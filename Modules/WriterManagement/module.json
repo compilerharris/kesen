@@ -1,0 +1,11 @@
+{
+    "name": "WriterManagement",
+    "alias": "writermanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\WriterManagement\\App\\Providers\\WriterManagementServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,11 @@
+{
+    "name": "JobCardManagement",
+    "alias": "jobcardmanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\JobCardManagement\\App\\Providers\\JobCardManagementServiceProvider"
+    ],
+    "files": []
+}

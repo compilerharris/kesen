@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/jobcardmanagement",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\JobCardManagement\\": "",
+            "Modules\\JobCardManagement\\App\\": "app/",
+            "Modules\\JobCardManagement\\Database\\Factories\\": "database/factories/",
+            "Modules\\JobCardManagement\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\JobCardManagement\\Tests\\": "tests/"
+        }
+    }
+}

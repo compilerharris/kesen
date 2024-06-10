@@ -1,0 +1,9 @@
+{
+    "ClientManagement": true,
+    "LanguageManagement": true,
+    "EmployeeManagement": true,
+    "WriterManagement": true,
+    "JobCardManagement": true,
+    "EstimateManagement": true,
+    "JobRegisterManagement": true
+}

@@ -1,0 +1,11 @@
+{
+    "name": "JobRegisterManagement",
+    "alias": "jobregistermanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\JobRegisterManagement\\App\\Providers\\JobRegisterManagementServiceProvider"
+    ],
+    "files": []
+}
