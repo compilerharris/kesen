@@ -84,7 +84,12 @@
                     border-color: #28a745!important; /* Change active page border color as needed */
                 }
         </style>
-    <div class="content">
+    <div class="content" style="padding-top: 20px; margin-left: 10px">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/job-card-management">Job Card </a></li>
+            </ol>
+        </nav>
         @include('components.notification')
         <a href="{{ route('jobcardmanagement.create') }}"><button class="btn btn-md btn-success "
                 style="float:right;margin:10px">Add Job Card</button></a>
@@ -107,10 +112,11 @@
                         <td>{{ $row->bill_date }}</td>
                         <td>{{  App\Models\User::where('id',$row->informed_to)->first()->name??'';}}</td>
                         <td>{{ $row->invoice_date }}</td>
-                        <td>
+                        <td width="250px">
                             <a href="{{route('jobcardmanagement.manage', $row->id)}}"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
                                Manage
                             </button></a>
+                            
                             <a href="{{route('jobregistermanagement.edit', $row->id)}}"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
                                 Edit
                              </button></a>

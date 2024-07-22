@@ -4,11 +4,14 @@ namespace Modules\WriterManagement\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Modules\JobCardManagement\App\Models\JobCard;
 use Modules\LanguageManagement\App\Models\Language;
 use Modules\WriterManagement\App\Models\Writer;
 use Modules\WriterManagement\App\Models\WriterLanguageMap;
@@ -21,7 +24,7 @@ class WriterManagementController extends Controller
      */
     public function index()
     {
-        $writers=Writer::all();
+        $writers=Writer::orderBy('created_at', 'desc')->get();
         return view('writermanagement::index')->with('writers',$writers);
     }
 
@@ -30,6 +33,9 @@ class WriterManagementController extends Controller
      */
     public function create()
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         return view('writermanagement::create');
     }
 
@@ -73,6 +79,9 @@ class WriterManagementController extends Controller
      */
     public function edit($id)
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $writer=Writer::find($id);
         $language_map=WriterLanguageMap::where('writer_id',$id)->get();
         $payments= WriterPayment::where('writer_id',$id)->get();
@@ -117,13 +126,19 @@ class WriterManagementController extends Controller
     }
 
     public  function deleteLanguageMap($writer_id,$id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $language_map=WriterLanguageMap::find($id);
         $language_map->delete();
         return redirect()->back();
     }
 
     public function editLanguageMap($writer_id,$id){
-        $languages=Language::all();
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
+        $languages=Language::orderBy('created_at', 'desc')->get();
         $language_map=WriterLanguageMap::find($id);
         
         return view('writermanagement::edit-language')->with('language_map',$language_map)->with('id',$writer_id)->with('languages',$languages);
@@ -138,6 +153,7 @@ class WriterManagementController extends Controller
             'bt_charges'=>'required|numeric',
             'bt_checking_charges'=>'required|numeric',
             'advertising_charges'=>'required|numeric',
+            'verification_2'=> 'required|numeric',
         ]);
         $language_map=WriterLanguageMap::find($id);
         $language_map->language_id=$request->language;
@@ -145,6 +161,7 @@ class WriterManagementController extends Controller
         $language_map->checking_charges=$request->checking_charges;
         $language_map->bt_charges=$request->bt_charges;
         $language_map->bt_checking_charges=$request->bt_checking_charges;
+        $language_map->verification_2= $request->verification_2;
         $language_map->advertising_charges=$request->advertising_charges;
         $language_map->save();
         Session::flash('message', 'Language Map Updated Successfully');
@@ -152,7 +169,10 @@ class WriterManagementController extends Controller
     }
 
     public function addLanguageMapView($writer_id){
-        $languages=Language::all();
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
+        $languages=Language::orderBy('created_at', 'desc')->get();
         return view('writermanagement::add-language')->with('id',$writer_id)->with('languages',$languages);
     }
 
@@ -164,7 +184,7 @@ class WriterManagementController extends Controller
             'bt_charges'=>'required|numeric',
             'bt_checking_charges'=>'required|numeric',
             'advertising_charges'=>'required|numeric',
-
+            'verification_2'=> 'required|numeric',
         ]);
         $language_map=new WriterLanguageMap();
         $language_map->writer_id=$writer_id;
@@ -173,6 +193,7 @@ class WriterManagementController extends Controller
         $language_map->checking_charges=$request->checking_charges;
         $language_map->bt_charges=$request->bt_charges;
         $language_map->bt_checking_charges=$request->bt_checking_charges;
+        $language_map->verification_2= $request->verification_2;
         $language_map->advertising_charges=$request->advertising_charges;
         $language_map->save();
         Session::flash('message', 'Language Map Added Successfully');
@@ -181,6 +202,9 @@ class WriterManagementController extends Controller
     }
 
     public function disableEnableWriter($id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $writer=Writer::find($id);
         if($writer->status==1){
             $writer->status=0;
@@ -198,6 +222,9 @@ class WriterManagementController extends Controller
     }
 
     public function addPaymentView($writer_id){
+        if(!(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         return view('writermanagement::add-payment')->with('id',$writer_id);
     }
 
@@ -210,11 +237,12 @@ class WriterManagementController extends Controller
             'apply_gst' => 'required|boolean',
             'apply_tds' => 'required|boolean',
             'period_from' => 'required|date',
+            'total_amount' => 'required|numeric',
             'period_to' => 'required|date',
             'online_ref_no' => 'nullable|string',
             'cheque_no' => 'nullable|string',
-            'performance_charge' => 'required|numeric',
-            'deductible' => 'required|numeric',
+            'performance_charge' => 'nullable|numeric',
+            'deductible' => 'nullable|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -228,6 +256,9 @@ class WriterManagementController extends Controller
     }
 
     public function editPaymentView($writer_id,$id){
+        if(!(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $payment = WriterPayment::find($id);
         return view('writermanagement::edit-payment')->with('payment',$payment)->with('id',$writer_id);
     }
@@ -241,20 +272,22 @@ class WriterManagementController extends Controller
             'apply_tds' => 'required|boolean',
             'period_from' => 'required|date',
             'period_to' => 'required|date',
+            'total_amount' => 'required|numeric',
             'online_ref_no' => 'nullable|string',
             'cheque_no' => 'nullable|string',
-            'performance_charge' => 'required|numeric',
-            'deductible' => 'required|numeric',
+            'performance_charge' => 'nullable|numeric',
+            'deductible' => 'nullable|numeric',
         ]);
 
         if ($validator->fails()) {
+            
             return redirect()->back()->withErrors($validator)->withInput();
         }
         
         $payment = WriterPayment::where('id',$id)->first();
         $payment->update($request->all());
         
-        return redirect()->back();
+        return redirect()->back()->with('message', 'Payment updated successfully.');;
     }
 
     public function showPayment($writer_id,$id)
@@ -263,4 +296,42 @@ class WriterManagementController extends Controller
         return view('writermanagement::show-payments', compact('payment'));
     }
 
+    public function calculatePayment(Request $request){
+        $min = Carbon::parse($request->period_from)->startOfDay();
+        $max = Carbon::parse($request->period_to)->endOfDay();
+        $job_card = JobCard::where(function ($query) use ($request) {
+            $query->where('t_writer_code', $request->id)
+                  ->orWhere('bt_writer_code', $request->id);
+        })
+        ->where('created_at', '>=', $min)
+        ->where('created_at', '<=', $max)
+        ->get();
+
+        $total = 0;
+        foreach ($job_card as $job) {
+            if($job->t_unit != ''){
+                $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit;
+            }
+            if($job->bt_unit != ''){
+                $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit;
+            }
+            if($job->v_unit != ''){
+                $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit;
+            }
+        }
+        // if($request->deductible){
+        //     $total-=intval($request->deductible);
+        // }
+        // if($request->performance_charge){
+        //     $total+=$request->performance_charge;
+        // }
+        // if($request->apply_gst){
+        //     $total+=$total*0.18;
+        // }
+        // if($request->apply_tds){
+        //     $total=$total-($total*0.1);
+        // }
+        $total = $total + ($request->apply_gst?$total*0.18:0) - ($request->apply_tds?$total*0.1:0) + ($request->performance_charge??0) - ($request->deductible ?? 0);
+        return round($total);
+    }
 }

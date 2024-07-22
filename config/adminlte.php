@@ -365,6 +365,33 @@ return [
             'icon' => 'fas fa-fw fa-user',
             'active' => ['writer-management', 'writer-management/*', 'regex:@^writer-management/[0-9]+$@']
         ]
+        ,
+        [
+            'text' => 'Reports',
+            'icon'=>'fas fa-fw fa-file',
+            'active'=>['bill-report','payment-report','writer-report'],
+            'submenu' => [
+                [
+                    'text' => 'Bill Export',
+                    'url' => '/bill-report',
+                    'active' => ['bill-report'],
+                    'href' => '/bill-report',
+                ],
+                [
+                    'text' => 'Payment Report',
+                    'url' => '/payment-report',
+                    'active' => ['payment-report'],
+                    'href' => '/payment-report',
+                ],
+
+                [
+                    'text' => 'Writer Work Done',
+                    'url' => '/writer-report',
+                    'active' => ['writer-report'],
+                    'href' => '/writer-report',
+                ],
+            ],
+        ]
         // [
         //     'text' => 'pages',
         //     'url' => 'admin/pages',

@@ -20,4 +20,8 @@ class Writer extends Model
     protected function getCreatedByAttribute($value){
         return User::where('id',$value)->first()->name;
     }
+
+    public function writer_language_map(){
+        return $this->hasMany(WriterLanguageMap::class);
+    }
 }

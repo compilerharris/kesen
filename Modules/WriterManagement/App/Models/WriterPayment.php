@@ -18,4 +18,7 @@ class WriterPayment extends Model
 
    protected $table="writer_payments";
 
+   public function writer(){
+       return $this->belongsTo(Writer::class,'writer_id','id');}
+
 }

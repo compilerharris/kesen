@@ -1,5 +1,16 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\preloaderHelper')
+@section('plugins.Select2', true)
+@php
+    $config = [
+        'title' => 'Select Client',
+        'liveSearch' => true,
+        'placeholder' => 'Search Client...',
+        'showTick' => true,
+        'actionsBox' => true,
+    ];
+@endphp
+
 @php $clients=Modules\ClientManagement\App\Models\Client::where('status',1)->get(); @endphp
 @php $languages=Modules\LanguageManagement\App\Models\Language::where('status',1)->get(); @endphp
 @if ($layoutHelper->isLayoutTopnavEnabled())
@@ -27,19 +38,26 @@
 
     {{-- Main Content --}}
     <div class="content" style="padding-top: 20px; margin-left: 10px">
-        <x-adminlte-card title="Edit Estimate" theme="success" icon="fas fa-lg fa-person">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/estimate-management">Estimate </a></li>
+                <li class="breadcrumb-item ">{{$estimate->estimate_no}}</li>
+                
+            </ol>
+        </nav>
+        <x-adminlte-card style="background-color: #eaecef;" title="Edit Estimate" theme="info" icon="fas fa-lg fa-person">
             <form action="{{ route('estimatemanagement.update', $estimate->id) }}" method="POST">
                 @method('PUT')
                 @csrf
                 <div class="row pt-2">
-                    <x-adminlte-select name="client_id" id="client_id" fgroup-class="col-md-3" required label="Client">
+                    <x-adminlte-select2  :config="$config"  name="client_id" id="client_id" fgroup-class="col-md-3" required label="Client">
                         <option value="">Select Client</option>
                         @foreach ($clients as $client)
                             <option value="{{ $client->id }}"
                                 {{ $estimate->client_id == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
                         @endforeach
-                    </x-adminlte-select>
-                    <x-adminlte-select name="client_contact_person_id" id="client_contact_person_id"
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 name="client_contact_person_id" id="client_contact_person_id"
                         fgroup-class="col-md-3" required label="Contact Person">
                         <option value="">Select Contact Person</option>
                         @foreach ($contact_persons as $contactPerson)
@@ -47,13 +65,12 @@
                                 {{ $estimate->client_contact_person_id == $contactPerson->id ? 'selected' : '' }}>
                                 {{ $contactPerson->name }}</option>
                         @endforeach
-                    </x-adminlte-select>
+                    </x-adminlte-select2>
                     <x-adminlte-input name="headline" placeholder="Headline" fgroup-class="col-md-3" type="text"
                         value="{{ $estimate->headline }}" required label="Headline" />
 
-                    <x-adminlte-input name="date" placeholder="Date" fgroup-class="col-md-3" type='date'
-                        value="{{ old('date', $estimate->date) }}" required label="Mail Received on" />
-                    <x-adminlte-select name="currency" placeholder="Currency" fgroup-class="col-md-3" required
+                    
+                    <x-adminlte-select2 name="currency" id="currency" placeholder="Currency" fgroup-class="col-md-3" required
                         value="{{ old('currency', $estimate->currency) }}" label="Currency">
                         <option value="">Select Currency</option>
                         <option value="AFN" @if ($estimate->currency == 'AFN') selected @endif label="Afghan afghani">
@@ -372,26 +389,29 @@
                             label="Zambian kwacha">ZMW</option>
                         <option value="ZWB" @if ($estimate->currency == 'ZWB') selected @endif
                             label="Zimbabwean bonds">ZWB</option>
-                    </x-adminlte-select>
-                    <x-adminlte-select name="status" fgroup-class="col-md-3" required label="Status">
+                    </x-adminlte-select2>
+                    <x-adminlte-input name="date" placeholder="Date" fgroup-class="col-md-3" type='date'
+                        value="{{ old('date', $estimate->date) }}" required label="Mail Received on" />
+                    <x-adminlte-input name="discount" placeholder="Discount" fgroup-class="col-md-3" type="text"
+                        value="{{ old('discount', $estimate->discount) }}" label="Discount" />
+                    <x-adminlte-select2 name="type" fgroup-class="col-md-3" required label="Type">
+                            <option value="">Select Type</option>
+                            <option value="words" {{ old('type.', $estimate->type) == 'words' ? 'selected' : '' }}>Words
+                            </option>
+                            <option value="unit" {{ old('type', $estimate->type) == 'unit' ? 'selected' : '' }}>Unit
+                            </option>
+                            <option value="minimum" {{ old('type', $estimate->type) == 'minimum' ? 'selected' : '' }}>
+                                Minimum</option>
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 name="status" fgroup-class="col-md-3" required label="Status">
                         <option value="">Select Status</option>
                         <option value="0" @if ($estimate->status == '0') selected @endif>Pending</option>
                         <option value="1" @if ($estimate->status == '1') selected @endif>Approve</option>
                         <option value="2" @if ($estimate->status == '2') selected @endif>Reject</option>
-                    </x-adminlte-select>
-                    <x-adminlte-select name="type" fgroup-class="col-md-3" required label="Type">
-                        <option value="">Select Type</option>
-                        <option value="words" {{ old('type.', $estimate->type) == 'words' ? 'selected' : '' }}>Words
-                        </option>
-                        <option value="unit" {{ old('type', $estimate->type) == 'unit' ? 'selected' : '' }}>Unit
-                        </option>
-                        <option value="minimum" {{ old('type', $estimate->type) == 'minimum' ? 'selected' : '' }}>
-                            Minimum</option>
-                    </x-adminlte-select>
+                    </x-adminlte-select2>
+                    
 
-                    <x-adminlte-input name="discount" placeholder="Discount" fgroup-class="col-md-3" type="text"
-                        value="{{ old('discount', $estimate->discount) }}" label="Discount" />
-
+                   
                     <div id="repeater">
                         @foreach ($estimate_details as $index => $detail)
                             <div class="repeater-item mt-3">
@@ -406,38 +426,36 @@
                                                 placeholder="Document Name" fgroup-class="col-md-3" type="text"
                                                 value="{{ old('document_name.' . $index, $detail->document_name) }}"
                                                 required label="Document Name" readonly />
-
-
                                             <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit"
-                                                fgroup-class="col-md-3" type="text"
+                                                fgroup-class="col-md-1" type="text"
                                                 value="{{ old('unit.' . $index, $detail->unit) }}" required
                                                 label="Unit" onkeyup="calculateAmount(this)" min="1" />
                                             <x-adminlte-input name="rate[{{ $index }}]" placeholder="Rate"
-                                                fgroup-class="col-md-3" type="text"
+                                                fgroup-class="col-md-2" type="text"
                                                 value="{{ old('rate.' . $index, $detail->rate) }}" required
                                                 label="Translation Rate" onkeyup="calculateAmount(this)" />
                                             <x-adminlte-input name="amount[{{ $index }}]" placeholder="Amount"
-                                                fgroup-class="col-md-3" type="text"
+                                                fgroup-class="col-md-2" type="text"
                                                 value="{{ ceil($detail->unit * $detail->rate) }}" label="Amount"
                                                 readonly />
                                             <x-adminlte-input name="verification[{{ $index }}]"
-                                                placeholder="Verification" fgroup-class="col-md-3" type="text"
+                                                placeholder="Verification 1" fgroup-class="col-md-2" type="text"
                                                 value="{{ old('verification.' . $index, $detail->verification) }}"
-                                                label="Verification" />
+                                                label="Verification 1" />
                                             <x-adminlte-input name="two_way_qc_t[{{ $index }}]"
-                                                placeholder="Two Way QC T" fgroup-class="col-md-3" type="text"
+                                                placeholder="Verification 2" fgroup-class="col-md-2" type="text"
                                                 value="{{ old('two_way_qc_t.' . $index, $detail->two_way_qc_t) }}"
-                                                label="Two Way QC T" />
+                                                label="Verification 2" />
                                             <x-adminlte-input name="layout_charges[{{ $index }}]"
-                                                placeholder="Layout Charges" fgroup-class="col-md-3" type="text"
+                                                placeholder="Layout Charges" fgroup-class="col-md-2" type="text"
                                                 value="{{ old('layout_charges.' . $index, $detail->layout_charges) }}"
                                                 label="Layout Charges" />
                                             <x-adminlte-input name="back_translation[{{ $index }}]"
-                                                placeholder="Back Translation" fgroup-class="col-md-3" type="text"
+                                                placeholder="Back Translation" fgroup-class="col-md-2" type="text"
                                                 value="{{ old('back_translation.' . $index, $detail->back_translation) }}"
                                                 label="Back Translation Rate" onkeyup="calculateAmount_2(this)" />
                                             <x-adminlte-input name="amount_bt[{{ $index }}]"
-                                                placeholder="Amount" fgroup-class="col-md-3" type="text"
+                                                placeholder="Amount" fgroup-class="col-md-2" type="text"
                                                 value="{{ $detail->unit * $detail->back_translation }}" label="Amount"
                                                 readonly />
                                             <x-adminlte-input name="verification_2[{{ $index }}]"
@@ -445,31 +463,46 @@
                                                 type="text"
                                                 value="{{ old('verification_2.' . $index, $detail->verification_2) }}"
                                                 label="Back Translation Verification" />
-                                            <x-adminlte-input name="two_way_qc_bt[{{ $index }}]"
+                                            {{-- <x-adminlte-input name="two_way_qc_bt[{{ $index }}]"
                                                 placeholder="Two Way QC BT" fgroup-class="col-md-3" type="text"
                                                 value="{{ old('two_way_qc_bt.' . $index, $detail->two_way_qc_bt) }}"
-                                                label="Two Way QC BT" />
+                                                label="Two Way QC BT" /> --}}
                                             <x-adminlte-input name="layout_charges_second[{{ $index }}]"
-                                                placeholder="BT Layout Charges" fgroup-class="col-md-3"
+                                                placeholder="Back Translation Layout Charges" fgroup-class="col-md-3"
                                                 type="text"
                                                 value="{{ old('layout_charges_second.' . $index, $detail->layout_charges_2) }}"
-                                                label="BT Layout Charges" />
-
-
-
-                                            <x-adminlte-select name="lang_{{ $index }}[]"
-                                                fgroup-class="col-md-3" label="Language" multiple>
+                                                label="Back Translation Layout Charges" />
+                                            <!-- <x-adminlte-select name="lang_{{ $index }}[]"
+                                                fgroup-class="col-md-3" label="Language" multiple for="lang_{{ $index }}" >
                                                 <option value="">Select Language</option>
                                                 @foreach ($languages as $language)
                                                     <option value="{{ $language->id }}"
                                                         {{ in_array($language->id, $detail->languages) ? 'selected' : '' }}>
                                                         {{ $language->name }}</option>
                                                 @endforeach
-                                            </x-adminlte-select>
+                                            </x-adminlte-select> -->
+                                            <div class="{{ $fgroupClass ?? '' }}">
+                                                <label>Languages</label>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_{{ $index }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        {{count($detail->languagesNames)>0?implode(', ',$detail->languagesNames):"Select Language"}}
+                                                        <!-- Select Language -->
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton_{{ $index }}" style="max-height: 200px; overflow-y: auto; padding: 5px;">
+                                                        @foreach ($languages as $option)
+                                                            <div class="custom-control custom-checkbox dropdown-item">
+                                                                <input type="checkbox" class="custom-control-input" id="checkbox-{{ $index }}-{{ $option->id }}" onclick="changeLan(this)" name="lang_{{ $index }}[]" value="{{ $option->id }}" {{ in_array($option->id, $detail->languages) ? 'checked' : '' }}>
+                                                                <label class="custom-control-label" for="checkbox-{{ $index }}-{{ $option->id }}">{{ $option->name }}</label>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <div class="invalid-feedback is-invalid" id="requiredMsg_{{ $index }}">Please select at least one language.</div>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <input type="button" name="button"
-                                                class="btn btn-danger remove-item mt-3 mb-3"
+                                                class="btn btn-danger remove-item mt-3 mb-1"
                                                 style="float:right;width: 100px"
                                                 data-detail-name="{{ $detail->document_name }}"
                                                 data-detail-unit="{{ $detail->unit }}"
@@ -483,28 +516,32 @@
                         @endforeach
                     </div>
                 </div>
+                
+                <button type="button" class="btn btn-primary mt-2" id="add-item">Add Document</button>
                 <br>
-                <button type="button" class="btn btn-primary mt-5" id="add-item">Add Document</button>
-                <br>
-                <x-adminlte-button label="Submit" type="submit" class="mt-3" />
+                <x-adminlte-button label="Submit" type="submit" onclick="checkValidLan(event)" class="mt-3" />
             </form>
         </x-adminlte-card>
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function() {      
+        addLangScripts();  
         let tempIndex = {{ count($estimate_details) }};
         let itemIndex = {{ count($estimate_details) }};
 
         $('#add-item').click(function() {
             let newItem = $('.repeater-item.mt-3:first').clone();
             newItem.find('.card-title').html('Document ' + (itemIndex + 1));
-            newItem.find('input, select').each(function() {
-                $(this).val('');
+            newItem.find('input, checkbox').each(function() {
+                $(this).prop('checked', false);
                 let name = $(this).attr('name');
+                if(name != "lang_0[]"){
+                    $(this).val('');
+                }
                 if (name == "button") {
                     $(this).attr('value', 'Remove');
-                    $(this).attr('data-detail-id', '');
+                    $(this).attr('data-detail-estimateid', '');
                 } else {
                     name = name.replace(/\d+/, itemIndex);
                     $(this).attr('name', name);
@@ -512,8 +549,30 @@
                         $(this).removeAttr('readonly');
                     }
                 }
+                // Update the id and 'for' attribute to ensure they are unique
+                let id = $(this).attr('id');
+                if (id) {
+                    id = id.replace(/\d+/, itemIndex);
+                    $(this).attr('id', id);
+                }
+
+                let label = $(this).next('label');
+                if (label.length > 0) {
+                    let labelFor = label.attr('for');
+                    if (labelFor) {
+                        labelFor = labelFor.replace(/\d+/, itemIndex);
+                        label.attr('for', labelFor);
+                    }
+                }
             });
+            newItem.find('#dropdownMenuButton_0').text('Select Language');
+            newItem.find('#dropdownMenuButton_0').attr('id','dropdownMenuButton_'+itemIndex);
+            newItem.find('.dropdown-menu').attr('aria-labelledby','dropdownMenuButton_'+itemIndex);
+            newItem.find('#requiredMsg_0').attr('id','requiredMsg_'+itemIndex);
             newItem.appendTo('#repeater');
+            var script = document.createElement('script');
+            script.textContent = "$('#dropdownMenuButton_"+itemIndex+" + div').on('click', function(e) { e.stopPropagation();});";
+            document.body.appendChild(script);
             itemIndex++;
         });
 
@@ -548,17 +607,49 @@
 
         function updateIndices() {
             itemIndex = 0;
+            // $('.repeater-item').each(function() {
+            //     let newItem = $(this);
+            //     newItem.find('input, select').each(function() {
+            //         let name = $(this).attr('name');
+            //         name = name.replace(/\d+/, itemIndex);
+            //         $(this).attr('name', name);
+            //         if (name == 'document_name[' + itemIndex + ']') {
+            //             $(this).removeAttr('readonly');
+            //         }
+            //     });
+            //     newItem.find('.card-title').html('Document ' + (itemIndex + 1));
+            //     itemIndex++;
+            // });
             $('.repeater-item').each(function() {
                 let newItem = $(this);
-                newItem.find('input, select').each(function() {
+                newItem.find('input, checkbox').each(function() {
                     let name = $(this).attr('name');
                     name = name.replace(/\d+/, itemIndex);
                     $(this).attr('name', name);
                     if (name == 'document_name[' + itemIndex + ']') {
                         $(this).removeAttr('readonly');
                     }
+                    newItem.attr('name', name);
+                    // Update the id and 'for' attribute to ensure they are unique
+                    let id = newItem.attr('id');
+                    if (id) {
+                        id = id.replace(/\d+/, itemIndex);
+                        newItem.attr('id', id);
+                    }
+
+                    let label = newItem.next('label');
+                    if (label.length > 0) {
+                        let labelFor = label.attr('for');
+                        if (labelFor) {
+                            labelFor = labelFor.replace(/\d+/, itemIndex);
+                            label.attr('for', labelFor);
+                        }
+                    }
                 });
                 newItem.find('.card-title').html('Document ' + (itemIndex + 1));
+                newItem.find('.dropdown-toggle').attr('id','dropdownMenuButton_'+itemIndex);
+                newItem.find('.dropdown-menu').attr('aria-labelledby','dropdownMenuButton_'+itemIndex);
+                newItem.find('.invalid-feedback').attr('id','requiredMsg_'+itemIndex);
                 itemIndex++;
             });
         }
@@ -602,5 +693,52 @@
         const rate = parseFloat(document.querySelector(`input[name="back_translation[${index}]"]`).value) || 0;
         const amount = Math.round(unit * rate);
         document.querySelector(`input[name="amount_bt[${index}]"]`).value = amount;
+    }
+
+    function changeLan(input) {
+        console.log(input);
+        const index = input.name.substring(5).replace("[]", "");
+        var selected = [];
+        $('input[name^="lang_'+index+'"]').each(function() {
+            if ($(this).is(':checked')) {
+                selected.push($(this).next('label').text());
+            }
+        });
+
+        $('#dropdownMenuButton_'+index).text(selected.join(', ') || 'Select Language');
+
+        // Update the hidden input value and validity
+        if (selected.length > 0) {
+            $('#requiredMsg_'+index).hide();
+        } else {
+            $('#requiredMsg_'+index).show();
+        }
+    }
+
+    // Validate form on submit
+    function checkValidLan(e){
+        let i=0;
+        $('.repeater-item').each(function() {
+            console.log($('#dropdownMenuButton_'+i).text());
+            // console.log(i,$('input[name="lang_'+i+'[]"]:checked').val());
+            // if ($('input[name="lang_'+i+'[]"]:checked').val() === '' || $('input[name="lang_'+i+'[]"]:checked').val() === undefined ) {
+            if ($('#dropdownMenuButton_'+i).text() === 'Select Language') {
+                $('#requiredMsg_'+i).show();
+                e.preventDefault();
+            } else {
+                $('#requiredMsg_'+i).hide();
+            }
+            i++;
+        });
+    }
+
+    function addLangScripts(){
+        let scriptIndex = 0;
+        $('.repeater-item').each(function() {
+            var script = document.createElement('script');
+            script.textContent = "$('#dropdownMenuButton_"+scriptIndex+" + div').on('click', function(e) { e.stopPropagation();});";
+            document.body.appendChild(script);
+            scriptIndex++;
+        });
     }
 </script>

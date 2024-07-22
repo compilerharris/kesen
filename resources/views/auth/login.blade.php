@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            @error('email')
+            @error('code')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>

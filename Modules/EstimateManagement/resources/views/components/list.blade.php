@@ -41,7 +41,7 @@
     ];
 
     $config = [
-        'order' => [[1, 'asc']],
+        'order' => [[1, 'desc']],
     ];
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
@@ -78,27 +78,44 @@
             /* Change active page border color as needed */
         }
     </style>
-    <div class="content">
+    <div class="content" style="padding-top: 20px; margin-left: 10px">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item ">Estimate </li>     
+            </ol>
+        </nav>
         @include('components.notification')
+        <!-- @if(!Auth::user()->hasRole('Accounts'))
         <a href="{{ route('estimatemanagement.create') }}"><button class="btn btn-md btn-success "
                 style="float:right;margin:10px">Add Estimate</button></a>
-        <br><br>
-        <div class="card" style="margin:10px">
-            <div class="card-body">
+        @endif
+        <br><br> -->
+
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 style="margin:0">All Estimates</h3>
+            </div>
+            <div class="card-body" style="background-color: #eaecef;">
                 <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
-                    <br>
                     <table border="0" cellspacing="5" cellpadding="5">
                         <tbody>
                             <tr>
-                                <td>From Date:</td>
-                                <form action="estimate-management">
-                                    <td><input type="date" id="min" name="min"></td>
-                                    <td>To Date:</td>
-                                    <td><input type="date" id="max" name="max"></td>
-                                    <td><input type="submit" value="Filter"></td>
-                                    <td><input type="submit" value="Reset" name="reset"></td>
-                                </form>
-
+                                <td width="90%">
+                                    <form action="estimate-management">
+                                        From Date:
+                                        <input type="date" id="min" name="min">
+                                        To Date:
+                                        <input type="date" id="max" name="max">
+                                        <input class="btn btn-info" type="submit" value="Filter">
+                                        <input class="btn btn-info" type="submit" value="Reset" name="reset">
+                                    </form>
+                                </td>
+                                @if(!Auth::user()->hasRole('Accounts'))
+                                    <td>
+                                        <a href="{{ route('estimatemanagement.create') }}"><button class="btn btn-md btn-success "
+                                            style="margin:10px;width:120px;">Add Estimate</button></a>
+                                    </td>
+                                @endif
                             </tr>
                         </tbody>
                     </table>
@@ -110,93 +127,85 @@
                         {{ $estimates_rejected_count }}</span>
                     @if (request()->input('min') || request()->input('max'))
                         <a
-                            href="{{ route('estimatemanagement.exporteestimate') }}?min={{ request()->input('min') }}&max={{ request()->input('max') }}"><button
-                                class="btn btn-sm btn-default text-dark" title="Edit"
-                                style="width:132px;margin-left:5px;height:33px">
+                            href="{{ route('estimatemanagement.exporteestimate') }}?min={{ request()->input('min') }}&max={{ request()->input('max') }}" target="_blank"><button
+                                class="btn btn-sm btn-info" title="Edit"
+                                style="width:132px;margin-left:5px;height:33px" > 
                                 Export
                             </button></a>
                     @else
-                        <a href="{{ route('estimatemanagement.exporteestimate') }}"><button
-                                class="btn btn-sm btn-default text-dark " title="Edit"
-                                style="width:132px;margin-left:5px;height:33px">
+                        <a href="{{ route('estimatemanagement.exporteestimate') }}" target="_blank"><button
+                                class="btn btn-sm btn-info " title="Edit"
+                                style="width:132px;margin-left:5px;height:33px" >
                                 Export
                             </button></a>
                     @endif
-                    <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config">
-                        @foreach ($estimates as $index => $row)
-                            <tr>
+                    <div class="card">
+                        <div class="card-body">
+                            <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config">
+                                @foreach ($estimates as $index => $row)
+                                    <tr>
 
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $row->estimate_no }}</td>
-                                <td>{{ App\Models\Metrix::where('id', $row->client->metrix)->first()->code }}</td>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $row->estimate_no }}</td>
+                                        <td>{{ App\Models\Metrix::where('id', $row->client->metrix)->first()->code }}</td>
 
-                                <td>{{ Modules\ClientManagement\App\Models\Client::where('id', $row->client_id)->first()->name ?? '' }}
-                                </td>
-                                <td>{{ Modules\ClientManagement\App\Models\ContactPerson::where('id', $row->client_contact_person_id)->first()->name ?? '' }}
-                                </td>
-                                <td>{{ $row->headline }}</td>
-                                {{-- <td>{{ $row->amount }}</td> --}}
-                                <td>{{ $row->currency }}</td>
-                                <td
-                                    class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
-                                    {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected') }}
-                                </td>
-                                <td>{{ App\Models\User::where('id', $row->created_by)->first()->name }}</td>
-                                <td>
+                                        <td>{{ Modules\ClientManagement\App\Models\Client::where('id', $row->client_id)->first()->name ?? '' }}
+                                        </td>
+                                        <td>{{ Modules\ClientManagement\App\Models\ContactPerson::where('id', $row->client_contact_person_id)->first()->name ?? '' }}
+                                        </td>
+                                        <td>{{ $row->headline }}</td>
+                                        {{-- <td>{{ $row->amount }}</td> --}}
+                                        <td>{{ $row->currency }}</td>
+                                        <td
+                                            class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
+                                            {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected') }}
+                                        </td>
+                                        <td>{{ App\Models\User::where('id', $row->created_by)->first()->name }}</td>
+                                        <td width="300px">
 
+                                            @if(!Auth::user()->hasRole('Accounts'))
+                                                <a href="{{ route('estimatemanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">
+                                                    Edit</a>
+                                                @endif
 
-                                    <a href="{{ route('estimatemanagement.edit', $row->id) }}"><button
-                                            class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                            Edit
-                                        </button></a>
+                                            {{-- <a href="{{route('estimatemanagement.show', $row->id)}}" target="_blank"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="View">
+                                            View
+                                        </button></a> --}}
+                                        
+                                            <a href="{{ route('estimatemanagement.viewPdf', $row->id) }}"
+                                                target="_blank" class="btn btn-info btn-sm mb-2">
+                                                    Preview
+                                                </a>
+                                            @if(!Auth::user()->hasRole('Accounts'))
+                                                @if ($row->status == 0)
+                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">
+                                                            Approve
+                                                    </a>
 
-                                    {{-- <a href="{{route('estimatemanagement.show', $row->id)}}" target="_blank"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="View">
-                                    View
-                                </button></a> --}}
-                                    <a href="{{ route('estimatemanagement.viewPdf', $row->id) }}"
-                                        target="_blank"><button class="btn btn-xs btn-default text-dark mx-1 shadow"
-                                            title="View">
-                                            Preview
-                                        </button></a>
-                                    @if ($row->status == 0)
-                                        <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}"><button
-                                                class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                                Approve
-                                            </button></a>
+                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 2]) }}" class="btn btn-info btn-sm mb-2">Reject
+                                                        </a>
+                                                @elseif($row->status == 1)
+                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}" class="btn btn-info btn-sm mb-2">Pending
+                                                        </a>
 
-                                        <a href="{{ route('estimatemanagement.status', [$row->id, 2]) }}"><button
-                                                class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                                Reject
-                                            </button></a>
-                                    @elseif($row->status == 1)
-                                        <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}"><button
-                                                class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                                Pending
-                                            </button></a>
+                                                @else
+                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}" class="btn btn-info btn-sm mb-2">Pending
+                                                        </a>
 
-                                        <a href="{{ route('estimatemanagement.status', [$row->id, 2]) }}"><button
-                                                class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                                Reject
-                                            </button></a>
-                                    @else
-                                        <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}"><button
-                                                class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                                Pending
-                                            </button></a>
-
-                                        <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}"><button
-                                                class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                                Approve
-                                            </button></a>
-                                    @endif
+                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">Approve
+                                                        </a>
+                                                @endif
+                                            @endif
 
 
 
-                                </td>
+                                        </td>
 
-                            </tr>
-                        @endforeach
-                    </x-adminlte-datatable>
+                                    </tr>
+                                @endforeach
+                            </x-adminlte-datatable>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

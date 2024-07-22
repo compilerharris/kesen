@@ -26,8 +26,14 @@
 
     {{-- Main Content --}}
 
-    <div class="content" style="padding-top: 20px;margin-left: 10px">
-        <x-adminlte-card title="Edit Employee" theme="success" icon="fas fa-lg fa-person">
+    <div class="content" style="padding-top: 20px; margin-left: 10px">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/employee-management">Employee </a></li>     
+                <li class="breadcrumb-item ">{{$user->name}}</li>     
+            </ol>
+        </nav>
+        <x-adminlte-card style="background-color: #eaecef;" title="Edit Employee" theme="info" icon="fas fa-lg fa-person">
 
             <form action="{{ route('employeemanagement.update', $user->id) }}" method="POST">
                 @method('PUT')
@@ -35,18 +41,18 @@
                 <div class="row pt-2">
                     <x-adminlte-input name="name" placeholder="Employee Name" fgroup-class="col-md-3" required
                         value="{{ $user->name }}" label="Employee Name" />
-                    <x-adminlte-input name="phone_no" placeholder="Employee Number" fgroup-class="col-md-3"
-                        value="{{ $user->phone }}" label="Employee Number" />
+                    <x-adminlte-input name="phone_no" placeholder="Contact Number" fgroup-class="col-md-3"
+                        value="{{ $user->phone }}" label="Contact Number" />
                     {{-- <x-adminlte-input name="landline"  placeholder="Landline Number"
                     fgroup-class="col-md-3" value="{{ $user->landline }}" label="Landline Number"/> --}}
                     <x-adminlte-input name="email" placeholder="Email" fgroup-class="col-md-3" type='email'
                         value="{{ $user->email }}" required label="Email" />
 
                     <x-adminlte-input name="code" placeholder="Employee Code" fgroup-class="col-md-3" type='text'
-                        value="{{ $user->code }}" required label="Employee Code" />
+                        value="{{ $user->code }}" required label="Employee Code" readonly/>
 
                     <x-adminlte-input name="password" placeholder="Password" fgroup-class="col-md-3" type='password'
-                        value="{{ $user->plain_password }}" required label="Password" />
+                        value="{{ $user->plain_password }}"  label="Password" />
                     <x-adminlte-textarea name="address" placeholder="Address" fgroup-class="col-md-3"
                         label="Address">{{ $user->address }}</x-adminlte-textarea>
 

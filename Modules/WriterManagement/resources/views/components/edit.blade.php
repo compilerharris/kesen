@@ -1,20 +1,20 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\PreloaderHelper')
 @php
-    $metrics = config('services.metrix');
     $language_heads = [
         ['label' => 'Sr. No.'],
         ['label' => 'Language Name'],
-        ['label' => 'Per Unit Charges'],
-        ['label' => 'Checking Charges'],
+        ['label' => 'Translation Charges'],
+        ['label' => 'Verification'],
         ['label' => 'Bt Charges'],
-        ['label' => 'Bt Checking Charges'],
+        ['label' => 'BT Verification Charges'],
+        ['label' => 'Verification 2'],
         ['label' => 'Advertising Charges'],
         ['label' => 'Action'],
     ];
 
     $language_config = [
-        'order' => [[1, 'asc']],
+        'order' => [[1, 'desc']],
         'paging' => true,
         'lengthMenu' => [10, 50, 100, 500],
     ];
@@ -34,7 +34,7 @@
     ];
 
     $payment_config = [
-        'order' => [[1, 'asc']],
+        'order' => [[1, 'desc']],
         'paging' => true,
         'lengthMenu' => [10, 50, 100, 500],
     ];
@@ -64,7 +64,13 @@
 
     {{-- Main Content --}}
     <div class="content" style="padding-top: 20px; margin-left: 10px">
-        <x-adminlte-card title="Edit Writer" theme="success" icon="fas fa-lg fa-language">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/writer-management">Writer </a></li>
+                <li class="breadcrumb-item active" >{{Modules\WriterManagement\App\Models\Writer::where('id',$id)->first()->writer_name}}</li>
+            </ol>
+        </nav>
+        <x-adminlte-card style="background-color: #eaecef;" title="Edit Writer" theme="info" icon="fas fa-lg fa-language">
             <form action="{{ route('writermanagement.update', $writer->id) }}" method="POST">
                 @method('PUT')
                 @csrf
@@ -102,16 +108,15 @@
                         <td>{{ $row->checking_charges }}</td>
                         <td>{{ $row->bt_charges }}</td>
                         <td>{{ $row->bt_checking_charges }}</td>
+                        <td>{{ $row->verification_2 }}</td>
                         <td>{{ $row->advertising_charges }}</td>
                         <td>
-                            <a href="{{ route('writermanagement.editLanguageMap', [$writer->id, $row->id]) }}">
-                                <button class="btn btn-xs btn-default text-dark mx-1 shadow"
-                                    title="Edit">Edit</button>
+                            <a href="{{ route('writermanagement.editLanguageMap', [$writer->id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit
                             </a>
-                            <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="Delete"
+                            <a class="btn btn-danger btn-sm mb-2" title="Delete"
                                 onclick="deleteLanguageMap('{{ route('writermanagement.deleteLanguageMap', [$writer->id, $row->id]) }}')">
-                                Delete
-                            </button>
+                                <i class="fa fa-lg fa-fw fa-trash"></i>
+                            </a>
                         </td>
                     </tr>
                 @endforeach
@@ -132,7 +137,7 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $payment->payment_method }}</td>
-                        <td>{{ $payment->metrix }}</td>
+                        <td>{{ App\Models\Metrix::where('id',$payment->metrix)->first()->name }}</td>
                         <td>{{ $payment->apply_gst ? 'Yes' : 'No' }}</td>
                         <td>{{ $payment->apply_tds ? 'Yes' : 'No' }}</td>
                         <td>{{ $payment->period_from }}</td>
@@ -141,10 +146,10 @@
                         <td>{{ $payment->performance_charge }}</td>
                         <td>{{ $payment->deductible }}</td>
                         <td>
-                            <a href="{{ route('writermanagement.editPaymentView', [$writer->id, $payment->id]) }}">
-                                <button class="btn btn-xs btn-default text-dark mx-1 shadow"
-                                    title="Edit">Edit</button>
-                            </a>
+                            @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
+                                <a href="{{ route('writermanagement.editPaymentView', [$writer->id, $payment->id]) }}" class="btn btn-info btn-sm mb-2">Edit
+                                </a>
+                            @endif
                             {{-- <a href="{{ route('writermanagement.showPayment', [$writer->id, $payment->id]) }}">
                                 <button class="btn btn-xs btn-default text-dark mx-1 shadow" title="View">View</button>
                             </a> --}}

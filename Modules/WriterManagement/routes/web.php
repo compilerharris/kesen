@@ -17,6 +17,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group([], function () {
         Route::resource('writer-management', WriterManagementController::class)->names('writermanagement');
     });
+    
+    Route::post('writer-management/calculatePayment', [WriterManagementController::class, 'calculatePayment'])->name('writermanagement.calculatePayment');
     Route::get('writer-management/{id}/disable-enable-writer', [WriterManagementController::class, 'disableEnableWriter'])->name('writermanagement.disableEnableWriter');
     Route::get('writer-management/{writer_id}/view-language-maps', [WriterManagementController::class, 'viewLanguageMaps'])->name('writermanagement.viewLanguageMaps');
     Route::get('writer-management/{writer_id}/add-language-maps', [WriterManagementController::class, 'addLanguageMapView'])->name('writermanagement.addLanguageMapView');

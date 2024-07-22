@@ -26,7 +26,16 @@
 
     {{-- Main Content --}}
     <div class="content" style="padding-top: 20px;margin-left: 10px">
-        <x-adminlte-card title="Edit Language Map" theme="success">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/writer-management">Writer </a></li>
+                <li class="breadcrumb-item" ><a href="/writer-management/{{$id}}/edit">{{Modules\WriterManagement\App\Models\Writer::where('id',$id)->first()->writer_name}}</a></li>
+                <li class="breadcrumb-item" ><a href="/writer-management/{{$id}}/view-language-maps">View Language Map</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{$language_map->language_id}}</li>
+            </ol>
+        </nav>
+        @include('components.notification')
+        <x-adminlte-card style="background-color: #eaecef;" title="Edit Language Map" theme="info">
             <form action="{{ route('writermanagement.updateLanguageMap', [$id, $language_map->id]) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -38,18 +47,21 @@
                                 {{ $language->name }}</option>
                         @endforeach
                     </x-adminlte-select>
-                    <x-adminlte-input name="per_unit_charges" placeholder="Per Unit Charges" fgroup-class="col-md-3"
-                        value="{{ $language_map->per_unit_charges }}" label="Per Unit Charges" />
-                    <x-adminlte-input name="checking_charges" placeholder="Checking Charges" fgroup-class="col-md-3"
-                        value="{{ $language_map->checking_charges }}" label="Checking Charges" />
+                    <x-adminlte-input name="per_unit_charges" placeholder="Translation Charges" fgroup-class="col-md-3"
+                        value="{{ $language_map->per_unit_charges }}" label="Translation Charges" required/>
+                    <x-adminlte-input name="checking_charges" placeholder="Verification" fgroup-class="col-md-3"
+                        value="{{ $language_map->checking_charges }}" label="Verification" required/>
+                        <x-adminlte-input name="verification_2" placeholder="Verification 2"
+                        fgroup-class="col-md-3" value="{{ $language_map->verification_2 }}" label="Verification 2" required/>
                     <x-adminlte-input name="bt_charges" placeholder="BT Charges" fgroup-class="col-md-3" type='text'
-                        value="{{ $language_map->bt_charges }}" label="BT Charges" />
-                    <x-adminlte-input name="bt_checking_charges" placeholder="BT Checking Charges"
+                        value="{{ $language_map->bt_charges }}" label="BT Charges" required/>
+                    <x-adminlte-input name="bt_checking_charges" placeholder="BT Verification Charges"
                         fgroup-class="col-md-3" value="{{ $language_map->bt_checking_charges }}"
-                        label="BT Checking Charges" />
+                        label="BT Verification Charges" required/>
+                        
                     <x-adminlte-input name="advertising_charges" placeholder="Advertising Charges"
                         fgroup-class="col-md-3" value="{{ $language_map->advertising_charges }}"
-                        label="Advertising Charges" />
+                        label="Advertising Charges" required/>
 
                 </div>
 

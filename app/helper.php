@@ -2,6 +2,7 @@
 
 use Modules\ClientManagement\App\Models\Client;
 use Modules\EstimateManagement\App\Models\Estimates;
+use NumberToWords\NumberToWords;
 
 if (!function_exists('checkRequestUrl')) {
     function checkRequestUrl($patterns,$currentUrl)
@@ -228,17 +229,41 @@ if(!function_exists('getCurrencyDropDown')){
 }
 
 if(!function_exists('generateEstimateNumber')){
-
     function generateEstimateNumber($client_id) {
+        $currentMonth = date('m');
         $currentYear = date('Y');
-        $nextYear = substr($currentYear + 1, 2);
-    
+        
+        if ($currentMonth >= 4) {
+            $startYear = $currentYear;
+            $endYear = $currentYear + 1;
+        } else {
+            $startYear = $currentYear - 1;
+            $endYear = $currentYear;
+        }
+        
+        $nextYearShort = substr($endYear, 2);
+        $financialYear = $startYear . '-' . $nextYearShort;
+        
         $count = Estimates::count() + 1;
-        $estimate_metric=Client::where('id',$client_id)->with('client_metric')->first();
-        $estimate_metric_code=$estimate_metric->client_metric->code;
-        $formattedID = str_pad($count, 4, '0', STR_PAD_LEFT) . '-'.$estimate_metric_code.'/' . $currentYear . '-' .$nextYear;
+        $estimate_metric = Client::where('id', $client_id)->with('client_metric')->first();
+        $estimate_metric_code = $estimate_metric->client_metric->code;
+        
+        $formattedID = str_pad($count, 4, '0', STR_PAD_LEFT) . '-' . $estimate_metric_code . '/' . $financialYear;
         
         return $formattedID;
     }
     
 }
+    
+    if (!function_exists('number_to_words')) {
+        function number_to_words($number)
+        {
+            $numberToWords = new NumberToWords();
+            $numberTransformer = $numberToWords->getNumberTransformer('en');
+    
+            $words = $numberTransformer->toWords(round($number));
+            $words = ucwords(str_replace('-', ' ', $words));
+    
+            return $words . " Only";
+        }
+    }

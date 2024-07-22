@@ -31,7 +31,7 @@
     ];
 
     $config = [
-        'order' => [[1, 'asc']],
+        'order' => [[1, 'desc']],
     ];
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
@@ -61,15 +61,21 @@
 
     {{-- Main Content --}}
     <div class="content" style="padding-top: 20px;margin-left: 10px">
-        <x-adminlte-card title="Edit Client" theme="success" icon="fas fa-lg fa-person">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/client-management">Client </a></li>     
+                <li class="breadcrumb-item ">{{$client->name}}</li>     
+            </ol>
+        </nav>
+        <x-adminlte-card style="background-color: #eaecef;" title="Edit Client" theme="info" icon="fas fa-lg fa-person">
             <form action="{{ route('clientmanagement.update', $client->id) }}" method="POST">
                 @method('PUT')
                 @csrf
                 <div class="row pt-2">
                     <x-adminlte-input name="name" placeholder="Client Name" fgroup-class="col-md-3" required
                         value="{{ $client->name }}" label="Client Name" />
-                    <x-adminlte-input name="phone_no" required placeholder="Client Number" fgroup-class="col-md-3"
-                        value="{{ $client->phone_no }}" label="Client Number" />
+                    <x-adminlte-input name="phone_no"  placeholder="Contact Number" fgroup-class="col-md-3"
+                        value="{{ $client->phone_no }}" label="Contact Number" />
                     {{-- <x-adminlte-input name="landline" required placeholder="Landline Number" fgroup-class="col-md-3"
                         value="{{ $client->landline }}" label="Landline Number" /> --}}
                     <x-adminlte-input name="email" placeholder="Email" fgroup-class="col-md-3" type='email'
@@ -145,28 +151,22 @@
                             <td>{{ $row->phone_no }}</td>
                             {{-- <td>{{ $row->landline }}</td> --}}
                             <td>{{ $row->designation }}</td>
-                            <td>
-                                <a href="{{ route('clientmanagement.editContactForm', [$client->id, $row->id]) }}"><button
-                                        class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                        <i class="fa fa-lg fa-fw fa-pen"></i>
-                                    </button></a>
+                            <td width="250px">
+                                <a href="{{ route('clientmanagement.editContactForm', [$client->id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
                                 @if ($row->status == 1)
                                     <a
-                                        href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}"><button
-                                            class="btn btn-xs btn-danger  mx-1 shadow" title="Disable">
-                                            Disable
-                                        </button></a>
+                                        href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}" class="btn btn-danger btn-sm mb-2">Disable</a>
                                 @else
                                     <a
-                                        href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}"><button
-                                            class="btn btn-xs btn-success  mx-1 shadow" title="Enable">
-                                            Enable
-                                        </button></a>
+                                        href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}" class="btn btn-success btn-sm mb-2">Enable</a>
                                 @endif
-                                <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="Delete"
+                                <!-- <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="Delete"
                                     onclick="disableEnable('{{ route('clientmanagement.deleteContact', [$client->id, $row->id]) }}')">
+                                   Delete
+                                </button> -->
+                                <a class="btn btn-danger btn-sm mb-2" title="Delete" onclick="disableEnable('{{ route('clientmanagement.deleteContact', [$client->id, $row->id]) }}')">
                                     <i class="fa fa-lg fa-fw fa-trash"></i>
-                                </button>
+                                </a>
                             </td>
 
                         </tr>
@@ -185,7 +185,7 @@
     document.getElementById('type').addEventListener('change', function() {
         if (this.value == 2 || this.value == '2') {
             document.getElementById('protocol').innerHTML =
-                '<div class="form-group col-md-12" style="padding: 0px;margin:0px"><div class="input-group" ><select name="protocol_data" class="form-control" required="required"><option value="">Non Protocol Type</option><option value="Advertisement ADV">Advertisement ADV</option><option value="Consolidated CON">Consolidated CON</option></select></div></div>';
+                '<label>Non Protocol Type</label><div class="form-group col-md-12" style="padding: 0px;margin:0px"><div class="input-group" ><select name="protocol_data" class="form-control" required="required"><option value="">Non Protocol Type</option><option value="Advertisement ADV">Advertisement ADV</option><option value="Consolidated CON">Consolidated CON</option></select></div></div>';
         } else {
             document.getElementById('protocol').innerHTML = '';
         }

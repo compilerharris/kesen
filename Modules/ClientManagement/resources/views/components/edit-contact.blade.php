@@ -26,7 +26,15 @@
 
     {{-- Main Content --}}
     <div class="content" style="padding-top: 20px;margin-left: 10px">
-        <x-adminlte-card title="Edit Contact" theme="success">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/client-management">Client </a></li>     
+                <li class="breadcrumb-item "><a href="/client-management/{{$id}}/edit">{{Modules\ClientManagement\App\Models\Client::where('id',$id)->first()->name}}</a></li>    
+                <li class="breadcrumb-item "><a href="/client-management/{{$id}}/view-contacts">View Contacts</a></li>  
+                <li class="breadcrumb-item ">{{$contact_person->name}}</li>  
+            </ol>
+        </nav>
+        <x-adminlte-card style="background-color: #eaecef;" title="Edit Contact" theme="info">
             <form action="{{ route('clientmanagement.editContact', [$id, $contact_person->id]) }}" method="POST">
                 @method('PUT')
                 @csrf

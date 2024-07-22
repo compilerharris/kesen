@@ -1,11 +1,9 @@
-@if(Auth::user()->hasRole('Accounts'))
-    @php $access_menu=['Job Card Management'] @endphp
-@elseif(Auth::user()->hasRole('Project Manager'))
+@if(Auth::user()->hasRole('Project Manager'))
     @php $access_menu=['Job Card Management'] @endphp
 @elseif(Auth::user()->hasRole('Quality Control Executive'))
     @php $access_menu=[] @endphp
 @else
-    @php $access_menu=['Job Card Management','Job Register Management','Estimate Management','Client Management','Language Management','Employee Management','Writer Management'] @endphp
+    @php $access_menu=['Job Card Management','Job Register Management','Estimate Management','Client Management','Language Management','Employee Management','Writer Management','Reports','Bill Export','Payment Report','Writer Work Done'] @endphp
 @endif
 @if(in_array($item['text'],$access_menu))
 <li @isset($item['id']) id="{{ $item['id'] }}" @endisset class="nav-item">

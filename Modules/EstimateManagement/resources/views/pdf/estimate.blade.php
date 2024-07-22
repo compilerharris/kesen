@@ -10,12 +10,13 @@
             font-family: 'Arial', sans-serif;
             margin: 10px;
             padding: 10px;
-            line-height: 1;
+            line-height: 0.80;
             border: 2px solid #000;
         }
 
         header,
         footer {
+            margin-top: 5px;
             width: 100%;
             text-align: center;
             margin-bottom: 20px;
@@ -32,6 +33,7 @@
             border: 1px solid black;
             padding: 8px;
             font-size: 8px;
+            line-height: 1;
             text-align: center;
             word-break: break-word;
             /* Prevents text from overflowing */
@@ -41,6 +43,7 @@
             border: 1px solid black;
             padding: 8px;
             font-size: 8px;
+            line-height: 1;
             text-align: center;
             font-size: 8px;
             background-color: #f2f2f2;
@@ -75,6 +78,9 @@
             white-space: nowrap;
             /* Prevents text from wrapping */
         }
+        p {
+            line-height: .5;
+        }
     </style>
 </head>
 @php $sub_total=0; @endphp
@@ -82,13 +88,13 @@
 <body>
     <header>
         @if ($estimate->client->client_metric->code == 'KCP')
-            <img src="{{ public_path('img/kesen-communication.jpeg') }}" alt="Iceberg Image" width="100%">
+            <img src="{{ public_path('img/kesen-communication.jpeg') }}" alt="Kesen Communication" width="100%">
         @elseif ($estimate->client->client_metric->code == 'KLB')
-            <img src="{{ public_path('img/kesen-language-buea.jpeg') }}" alt="Iceberg Image" width="100%">
+            <img src="{{ public_path('img/kesen-language-buea.jpeg') }}" alt="Kesen Language Bureau" width="100%">
         @elseif ($estimate->client->client_metric->code == 'LGS')
-            <img src="{{ public_path('img/kesen-linguist-Servi-llp.jpeg') }}" alt="Iceberg Image" width="100%">
+            <img src="{{ public_path('img/kesen-linguist-system.jpeg') }}" alt="Kesen Linguist Systems" width="100%">
         @else
-            <img src="{{ public_path('img/kesen-linguist-system.jpeg') }}" alt="Iceberg Image" width="100%">
+            <img src="{{ public_path('img/kesen-linguist-Servi-llp.jpeg') }}" alt="Kesen Linguist Services" width="100%">
         @endif
 
        
@@ -107,17 +113,18 @@
         <div>
             <hr style="opacity: 0.5;">
         </div>
-        <p> {{ $estimate->client_person->name }}</p>
-        <p> {{ $estimate->client->name }}</p>
-        <p>{{ $estimate->client->address }}</p>
-        <p><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</p>
-        <p><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</p>
-        <p><strong>Languages Required:</strong>
+        <p style="font-size: 12px"> <strong>{{ $estimate->client_person->name }}</strong><span style="font-size: 12px;float:right;width:300px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</span></p>
+        <p style="font-size: 12px"> <strong>{{ $estimate->client->name }}</strong><span style="font-size: 12px;float:right;width:300px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</span></p>
+        <p style="font-size: 12px">{{ $estimate->client->address }}</p>
+        <!-- <p style="font-size: 12px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</p>
+        <p style="font-size: 12px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</p> -->
+        <p style="font-size:12px;line-height:1.6;"><strong>Languages Required:</strong>
             @php $languages_list=[] @endphp
             @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
-                @php $languages_list[]=Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()->name @endphp
+                @php $languages_list[]=Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()->name??'' @endphp
             @endforeach
-            {{ implode(',',array_unique($languages_list)) }}
+            
+            {{ implode(', ',array_filter(array_unique($languages_list), function($value) {return !is_null($value) && $value !== '';})) }}
         </p>
         @php $counter=6; @endphp
         <table>
@@ -175,7 +182,7 @@
             
                     <tr>
                         <td>{{ $detail->document_name }}</td>
-                        <td class="nowrap">{{ $detail->unit }}</td>
+                        <td class="nowrap">{{ $detail->unit != 1 ? $detail->unit : 'Min'}}</td>
                         <td class="nowrap">{{ $detail->rate }}</td>
                         <td class="nowrap">{{ $detail->unit * $detail->rate }}</td>
                         @if ($estimate->details[0]->verification)
@@ -188,7 +195,7 @@
                             <td class="nowrap">{{ $detail->layout_charges }}</td>
                         @endif
                         @if ($estimate->details[0]->back_translation)
-                            <td class="nowrap">{{ $detail->back_translation }}</td>
+                            <td class="nowrap">{{ $detail->back_translation*$detail->unit }}</td>
                         @endif
                         @if ($estimate->details[0]->verification_2)
                             <td class="nowrap">{{ $detail->verification_2 }}</td>
@@ -204,10 +211,10 @@
                         @endphp
                         <td>{{ Modules\LanguageManagement\App\Models\Language::whereIn('id', $languages_ids)->pluck('code')->implode('/') }}</td>
                         <td class="nowrap">
-                            {{ number_format(($detail->unit * $detail->rate + $detail->layout_charges + $detail->back_translation + $detail->verification+ $detail->two_way_qc_t+ $detail->two_way_qc_bt + $detail->verification_2 + $detail->layout_charges_2) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('document_name', $detail->document_name)->where('unit', $detail->unit)->count()),2) }}
+                            {{ number_format( (($detail->unit * $detail->rate) + ($detail->layout_charges) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2??0) ) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()),2) }}
                         </td>
                         @php
-                            $sub_total = ($sub_total + (($detail->unit * $detail->rate) + ($detail->layout_charges) + ($detail->back_translation) + ($detail->verification) + ($detail->two_way_qc_t) + ($detail->two_way_qc_bt) + ($detail->verification_2) + ($detail->layout_charges_2)) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('document_name', $detail->document_name)->where('unit', $detail->unit)->count()));
+                            $sub_total = ($sub_total + (($detail->unit * $detail->rate) + ($detail->layout_charges) +  ($detail->unit*($detail->back_translation??0)) + ($detail->verification) + ($detail->two_way_qc_t) + ($detail->two_way_qc_bt) + ($detail->verification_2) + ($detail->layout_charges_2)) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()));
                         @endphp
                     </tr>
                 @endif
@@ -223,42 +230,52 @@
                         <td colspan="1" style="font-size: 6px;">{{ number_format($estimate->discount,2) ?? 0 }}</td>
                     </tr>
                     <tr class="financials" style="background-color: #f0f0f0">
-                        <td colspan="{{ $counter - 1 }}">Net Total</td>
-                        <td colspan="1" style="font-size: 6px;">{{  number_format(($sub_total - $estimate->discount),2) }}</td>
+                        <td colspan="{{ $counter - 1 }}"><strong>Gross Total</strong></td>
+                        <td colspan="1" style="font-size: 6px;"><strong>{{  number_format(($sub_total - $estimate->discount),2) }}</strong></td>
                     </tr>
                 @endif
                 @php $net_total=($sub_total-($estimate->discount)) @endphp
                 <tr class="financials">
                     <td colspan="{{ $counter - 1 }}">GST (18%)</td>
-                    <td colspan="1" style="font-size: 6px;">{{ number_format((($net_total / 100) * 18),2) }}</td>
+                    <td colspan="1" style="font-size: 6px;">{{ number_format(ceil((($net_total / 100) * 18)),2) }}</td>
                 </tr>
                 <tr class="financials" style="background-color: #f0f0f0">
-                    <td colspan="{{ $counter - 1 }}" style="font-size: 14px;font-weight: bold">Total</td>
-                    <td colspan="1" style="font-size: 6px;font-weight: bold">{{ number_format(($net_total + ($net_total / 100) * 18),2) }}
+                    <td colspan="{{ $counter - 1 }}" style="font-size: 14px;font-weight: bold">Net Total</td>
+                    <td colspan="1" style="font-size: 6px;font-weight: bold">{{ number_format(ceil(($net_total + ($net_total / 100) * 18)),2) }}
                     </td>
                 </tr>
             </tbody>
         </table>
     </section>
 
-    <footer style="text-align: left;float: left;margin-top: 10px">
+    <footer style="text-align: left;float: left;">
         <p style="font-weight: bold;font-size: 12px">SAC Code: 998395</p>
         <p style="font-weight: bold;font-size: 12px">PS: TAXES AS APPLICABLE FROM TIME TO TIME.</p>
         <p style="font-size: 12px">The Job will be completed as per TAT provided.</p>
         <p style="font-size: 12px">Kindly let us have your approval.</p>
         <p style="font-size: 12px"> In case you need any clarification, please do not hesitate to call the undersigned.
         </p>
-        <p style="font-size: 12px">Assuring you of our best services at all times.</p>
+        <p style="font-size: 12px">Assuring you of our best services at all times.</p><br>
         <div>
             <div style="display: block">
                 <p style="display: inline">For </p>
-                (<p style="font-weight: bold;display: inline">{{ $estimate->client->client_metric->name }}</p>)
+                <p style="font-weight: bold;display: inline">{{ $estimate->client->client_metric->name }}</p>
             </div>
-            <div style="margin-top:35px;">
+            @if (Auth::user()->code == 'RIT')
+                <img src="{{ public_path('img/ritesh.png') }}" alt="Ritesh Jadhav" width="120px" style="margin-left:20px;margin-bottom:-10px;">
+            @elseif (Auth::user()->code == 'SHA')
+                <img src="{{ public_path('img/shanti.png') }}" alt="Shanti Pillai" width="120px" style="margin-left:20px;margin-bottom:-10px;">
+            @elseif (Auth::user()->code == 'ANG')
+                <img src="{{ public_path('img/angela.png') }}" alt="Angela Mitra" width="120px" style="margin-left:20px;margin-bottom:-10px;">
+            @else
+                <div style="height: 50px;"></div>
+            @endif
+            <div>
                 _________________________
             </div>
+            <br>
             <div >
-                <span style="display: inline;padding-left: 35px;">Authorized Signatory</span>
+                <span style="display: inline;padding-left: 35px;"><strong>Authorized Signatory</strong></span>
                 <span style="float: right;font-weight: bold;font-size: 12px;display: inline">Help us to Serve you Better
                 </span>
             </div>

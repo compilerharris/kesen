@@ -26,7 +26,14 @@
 
     {{-- Main Content --}}
     <div class="content" style="padding-top: 20px;margin-left: 10px">
-        <x-adminlte-card title="New Writer" theme="success" icon="fas fa-lg fa-language">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/writer-management">Writer </a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add Writer</li>
+                
+            </ol>
+        </nav>
+        <x-adminlte-card style="background-color: #eaecef;" title="New Writer" theme="info" icon="fas fa-lg fa-language">
 
 
             <form action="{{ route('writermanagement.store') }}" method="POST">

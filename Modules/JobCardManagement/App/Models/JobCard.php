@@ -18,9 +18,6 @@ class JobCard extends Model
         'id'
     ];
 
-    public function handle_by(){
-        return $this->belongsTo(User::class,'handled_by');
-    }
     public function estimateDetail()
     {
         return $this->belongsTo(EstimatesDetails::class, 'estimate_detail_id', 'id');

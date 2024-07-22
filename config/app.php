@@ -58,6 +58,15 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
+    
+    'recipients' =>[
+         "sudhajustindavid@gmail.com",
+         "mamtanaik1410@gmail.com",
+         "vanithaganeshk@gmail.com",
+         "naikmansi1710@gmail.com",
+        //  "obaidkazi03@gmail.com",
+        //  "compilerharris@gmail.com"
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +79,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Kolkata',
 
     /*
     |--------------------------------------------------------------------------

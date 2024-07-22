@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Modules\LanguageManagement\App\Models\Language;
 
 class LanguageManagementController extends Controller
@@ -15,7 +16,7 @@ class LanguageManagementController extends Controller
      */
     public function index()
     {
-        $language=Language::all();
+        $language=Language::orderBy('created_at', 'desc')->get();
         return view('languagemanagement::index')->with('languages',$language);
     }
 
@@ -24,6 +25,9 @@ class LanguageManagementController extends Controller
      */
     public function create()
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         return view('languagemanagement::create');
     }
 
@@ -60,6 +64,9 @@ class LanguageManagementController extends Controller
      */
     public function edit($id)
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $language=Language::find($id);
         return view('languagemanagement::edit')->with('language',$language);
     }
@@ -90,6 +97,9 @@ class LanguageManagementController extends Controller
     }
 
     public function disableEnableClient($id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $language=Language::find($id);
         $language->status=$language->status==1?0:1;
         $language->save();

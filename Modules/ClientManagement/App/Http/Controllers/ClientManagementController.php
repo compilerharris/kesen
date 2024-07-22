@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Modules\ClientManagement\App\Models\Client;
 use Modules\ClientManagement\App\Models\ContactPerson;
 
@@ -25,6 +26,9 @@ class ClientManagementController extends Controller
      */
     public function create()
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         return view('clientmanagement::create');
     }
 
@@ -35,8 +39,8 @@ class ClientManagementController extends Controller
     {
         $request->validate([
             'name'=>'required',
-            'email'=>'required|email|unique:clients,email',
-            'phone_no'=>'required|numeric|unique:clients,phone_no',
+            'email'=>'nullable|email|unique:clients,email',
+            'phone_no'=>'nullable|numeric|unique:clients,phone_no',
             'landline'=>'nullable|numeric|unique:clients,landline',
             'type'=>'required|in:1,2',
             'client_accountant_person_id'=>'required',
@@ -63,6 +67,9 @@ class ClientManagementController extends Controller
      */
     public function show($id)
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $client=Client::find($id);
         return view('clientmanagement::show')->with('client',$client);
     }
@@ -73,6 +80,9 @@ class ClientManagementController extends Controller
      */
     public function edit($id)
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $client=Client::find($id);
         $contact_persons=ContactPerson::where('client_id',$id)->orderBy('created_at','desc')->get();
         return view('clientmanagement::edit',compact('client','contact_persons'));
@@ -85,8 +95,8 @@ class ClientManagementController extends Controller
     {
         $request->validate([
             'name'=>'required',
-            'email'=>'required|email|unique:clients,email,' . $id . ',id',
-            'phone_no'=>'required|numeric|unique:clients,phone_no,' . $id . ',id',
+            'email'=>'nullable|email|unique:clients,email,' . $id . ',id',
+            'phone_no'=>'nullable|numeric|unique:clients,phone_no,' . $id . ',id',
             'landline'=>'nullable|numeric|unique:clients,landline,' . $id . ',id',
             'type'=>'required|in:1,2',
             'client_accountant_person_id'=>'required',
@@ -117,6 +127,9 @@ class ClientManagementController extends Controller
     }
 
     public function disableEnableClient($id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $client=Client::find($id);
         if($client->status==1){
             $client->status=0;
@@ -133,6 +146,9 @@ class ClientManagementController extends Controller
     }
 
     public function addContactForm($id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         return view('clientmanagement::add_contact')->with('id',$id);
     }
 
@@ -158,6 +174,9 @@ class ClientManagementController extends Controller
 
     
     public function editContactForm($id,$contact_id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $contact_person=ContactPerson::find($contact_id);
         return view('clientmanagement::edit_contact')->with('id',$id)->with('contact_person',$contact_person);
     }
@@ -182,6 +201,9 @@ class ClientManagementController extends Controller
     }
 
     public function disableEnableContact($id,$contact_id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $contact_person=ContactPerson::find($contact_id);
         if($contact_person->status==1){
             $contact_person->status=0;
@@ -192,6 +214,9 @@ class ClientManagementController extends Controller
         return redirect(route('clientmanagement.viewContacts', $id));
     }
     public function deleteContact($id,$contact_id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $contact_person=ContactPerson::find($contact_id);
         $contact_person->email=$contact_person->email.'-deleted'.date('Y-m-d H:i:s');
         $contact_person->landline=$contact_person->landline.'-deleted'.date('Y-m-d H:i:s');

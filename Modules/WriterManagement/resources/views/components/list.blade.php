@@ -28,6 +28,10 @@
         [
             'label' => 'Address',
         ],
+
+        [
+            'label' => 'Languages',
+        ],
         [
             'label' => 'Created By',
         ],
@@ -36,7 +40,7 @@
         ],
     ];
     $config = [
-        'order' => [[1, 'asc']],
+        'order' => [[1, 'desc']],
     ];
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
@@ -75,64 +79,68 @@
     </style>
     <div class="content">
         <div class="content" style="padding-top: 20px;margin-left: 10px">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">Writer </li>
+                </ol>
+            </nav>
             @include('components.notification')
+            @if(!Auth::user()->hasRole('Accounts'))
             <a href="{{ route('writermanagement.create') }}"><button class="btn btn-md btn-success "
                     style="float:right;margin:10px">Add Writer</button></a>
+            @endif
             <br><br>
-            <div class="card" style="margin:10px">
-                <div class="card-body">
-                    <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
-                        <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped
-                            :config="$config" with-buttons>
-                            @foreach ($writers as $index => $row)
-                                <tr>
-
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $row->writer_name }}</td>
-                                    <td>{{ $row->email }}</td>
-                                    <td>{{ $row->code }}</td>
-
-                                    <td>{{ $row->phone_no }}</td>
-                                    {{-- <td>{{ $row->landline }}</td> --}}
-                                    <td>{{ $row->address }}</td>
-                                    <td>{{ $row->created_by }}</td>
-                                    <td>
-                                        <a
-                                            @if ($row->status == 1) href="{{ route('writermanagement.edit', $row->id) }}" @else href="javascript:function() { return false; }" @endif><button
-                                                @if ($row->status == 1) class="btn btn-xs btn-default text-dark mx-1 shadow" @else class="btn btn-xs btn-default text-dart mx-1 shadow" disabled @endif
-                                                title="Edit">
-                                                Edit
-                                            </button></a>
-                                        {{-- <a href="{{route('writermanagement.show', $row->id)}}"><button class="btn btn-xs btn-default text-primary mx-1 shadow" title="View Language">
-                                    View 
-                                </button> --}}
-                                        <a href="{{ route('writermanagement.viewLanguageMaps', $row->id) }}"><button
-                                                class="btn btn-xs btn-default text-primary mx-1 shadow"
-                                                title="View Language">
-                                                View Language
-                                            </button>
-                                            <a href="{{ route('writermanagement.viewPayments', $row->id) }}"><button
-                                                    class="btn btn-xs btn-default text-primary mx-1 shadow"
-                                                    title="View Payment">
-                                                    View Payment
-                                                </button>
-                                                @if ($row->status == 1)
-                                                    <a
-                                                        href="{{ route('writermanagement.disableEnableWriter', $row->id) }}"><button
-                                                            class="btn btn-xs btn-danger mx-1 shadow" title="Disable">
-                                                            Disable</button></a>
-                                                @else
-                                                    <a
-                                                        href="{{ route('writermanagement.disableEnableWriter', $row->id) }}"><button
-                                                            class="btn btn-xs btn-success  mx-1 shadow"
-                                                            title="Enable">Enable</button>
+            <div class="card card-info" style="margin:10px">
+                <div class="card-header">
+                    <h3 style="margin:0">All Writers</h3>
+                </div>
+                <div class="card-body" style="background-color: #eaecef;">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
+                                <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped
+                                    :config="$config" with-buttons>
+                                    @foreach ($writers as $index => $row)
+                                        <tr>
+        
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $row->writer_name }}</td>
+                                            <td>{{ $row->email }}</td>
+                                            <td>{{ $row->code }}</td>
+        
+                                            <td>{{ $row->phone_no }}</td>
+                                            {{-- <td>{{ $row->landline }}</td> --}}
+                                            <td>{{ $row->address }}</td>
+                                            
+                                            <td>{{ $row->writer_language_map->pluck('language_id')->implode(', ') }}</td>
+                                            <td>{{ $row->created_by }}</td>
+                                            <td width="250px">
+                                                <a
+                                                @if(!Auth::user()->hasRole('Accounts'))
+                                                    @if ($row->status == 1) href="{{ route('writermanagement.edit', $row->id) }}" @else href="javascript:function() { return false; }" @endif class="btn btn-info btn-sm mb-2">Edit</a>
                                                 @endif
-
-                                    </td>
-
-                                </tr>
-                            @endforeach
-                        </x-adminlte-datatable>
+                                                {{-- <a href="{{route('writermanagement.show', $row->id)}}"><button class="btn btn-xs btn-default text-primary mx-1 shadow" title="View Language">
+                                            View 
+                                        </button> --}}
+                                                <a href="{{ route('writermanagement.viewLanguageMaps', $row->id) }}" class="btn btn-info btn-sm mb-2">View Language</a>
+                                                <a href="{{ route('writermanagement.viewPayments', $row->id) }}" class="btn btn-info btn-sm mb-2">View Payment</a>
+                                                @if(!Auth::user()->hasRole('Accounts'))
+                                                    @if ($row->status == 1)
+                                                        <a
+                                                            href="{{ route('writermanagement.disableEnableWriter', $row->id) }}" class="btn btn-danger btn-sm mb-2">Disable</a>
+                                                    @else
+                                                        <a
+                                                            href="{{ route('writermanagement.disableEnableWriter', $row->id) }}" class="btn btn-success btn-sm mb-2">Enable</a>
+                                                    @endif
+                                                @endif
+        
+                                            </td>
+        
+                                        </tr>
+                                    @endforeach
+                                </x-adminlte-datatable>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

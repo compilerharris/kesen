@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeManagementController extends Controller
 {
@@ -14,7 +15,7 @@ class EmployeeManagementController extends Controller
      */
     public function index()
     {
-        $employee=User::where('email','!=','developer@kesen.com')->where('id','!=',Auth()->user()->id)->orderBy('created_at', 'desc')->get();
+        $employee=User::where('email','!=','developer@kesen.com')->where('id','!=',Auth()->user()->id)->with('roles')->orderBy('created_at', 'desc')->get();
         return view('employeemanagement::index')->with('employee',$employee);
     }
 
@@ -23,6 +24,9 @@ class EmployeeManagementController extends Controller
      */
     public function create()
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         return view('employeemanagement::create');
     }
 
@@ -38,8 +42,8 @@ class EmployeeManagementController extends Controller
             'address' => 'nullable',
             'code' => 'nullable|unique:users',
             'landline' => 'nullable|numeric|unique:users',
-            'password' => 'required|min:8',
-            'confirm_password' => 'required|same:password|min:8',
+            'password' => 'required|min:4',
+            'confirm_password' => 'required|same:password|min:4',
             'role' => 'required',
             'language' => 'required',
         ]);
@@ -78,6 +82,9 @@ class EmployeeManagementController extends Controller
      */
     public function edit($id)
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $user=User::find($id);
         return view('employeemanagement::edit')->with('user',$user);
     }
@@ -94,7 +101,7 @@ class EmployeeManagementController extends Controller
             'landline'=>'nullable|numeric|unique:users,landline,' . $id . ',id',
             'address' => 'nullable',
             'code' => 'nullable|unique:users,code,' . $id . ',id',
-            'password' => 'required|min:8',
+            'password' => 'nullable|min:4',
             'role' => 'required',
             'language' => 'required',
         ]);
@@ -107,8 +114,9 @@ class EmployeeManagementController extends Controller
         $user->code = $request->code;
         $user->landline = $request->landline;
         if(isset($request->password)){
-            $user->password = bcrypt($request->password);
             $user->plain_password = $request->password;
+            $user->password = bcrypt($request->password);
+         
         }
         $user->language_id = $request->language;
         $user->updated_by = Auth()->user()->id;
@@ -127,6 +135,9 @@ class EmployeeManagementController extends Controller
     }
 
     public function disableEnableClient($id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $client=User::find($id);
         if($client->status==1){
             $client->status=0;

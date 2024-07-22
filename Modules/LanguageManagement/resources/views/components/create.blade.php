@@ -26,8 +26,13 @@
 
     {{-- Main Content --}}
     <div class="content" style="padding-top: 20px;margin-left: 10px">
-
-        <x-adminlte-card title="New Language" theme="success" icon="fas fa-lg fa-language">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item "><a href="/language-management">Language </a></li>
+                <li class="breadcrumb-item ">Add Language</li>
+            </ol>
+        </nav>
+        <x-adminlte-card style="background-color: #eaecef;" title="New Language" theme="info" icon="fas fa-lg fa-language">
 
 
             <form action="{{ route('language-management.store') }}" method="POST">

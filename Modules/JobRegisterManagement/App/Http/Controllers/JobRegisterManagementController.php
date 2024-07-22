@@ -2,13 +2,16 @@
 
 namespace Modules\JobRegisterManagement\App\Http\Controllers;
 
+use App\Mail\JobConfirmationMail;
+use Modules\EstimateManagement\App\Models\EstimatesDetails;
 use Modules\JobRegisterManagement\App\Sheet\KesenExport;
 use App\Http\Controllers\Controller;
+use App\Mail\JobCompleted;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\ClientManagement\App\Models\Client;
@@ -23,7 +26,7 @@ class JobRegisterManagementController extends Controller
      */
     public function index()
     {
-        $job_registers=JobRegister::all();
+        $job_registers=JobRegister::orderBy('created_at', 'desc')->get();
         return view('jobregistermanagement::index')->with('job_registers',$job_registers);
     }
 
@@ -32,6 +35,9 @@ class JobRegisterManagementController extends Controller
      */
     public function create()
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         return view('jobregistermanagement::create');
     }
 
@@ -44,12 +50,14 @@ class JobRegisterManagementController extends Controller
             'estimate_id' => 'required|string',
             'handled_by_id' => 'required|string',
             'other_details' => 'nullable|array',
-            'estimate_document_id' => 'required|string|unique:job_register,estimate_document_id',
+            'estimate_document_id' => 'required',
             'category' => 'required|integer',
-            'type' => 'string',
+            'type' => 'nullable|string',
             'date' => 'required|date',
             'description' => 'nullable|string',
-            'protocol_no' => 'string',
+            'protocol_no' => 'nullable|string',
+            'version_date' => 'nullable|string',
+            'version_no' => 'nullable|string',
             'status' => 'required|integer',
             'cancel_reason' => 'nullable|string',
             'bill_no' => 'nullable|string|max:255',
@@ -57,6 +65,7 @@ class JobRegisterManagementController extends Controller
             'informed_to' => 'nullable|string|max:255',
             'invoice_date' => 'nullable|date',
             'sent_date' => 'nullable|date',
+            'operator' => 'nullable|string',
             #'site_specific' => 'nullable|string|max:255',
         ]);
 
@@ -69,15 +78,17 @@ class JobRegisterManagementController extends Controller
         $job_register->estimate_id = $request->estimate_id;
         $job_register->handled_by_id = $request->handled_by_id;
         $job_register->created_by_id = auth()->user()->id;
-        $job_register->other_details = implode(',',$request->other_details);
+        $job_register->other_details = $request->other_details!=null?implode(',',$request->other_details):null;
         $job_register->category = $request->category;
         $job_register->estimate_document_id = $request->estimate_document_id;
         $job_register->type = $request->type;
-        $job_register->old_job_no=$request->old_job_no;
+        $job_register->old_job_no=$request->old_job_no??'';
         $job_register->client_accountant_person_id = Client::where('id',Estimates::where('id',$request->estimate_id)->first()->client_id)->first()->client_accountant_person_id;
         $job_register->date = $request->date;
         $job_register->description = $request->estimate_document_id;
         $job_register->protocol_no = $request->protocol_no;
+        $job_register->version_date = $request->version_date;
+        $job_register->version_no = $request->version_no;
         $job_register->status = $request->status;
         $job_register->cancel_reason = $request->cancel_reason;
         $job_register->bill_no = $request->bill_no;
@@ -85,6 +96,7 @@ class JobRegisterManagementController extends Controller
         $job_register->informed_to = $request->client_contact_person_id;
         $job_register->invoice_date = $request->invoice_date;
         $job_register->sent_date = $request->sent_date;
+        $job_register->operator = $request->operator;
         #$job_register->site_specific = $request->site_specific;
 
         $job_register->save();
@@ -106,7 +118,11 @@ class JobRegisterManagementController extends Controller
      */
     public function edit($id)
     {
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
         $jobRegister = JobRegister::findOrFail($id);
+        $jobRegister->clientName = Client::where('id',$jobRegister->client_id)->first('name')->name;
        
         return view('jobregistermanagement::edit', compact('jobRegister'));
     }
@@ -120,15 +136,18 @@ class JobRegisterManagementController extends Controller
             'handled_by_id' => 'required|string',
             'other_details' => 'nullable|array',
             'category' => 'required|integer',
-            'type' => 'string',
+            'type' => 'nullable|string',
             'date' => 'required|date',
-            'protocol_no' => 'required|string',
+            'protocol_no' => 'nullable|string',
+            'version_date' => 'nullable|string',
+            'version_no' => 'nullable|string',
             'status' => 'required|integer',
             'cancel_reason' => 'nullable|string',
             'bill_no' => 'nullable|string|max:255',
             'bill_date' => 'nullable|date',
             'invoice_date' => 'nullable|date',
             'sent_date' => 'nullable|date',
+            'operator' => 'nullable|string',
             #'site_specific' => 'nullable|string|max:255',
         ]);
 
@@ -138,19 +157,22 @@ class JobRegisterManagementController extends Controller
         $jobRegister = JobRegister::where('id', $id)->first();
 
         $jobRegister->handled_by_id = $request->handled_by_id;
-        $jobRegister->other_details = implode(',',$request->other_details);
+        $jobRegister->other_details = $request->other_details!=null?implode(',',$request->other_details):null;
         $jobRegister->type = $request->type;
         $jobRegister->category = $request->category;
         $jobRegister->date = $request->date;
-        $jobRegister->old_job_no=$request->old_job_no;
+        $jobRegister->old_job_no=$request->old_job_no??'';
         $jobRegister->description = $request->estimate_document_id;
         $jobRegister->protocol_no = $request->protocol_no;
+        $jobRegister->version_date = $request->version_date;
+        $jobRegister->version_no = $request->version_no;
         $jobRegister->status = $request->status;
         $jobRegister->cancel_reason = $request->cancel_reason;
         $jobRegister->bill_no = $request->bill_no;
         $jobRegister->bill_date = $request->bill_date;
         $jobRegister->invoice_date = $request->invoice_date;
         $jobRegister->sent_date = $request->sent_date;
+        $jobRegister->operator = $request->operator;
            # 'site_specific' => $request->site_specific,
         $jobRegister->save();        
 
@@ -172,8 +194,46 @@ class JobRegisterManagementController extends Controller
     public function generateExcel($id)
     {
         $jobRegister = JobRegister::findOrFail($id);
-        return Excel::download(new KesenExport($jobRegister), $jobRegister->description.'.xlsx');
+        return Excel::download(new KesenExport($jobRegister), $jobRegister->sr_no.'.xlsx');
         
     }
 
+    public function sendComplete($id){
+        $jobRegister = JobRegister::findOrFail($id);
+        
+        // to get all languages of current document
+        $language_ids = EstimatesDetails::where('estimate_id', $jobRegister->estimate_id)->where('document_name',$jobRegister->estimate_document_id)->pluck('lang')->toArray();
+        $jobRegister->languages = Language::whereIn('id', $language_ids)->pluck('name')->toArray();
+        
+        try{
+            Mail::to($jobRegister->estimate->client_person->email)->send(new JobConfirmationMail($jobRegister));
+        }catch (\Exception $e) {
+            // Handle email sending error
+            return back()->with('alert', 'Failed to send confirmation email: ' . $e->getMessage());
+        }
+        // $pdf = Pdf::loadView('jobregistermanagement::job-register-complete-pdf', ['jobRegister' => $jobRegister]);   
+        // #$pdf = SnappyPdf::loadView('jobregistermanagement::job-register-complete-pdf', compact('jobRegister'));
+
+        // if (!$pdf->output()) {
+        //   // Handle PDF generation error
+        //   return back()->withErrors('Failed to generate PDF');
+        // }
+      
+        
+        // Mail::send([], [], function ($message) use ($pdf, $jobRegister) {
+        //     $message->to($jobRegister->estimate->client_person->email)
+        //             ->subject('Job Confirmation Letter')
+        //             ->attachData($pdf->output(), 'confirmation_letter.pdf', [
+        //                 'mime' => 'application/pdf',
+        //             ]);
+        // });
+      
+        return redirect('/job-register-management')->with('message', 'Confirmation email sent successfully!');
+    }
+    public function sendFeedBackForm($job_id){
+        $job_register = JobRegister::where('id', $job_id)->first();
+        $job_register->imageUrl = public_path('img/logo.png');
+        Mail::to($job_register->estimate->client_person->email)->send(new JobCompleted($job_register));
+        return redirect('/job-register-management')->with('message', 'email letter has been sent successfully!');
+    }
 }

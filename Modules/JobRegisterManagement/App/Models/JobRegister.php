@@ -29,7 +29,7 @@ class JobRegister extends Model
     }
 
     public function estimate_details(){
-        return $this->belongsTo(EstimatesDetails::class,'estimate_document_id');
+        return $this->hasMany(EstimatesDetails::class,'document_name', 'estimate_document_id');
     }
     public function estimateDetail()
     {
@@ -38,7 +38,7 @@ class JobRegister extends Model
 
     public function jobCard()
     {
-        return $this->hasMany(JobCard::class, 'job_no','sr_no');
+        return $this->hasMany(JobCard::class, 'job_no','sr_no')->orderBy('estimate_detail_id', 'desc');
     }
 
     public function client(){

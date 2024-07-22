@@ -18,5 +18,10 @@ Auth::routes();
 Route::get('/', function () {
         return redirect('/home');
 });
-
+Route::get('/bill-report', [App\Http\Controllers\HomeController::class, 'showBillReportForm'])->name('billReport')->middleware('auth');
+Route::get('/payment-report', [App\Http\Controllers\HomeController::class, 'showPaymentlReportForm'])->name('paymentReport')->middleware('auth');
+Route::get('/writer-report', [App\Http\Controllers\HomeController::class, 'showWriterReportForm'])->name('writerReport')->middleware('auth');
+Route::post('/bill-report', [App\Http\Controllers\HomeController::class, 'generateBillReport'])->name('report.bills')->middleware('auth');
+Route::post('/payment-report', [App\Http\Controllers\HomeController::class, 'generatePaymentReport'])->name('report.payments')->middleware('auth');
+Route::post('/writer-report', [App\Http\Controllers\HomeController::class, 'generateWriterReport'])->name('report.writers')->middleware('auth');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');

@@ -36,8 +36,8 @@
             <div class="row pt-2">
                 <x-adminlte-input name="name"  placeholder="Employee Name"
                     fgroup-class="col-md-3" required value="{{ $user->name }}" label="Employee Name" disabled/>
-                <x-adminlte-input name="phone_no"  placeholder="Employee Number"
-                    fgroup-class="col-md-3" value="{{ $user->phone }}"  label="Employee Number" disabled/>
+                <x-adminlte-input name="phone_no"  placeholder="Contact Number"
+                    fgroup-class="col-md-3" value="{{ $user->phone }}"  label="Contact Number" disabled/>
                     {{-- <x-adminlte-input name="landline"  placeholder="Landline Number"
                     fgroup-class="col-md-3" value="{{ $user->landline }}" label="Landline Number" disabled/> --}}
                     <x-adminlte-input name="email"  placeholder="Email"
