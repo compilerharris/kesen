@@ -261,12 +261,8 @@
                 <p style="display: inline">For </p>
                 <p style="font-weight: bold;display: inline">{{ $estimate->client->client_metric->name }}</p>
             </div>
-            @if (Auth::user()->code == 'RIT')
-                <img src="{{ public_path('img/ritesh.png') }}" alt="Ritesh Jadhav" width="120px" style="margin-left:20px;margin-bottom:-10px;">
-            @elseif (Auth::user()->code == 'SHA')
-                <img src="{{ public_path('img/shanti.png') }}" alt="Shanti Pillai" width="120px" style="margin-left:20px;margin-bottom:-10px;">
-            @elseif (Auth::user()->code == 'ANG')
-                <img src="{{ public_path('img/angela.png') }}" alt="Angela Mitra" width="120px" style="margin-left:20px;margin-bottom:-10px;">
+            @if (in_array(Auth::user()->code,['RIT','SHA','ANG']))
+                <img src="{{ public_path('img/'.Auth::user()->code.'.png') }}" alt="{{Auth::user()->name}}" width="120px" style="margin-left:20px;margin-bottom:-10px;">
             @else
                 <div style="height: 50px;"></div>
             @endif
