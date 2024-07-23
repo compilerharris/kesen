@@ -9,11 +9,14 @@ use Illuminate\Http\Request;
 use Modules\EstimateManagement\App\Models\Estimates;
 use Modules\EstimateManagement\App\Models\EstimatesDetails;
 use Modules\JobCardManagement\App\Models\JobCard;
+use Modules\JobCardManagement\App\Sheet\JobCardExcelExport;
 use Modules\JobRegisterManagement\App\Models\JobRegister;
 use App\Mail\JobCompletedBilling;
 use App\Mail\JobCompleted;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Modules\LanguageManagement\App\Models\Language;
+use Maatwebsite\Excel\Facades\Excel;
 class JobCardManagementController extends Controller
 {
 
@@ -376,7 +379,12 @@ class JobCardManagementController extends Controller
         }
         $jobCard->complete_count=$jobCard->where('status',1)->count();
         $jobCard->cancel_count=$jobCard->where('status',2)->count();
-        $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', ['jobCard'=> $jobCard]);
+        foreach($jobCard as $job){
+            $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
+            $job->languages = implode(", ",Language::whereIn('id',$langIds)->pluck('name')->toArray());
+        }
+        // return Excel::download(new JobCardExcelExport($jobCard), 'job-card.xlsx');
+        $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', ['jobCard'=> $jobCard])->setPaper('a4', 'landscape');
         return $pdf->stream();
     }
 }

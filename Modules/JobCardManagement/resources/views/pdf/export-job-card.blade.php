@@ -3,16 +3,18 @@
 @php
     $heads = [
         ['label' => '#'],
-        ['label' => 'Job No'],
         ['label' => 'Date'],
-        ['label' => 'Protocol No'],
-        ['label' => 'Client Name'],
+        ['label' => 'Job No.'],
+        ['label' => 'Project Manager'],
+        ['label' => 'Client'],
+        ['label' => 'Client Contact'],
+        ['label' => 'Estimate No.'],
         ['label' => 'Document Name'],
-        ['label' => 'Handled By'],
-        ['label' => 'Billing Status'],
-        ['label' => 'Bill Date'],
-        ['label' => 'Informed To'],
-        ['label' => 'Sent Date'],
+        ['label' => 'Protocol No.'],
+        ['label' => 'Version No.'],
+        ['label' => 'Version Date'],
+        ['label' => 'Laguages'],
+        ['label' => 'Delivery Date'],
         ['label' => 'Status']
     ];
 
@@ -35,7 +37,7 @@
             text-align: left;
             word-break: break-word;
             table-layout: fixed;
-            font-size: 8pt;
+            font-size: 12pt;
         }
         th {
             background-color: #333;
@@ -89,25 +91,41 @@
 <table style=" margin-top:20px">
     <thead>
         <tr>
-            @foreach ($heads as $head)
+            <!-- @foreach ($heads as $head)
                 <th>{{ $head['label'] }}</th>
-            @endforeach
+            @endforeach -->
+            <th style="width:2%">#</th>
+            <th style="width:6%">Date</th>
+            <th style="width:6%">Job No.</th>
+            <th style="width:8%">Project Manager</th>
+            <th style="width:8%">Client</th>
+            <th style="width:8%">Client Contact</th>
+            <th style="width:8%">Estimate No.</th>
+            <th style="width:9%">Document Name</th>
+            <th style="width:8%">Protocol No.</th>
+            <th style="width:5%">Version No.</th>
+            <th style="width:8%">Version Date</th>
+            <th style="width:15%">Laguages</th>
+            <th style="width:8%">Delivery Date</th>
+            <th style="width:10%">Statu</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($jobCard as $index=>$row)
         <tr>
             <td>{{ $index + 1 }}</td>
+            <td>{{ $row->created_at?\Carbon\Carbon::parse($row->created_at)->format('j M Y'):'' }}</td>
             <td>{{ $row->sr_no }}</td>
-            <td>{{ $row->date?\Carbon\Carbon::parse($row->date)->format('j M Y'):'' }}</td>
-            <td>{{ $row->protocol_no }}</td>
-            <td>{{ $row->estimate->client->name }}</td>
-            <td>{{ $row->estimate_document_id }}</td>
             <td>{{ $row->handle_by->name }}</td>
-            <td>{{ $row->bill_no!=null || $row->bill_no!='' ? "billed-".$row->bill_no:"unbilled" }}</td>
-            <td>{{ $row->bill_date? \Carbon\Carbon::parse($row->bill_date)->format('j M Y'):'' }}</td>
-            <td>{{ $row->estimate->client_person->name??'' }}</td>
-            <td>{{ $row->sent_date?\Carbon\Carbon::parse($row->sent_date)->format('j M Y'):'' }}</td>
+            <td>{{ $row->estimate->client->name }}</td>
+            <td>{{ $row->estimate->client_person->name }}</td>
+            <td>{{ $row->estimate->estimate_no }}</td>
+            <td>{{ $row->estimate_document_id }}</td>
+            <td>{{ $row->protocol_no }}</td>
+            <td>{{ $row->version_no }}</td>
+            <td>{{ $row->version_date }}</td>
+            <td>{{ $row->languages }}</td>
+            <td>{{ $row->date?\Carbon\Carbon::parse($row->date)->format('j M Y'):'' }}</td>
             <td  class="{{ $row->status == 0 ? 'status-pending' : ($row->status == 1 ? 'status-approved' : 'status-rejected') }}">
                 {{ $row->status == 0 ? 'In Progress' : ($row->status == 1 ? 'Completed' : 'Canceled') }}
             </td>
