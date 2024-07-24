@@ -163,7 +163,11 @@
                                                 @endif
                                                 
                                                 @if($row->type=='site-specific')
-                                                    <a href="{{route('jobregistermanagement.excell', $row->id)}}" class="btn btn-info btn-sm mb-2">Download Excel</a>
+                                                    @if($row->is_excel_downloaded)
+                                                        <a class="btn btn-info btn-sm mb-2 disabled">Excel Already Download</a>
+                                                    @else
+                                                        <a href="{{route('jobregistermanagement.excell', $row->id)}}" class="btn btn-info btn-sm mb-2">Download Excel</a>
+                                                    @endif
                                                 @endif
                                                 @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
                                                 <a href="{{ route('jobcardmanagement.bill', ['job_id' => $row->id]) }}" class="btn btn-info btn-sm mb-2">Billing</a>
