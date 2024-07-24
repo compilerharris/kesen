@@ -383,7 +383,8 @@ class JobCardManagementController extends Controller
                 return redirect('/job-card-management')->with('message', 'Job completed and email has been sent.');    
             }
             return redirect('/job-card-management')->with('message', 'Status changed successfully.');
-        }   
+        }
+        return back()->with('alert', 'Can not find job status.');
     }
 
     public function exportJobCard()
