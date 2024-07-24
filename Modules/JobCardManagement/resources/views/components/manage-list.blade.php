@@ -24,8 +24,6 @@
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
 
-
-    //$job_card=Modules\JobCardManagement\App\Models\JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate_detail->id)->get();
     $heads_manage = [
         ['label' => '#'],
         ['label' => 'Document Name'],
@@ -148,8 +146,7 @@
                                                 <a href="{{ route('jobcardmanagement.pdf', ['job_id' => $row->id]) }}"  target="_blank" class="btn btn-info btn-sm mb-2">Preview</a>
                                                 @if(!Auth::user()->hasRole('Accounts'))
                                                     @if($row->status == 0)
-                                                    
-                                                            <a href="{{route('jobcardmanagement.status', [$row->id,1])}}" class="btn btn-info btn-sm mb-2">Completed</a>
+                                                        <a href="{{route('jobcardmanagement.status', [$row->id,1])}}" class="btn btn-info btn-sm mb-2">Completed</a>
                                                     @elseif($row->status == 1)
                         
                                                         <a href="{{route('jobcardmanagement.status', [$row->id,0])}}" class="btn btn-info btn-sm mb-2">In Progress</a>

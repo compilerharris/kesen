@@ -344,6 +344,34 @@ class JobCardManagementController extends Controller
         }
         if(in_array($status,[0,1,2])){
             $job_register = JobRegister::where('id', $id)->first();
+            if($status == 1){
+                $estimate_detail = EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$job_register->estimate_document_id)->get();
+                foreach($estimate_detail as $estimate){
+                    $allPartCopy = JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate->id)->get();
+                    if(count($allPartCopy) == 0){
+                        $langName = Language::where('id',$estimate->lang)->first('name')->name;
+                        return back()->with('alert', 'Please enter all language part copy of '.$langName.' in Job No: '.$job_register->sr_no);
+                    }
+                    foreach($allPartCopy as $partCopy){
+                        if(!$partCopy->t_cr){
+                            $langName = Language::where('id',$estimate->lang)->first('name')->name;
+                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }elseif($partCopy->v_pd && !$partCopy->v_cr){
+                            $langName = Language::where('id',$estimate->lang)->first('name')->name;
+                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }elseif($partCopy->v2_pd && !$partCopy->v2_cr){
+                            $langName = Language::where('id',$estimate->lang)->first('name')->name;
+                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }elseif($partCopy->bt_pd && !$partCopy->bt_cr){
+                            $langName = Language::where('id',$estimate->lang)->first('name')->name;
+                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }elseif($partCopy->btv_pd && !$partCopy->btv_cr){
+                            $langName = Language::where('id',$estimate->lang)->first('name')->name;
+                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }
+                    }
+                }
+            }
             $job_register->status = $status;
             $job_register->updated_at = Carbon::now();
             $job_register->save();
@@ -352,12 +380,9 @@ class JobCardManagementController extends Controller
                 foreach ($recipients as $recipient) {
                     Mail::to($recipient)->send(new JobCompletedBilling($job_register));
                 }
-            }
-            if($status==1){
                 return redirect('/job-card-management')->with('message', 'Job completed and email has been sent.');    
-            }else{
-                return redirect('/job-card-management')->with('message', 'Status changed successfully.');    
             }
+            return redirect('/job-card-management')->with('message', 'Status changed successfully.');
         }   
     }
 
