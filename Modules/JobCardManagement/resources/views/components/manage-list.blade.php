@@ -240,7 +240,7 @@
                                             <td class="{{ $detail->partCopyCreate=='Yes'?'bg-success':'' }}">{{ $detail->partCopyCreate }}</td>
                                             <td width="250px">
                                                 @if(!Auth::user()->hasRole('Accounts'))
-                                                    <a href="{{route('jobcardmanagement.manage.add', ['job_id' => $job_register->id, 'estimate_detail_id' => $detail->id])}}" class="btn btn-info btn-sm mb-2">Edit</a>
+                                                    <a href="{{route('jobcardmanagement.manage.add', ['job_id' => $job_register->id, 'estimate_detail_id' => $detail->id])}}" class="btn btn-info btn-sm mb-2">{{ $detail->partCopyCreate=='Yes'?'Edit':'Add' }}</a>
                                                 @endif
                                             </td>
                                         </tr>
