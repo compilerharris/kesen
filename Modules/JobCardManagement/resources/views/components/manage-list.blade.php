@@ -24,19 +24,21 @@
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
 
-    $heads_manage = [
-            ['label' => '#'],
-            ['label' => 'Document Name'],
-            //['label' => 'Job No'],
-            ['label' => 'Language'],
-            ['label' => 'Action'],
-        ];
 
-        $config_manage = [
-            'order' => [[1, 'desc']],
-        ];
-        $config_manage['paging'] = true;
-    @endphp
+    //$job_card=Modules\JobCardManagement\App\Models\JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate_detail->id)->get();
+    $heads_manage = [
+        ['label' => '#'],
+        ['label' => 'Document Name'],
+        ['label' => 'Language'],
+        ['label' => 'Part Copy Created'],
+        ['label' => 'Action'],
+    ];
+
+    $config_manage = [
+        'order' => [[1, 'desc']],
+    ];
+    $config_manage['paging'] = true;
+@endphp
 
 @if (!isset($list_estimate_language))
     
@@ -234,9 +236,8 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $detail->document_name }}</td>
-                                            <!-- <td>{{ $detail->jobRegister->sr_no }}</td> -->
                                             <td>{{ Modules\LanguageManagement\App\Models\Language::where('id', $detail->lang)->first()->name }}</td>
-                                            
+                                            <td class="{{ $detail->partCopyCreate=='Yes'?'bg-success':'' }}">{{ $detail->partCopyCreate }}</td>
                                             <td width="250px">
                                                 @if(!Auth::user()->hasRole('Accounts'))
                                                     <a href="{{route('jobcardmanagement.manage.add', ['job_id' => $job_register->id, 'estimate_detail_id' => $detail->id])}}" class="btn btn-info btn-sm mb-2">Edit</a>

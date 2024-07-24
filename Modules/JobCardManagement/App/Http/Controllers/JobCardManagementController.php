@@ -284,6 +284,9 @@ class JobCardManagementController extends Controller
         $job_register = JobRegister::where('id',$job_id)->first();
         $estimate_detail=EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$estimate_detail_id)->get();
         $list_estimate_language=true;
+        foreach($estimate_detail as $estimate){
+            $estimate->partCopyCreate = count(JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate->id)->get())>0?'Yes':'No';
+        }
         if($estimate_detail!=null){
             return view('jobcardmanagement::manage',compact('job_id','estimate_detail','list_estimate_language','job_register'));
         }
