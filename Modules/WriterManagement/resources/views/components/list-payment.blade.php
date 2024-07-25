@@ -64,14 +64,14 @@
                 </ol>
             </nav>
             @include('components.notification')
-            <a href="{{ route('writermanagement.addPaymentView', $id) }}"><button class="btn btn-md btn-success"
-                    style="float:right;margin:10px">Add Payment</button></a>
-            <br><br>
             <div class="card card-info" style="margin:10px">
                 <div class="card-header">
                     <h3 style="margin:0">All payments of "{{Modules\WriterManagement\App\Models\Writer::where('id',$id)->first()->writer_name}}"</h3>
                 </div>
-                <div class="card-body" style="background-color: #eaecef;">
+                <div style="background-color: #eaecef;">
+                    <a href="{{ route('writermanagement.addPaymentView', $id) }}"><button class="btn btn-md btn-success" style="float:right;margin:10px">Add Payment</button></a>
+                </div>
+                <div class="card-body" style="background-color: #eaecef;padding-top:0">
                     <div class="card">
                         <div class="card-body">
                             <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">

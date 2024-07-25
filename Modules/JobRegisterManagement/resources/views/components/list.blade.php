@@ -71,16 +71,16 @@
             </ol>
         </nav>
         @include('components.notification')
-        @if(!Auth::user()->hasRole('Accounts'))
-            <a href="{{ route('jobregistermanagement.create') }}"><button class="btn btn-md btn-success "
-                style="float:right;margin:10px">Add Job Register</button></a>
-        @endif
-        <br><br>
         <div class="card card-info" style="margin:10px">
             <div class="card-header">
                 <h3 style="margin:0">All Registered Jobs</h3>
             </div>
-            <div class="card-body" style="background-color: #eaecef;">
+            @if(!Auth::user()->hasRole('Accounts'))
+                <div style="background-color: #eaecef;">
+                    <a href="{{ route('jobregistermanagement.create') }}"><button class="btn btn-md btn-success" style="float:right;margin:10px;">Add Job Register</button></a>
+                </div>
+            @endif
+            <div class="card-body" style="background-color: #eaecef;padding-top:0">
                 <div class="card">
                     <div class="card-body">
                         <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">

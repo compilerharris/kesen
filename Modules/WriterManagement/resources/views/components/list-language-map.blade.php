@@ -81,20 +81,21 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item "><a href="/writer-management">Writer </a></li>
                     <li class="breadcrumb-item active" ><a href="/writer-management/{{$id}}/edit">{{Modules\WriterManagement\App\Models\Writer::where('id',$id)->first()->writer_name}}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Language Map</li>
+                    <li class="breadcrumb-item active" aria-current="page">All Languages</li>
                 </ol>
             </nav>
             @include('components.notification')
-            @if(!Auth::user()->hasRole('Accounts'))
-            <a href="{{ route('writermanagement.addLanguageMapView', $id) }}"><button class="btn btn-md btn-success "
-                    style="float:right;margin:10px">Add Language Map</button></a>
-            @endif
-            <br><br>
             <div class="card card-info" style="margin:10px">
                 <div class="card-header">
                     <h3 style="margin:0">All languages of "{{Modules\WriterManagement\App\Models\Writer::where('id',$id)->first()->writer_name}}"</h3>
                 </div>
-                <div class="card-body" style="background-color: #eaecef;">
+                @if(!Auth::user()->hasRole('Accounts'))
+                    <div style="background-color: #eaecef;">
+                        <a href="{{ route('writermanagement.addLanguageMapView', $id) }}"><button class="btn btn-md btn-success "
+                            style="float:right;margin:10px">Add More Language</button></a>
+                    </div>
+                @endif
+                <div class="card-body" style="background-color: #eaecef;padding-top:0">
                     <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
                         <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped
                             :config="$config" with-buttons>
