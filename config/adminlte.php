@@ -369,7 +369,7 @@ return [
         [
             'text' => 'Reports',
             'icon'=>'fas fa-fw fa-file',
-            'active'=>['bill-report','payment-report','writer-report'],
+            'active'=>['bill-report','payment-report','writer-report','writer-workload-report'],
             'submenu' => [
                 [
                     'text' => 'Bill Export',
@@ -378,17 +378,22 @@ return [
                     'href' => '/bill-report',
                 ],
                 [
+                    'text' => 'Writer Work Done',
+                    'url' => '/writer-report',
+                    'active' => ['writer-report'],
+                    'href' => '/writer-report',
+                ],
+                [
                     'text' => 'Payment Report',
                     'url' => '/payment-report',
                     'active' => ['payment-report'],
                     'href' => '/payment-report',
                 ],
-
                 [
-                    'text' => 'Writer Work Done',
-                    'url' => '/writer-report',
-                    'active' => ['writer-report'],
-                    'href' => '/writer-report',
+                    'text' => 'Writer Workload',
+                    'url' => '/writer-workload-report',
+                    'active' => ['writer-workload-report'],
+                    'href' => '/writer-workload-report',
                 ],
             ],
         ]

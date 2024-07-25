@@ -51,7 +51,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Linguistic Systems</h1>
+            <center><img src="{{public_path('img/logo.png')}}" alt="Kesen Logo" width="30%" style="display:block"></center>
             <p>KANAKIA WALL STREET, A WING, 904-905, 9TH FLOOR, ANDHERI KURLA ROAD, CHAKALA, ANDHERI EAST, MUMBAI - 400 093</p>
             <p>022 4034 8888 / 022 4034 8801 / 022 4034 8845</p>
             <p>PAN NO: AADFL1698N GST NO: 27AADFL1698N1ZP</p>

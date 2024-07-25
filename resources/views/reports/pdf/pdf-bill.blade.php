@@ -57,7 +57,7 @@
 
 <div class="container">
     <div class="header">
-        <h1>KeSen</h1>
+        <center><img src="{{public_path('img/logo.png')}}" alt="Kesen Logo" width="30%" style="display:block"></center>
         <p>KANAKIA WALL STREET, A WING, 904-905, 9TH FLOOR, ANDHERI KURLA ROAD, CHAKALA , ANDHERI EAST, MUMBAI - 400 093</p>
         <p>Phone: 002 4034 8888, 4034 8844 to 8865 | Fax: 22674618</p>
         <h2>Bill Details</h2>

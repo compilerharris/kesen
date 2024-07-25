@@ -3,7 +3,7 @@
 @elseif(Auth::user()->hasRole('Quality Control Executive'))
     @php $access_menu=[] @endphp
 @else
-    @php $access_menu=['Job Card Management','Job Register Management','Estimate Management','Client Management','Language Management','Employee Management','Writer Management','Reports','Bill Export','Payment Report','Writer Work Done'] @endphp
+    @php $access_menu=['Job Card Management','Job Register Management','Estimate Management','Client Management','Language Management','Employee Management','Writer Management','Reports','Bill Export','Payment Report','Writer Work Done','Writer Workload'] @endphp
 @endif
 @if(in_array($item['text'],$access_menu))
 <li @isset($item['id']) id="{{ $item['id'] }}" @endisset class="nav-item has-treeview @isset($item['submenu_class']) {{ $item['submenu_class'] }} @endisset @if(checkRequestUrl($item['active']??[],request()->path())) menu-is-opening menu-open @endif">

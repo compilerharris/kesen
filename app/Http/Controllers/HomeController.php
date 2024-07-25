@@ -60,7 +60,7 @@ class HomeController extends Controller
         $min = $this->getStartAndEndOfMonth($year, $month)['start_of_month'];
         $max = $this->getStartAndEndOfMonth($year, $month)['end_of_month'];
        
-        $writer_payment=WriterPayment::whereBetween('created_at', [$min, $max])->first();
+        $writer_payment=WriterPayment::where('writer_id',$request->writer)->whereBetween('created_at', [$min, $max])->first();
         if($writer_payment==null){
             return redirect('/payment-report')->with('alert', 'No writer payments found');
         }
@@ -103,5 +103,63 @@ class HomeController extends Controller
             'end_of_month' => $endOfMonth->toDateString(),
         ];
     }
-    
+
+    public function writerWorkloadRedirect(){
+        return view('reports.writer-workload-report');
+    }
+
+    public function writerWorkload(Request $request){
+        $writerWorkload = JobCard::where('t_writer_code',$request->writer)->orWhere('bt_writer_code',$request->writer)->get();
+        $writerWorkload = $writerWorkload->sortBy('job_no');
+        $writerWorkload->writerId = $request->writer;
+        // dd("testing...");
+        $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload'));
+        return $pdf->stream();
+    }
+
+    // private function processData($data)
+    // {
+    //     $result = [];
+    //     $partCopyCounters = [];
+
+    //     foreach ($data as $item) {
+    //         if (!isset($partCopyCounters[$item->job_no])) {
+    //             $partCopyCounters[$item->job_no] = [];
+    //         }
+
+    //         if (!isset($partCopyCounters[$item->job_no][$item->writer_code])) {
+    //             $partCopyCounters[$item->job_no][$item->writer_code] = 0;
+    //         }
+
+    //         $partCopyCounters[$item->job_no][$item->writer_code]++;
+    //         $partCopyNumber = $partCopyCounters[$item->job_no][$item->writer_code];
+
+    //         $result[] = [
+    //             'job_no' => $item->job_no,
+    //             'writer_code' => $item->writer_code,
+    //             'part_copy' => 'pc' . $partCopyNumber
+    //         ];
+    //     }
+
+    //     // Group by job_no and writer_code and concatenate part copies
+    //     $groupedResults = [];
+    //     foreach ($result as $row) {
+    //         $key = $row['job_no'] . '-' . $row['writer_code'];
+    //         if (!isset($groupedResults[$key])) {
+    //             $groupedResults[$key] = [
+    //                 'job_no' => $row['job_no'],
+    //                 'writer_code' => $row['writer_code'],
+    //                 'part_copies' => []
+    //             ];
+    //         }
+    //         $groupedResults[$key]['part_copies'][] = $row['part_copy'];
+    //     }
+
+    //     // Format part copies as a comma-separated string
+    //     foreach ($groupedResults as &$group) {
+    //         $group['part_copies'] = implode(',', $group['part_copies']);
+    //     }
+
+    //     return $groupedResults;
+    // }
 }
