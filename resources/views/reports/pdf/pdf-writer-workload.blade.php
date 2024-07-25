@@ -110,12 +110,12 @@
                     @endforeach
                     @if ($index == 0)
                         <tr>
-                            <td colspan="7" style="text-align:center;">No Data Found.</td>
+                            <td colspan="8" style="text-align:center;">No Data Found.</td>
                         </tr>
                     @endif
                 @else
                     <tr>
-                        <td colspan="7" style="text-align:center;">No Data Found.</td>
+                        <td colspan="8" style="text-align:center;">No Data Found.</td>
                     </tr>
                 @endif
             </tbody>
