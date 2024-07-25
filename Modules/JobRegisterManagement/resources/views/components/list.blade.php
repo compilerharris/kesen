@@ -100,9 +100,9 @@
                                             <a href="{{ route('jobregistermanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">Edit
                                                 </a>
                                             @endif
-                                            <a href="{{ route('jobregistermanagement.pdf', $row->id) }}" class="btn btn-info btn-sm mb-2"
+                                            <!-- <a href="{{ route('jobregistermanagement.pdf', $row->id) }}" class="btn btn-info btn-sm mb-2"
                                                 target="_blank">Preview
-                                            </a>
+                                            </a> -->
                                             @if(!Auth::user()->hasRole('Accounts'))
                                             <a href="{{ route('jobregistermanagement.complete', $row->id) }}" class="btn btn-info btn-sm mb-2">Job Confirmation Letter
                                                 </a>
