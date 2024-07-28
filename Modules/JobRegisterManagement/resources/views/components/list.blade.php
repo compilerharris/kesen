@@ -91,7 +91,7 @@
         
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $row->sr_no }}</td>
-                                        <td>{{ $row->estimate->estimate_no }}</td>
+                                        <td>{{ $row->estimate?$row->estimate->estimate_no:"No Estimate" }}</td>
                                         <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
                                         <td>{{ $row->handle_by->name }}</td>
                                         <td>{{ $row->client->name }}</td>

@@ -10,6 +10,7 @@ use Modules\ClientManagement\App\Models\Client;
 use Modules\ClientManagement\App\Models\ContactPerson;
 use Modules\EstimateManagement\App\Models\Estimates;
 use Modules\EstimateManagement\App\Models\EstimatesDetails;
+use Modules\EstimateManagement\App\Models\NoEstimates;
 use Modules\JobCardManagement\App\Models\JobCard;
 use Modules\JobRegisterManagement\Database\factories\JobRegisterFactory;
 
@@ -26,6 +27,10 @@ class JobRegister extends Model
 
     public function estimate(){
         return $this->belongsTo(Estimates::class,'estimate_id');
+    }
+
+    public function no_estimate(){
+        return $this->belongsTo(NoEstimates::class,'estimate_id');
     }
 
     public function estimate_details(){

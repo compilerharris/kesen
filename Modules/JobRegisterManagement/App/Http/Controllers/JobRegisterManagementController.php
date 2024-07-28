@@ -4,6 +4,7 @@ namespace Modules\JobRegisterManagement\App\Http\Controllers;
 
 use App\Mail\JobConfirmationMail;
 use Modules\EstimateManagement\App\Models\EstimatesDetails;
+use Modules\EstimateManagement\App\Models\NoEstimates;
 use Modules\JobRegisterManagement\App\Sheet\KesenExport;
 use App\Http\Controllers\Controller;
 use App\Mail\JobCompleted;
@@ -50,7 +51,7 @@ class JobRegisterManagementController extends Controller
             'estimate_id' => 'required|string',
             'handled_by_id' => 'required|string',
             'other_details' => 'nullable|array',
-            'estimate_document_id' => 'required',
+            'estimate_document_id' => 'nullable',
             'category' => 'required|integer',
             'type' => 'nullable|string',
             'date' => 'required|date',
@@ -71,6 +72,69 @@ class JobRegisterManagementController extends Controller
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
+        }
+        if($request->estimate_id == 'no_estimate'){
+            $estimate = new NoEstimates();
+            $estimate->client_id = $request->client_id;
+            $estimate->client_contact_person_id = $request->client_contact_person_id;
+            $estimate->created_by = Auth()->user()->id;
+            $estimate->updated_by = Auth()->user()->id;
+            $estimate->save();
+            if ($request->document_name != null) {
+                foreach($request->lang as $language) {
+                    if(isset($language)&&$language!=null&&$language!='')
+                       {
+                        EstimatesDetails::updateOrCreate([
+                            'estimate_id' => $estimate->id,
+                            'document_name' => $request->document_name,
+                            'lang' => $language,
+                        ], [
+                            'estimate_id' => $estimate->id,
+                            'document_name' => $request->document_name,
+                            'type' => "NA",
+                            'unit' => "0",
+                            'rate' => 0,
+                            'verification' => null,
+                            'verification_2' => null,
+                            'back_translation' => null,
+                            'layout_charges' => null,
+                            'layout_charges_2' => null,
+                            'lang' => $language,
+                            'two_way_qc_t' => null,
+                            'two_way_qc_bt' => null,
+                        ]);
+                    }
+                }
+                $job_register=new JobRegister();
+                $job_register->client_id = $request->client_id;
+                $job_register->client_contact_person_id = $request->client_contact_person_id;
+                $job_register->estimate_id = $estimate->id;
+                $job_register->handled_by_id = $request->handled_by_id;
+                $job_register->created_by_id = auth()->user()->id;
+                $job_register->other_details = $request->other_details!=null?implode(',',$request->other_details):null;
+                $job_register->category = $request->category;
+                $job_register->estimate_document_id = $request->document_name;
+                $job_register->type = $request->type;
+                $job_register->old_job_no=$request->old_job_no??'';
+                $job_register->client_accountant_person_id = $request->client_contact_person_id;
+                $job_register->date = $request->date;
+                $job_register->description = $request->document_name;
+                $job_register->protocol_no = $request->protocol_no;
+                $job_register->version_date = $request->version_date;
+                $job_register->version_no = $request->version_no;
+                $job_register->status = $request->status;
+                $job_register->cancel_reason = $request->cancel_reason;
+                $job_register->bill_no = $request->bill_no;
+                $job_register->bill_date = $request->bill_date;
+                $job_register->informed_to = $request->client_contact_person_id;
+                $job_register->invoice_date = $request->invoice_date;
+                $job_register->sent_date = $request->sent_date;
+                $job_register->operator = $request->operator;
+                $job_register->save();
+                return redirect()->route('jobregistermanagement.index')->with('message', 'Job register created successfully.');
+            }else{
+                return redirect()->back()->with('alert', 'Document Not Found.');
+            }
         }
         $job_register=new JobRegister();
         $job_register->client_id = Estimates::where('id',$request->estimate_id)->first()->client_id;
@@ -98,7 +162,6 @@ class JobRegisterManagementController extends Controller
         $job_register->sent_date = $request->sent_date;
         $job_register->operator = $request->operator;
         #$job_register->site_specific = $request->site_specific;
-
         $job_register->save();
         
         return redirect()->route('jobregistermanagement.index')->with('message', 'Job register created successfully.');
