@@ -91,6 +91,7 @@ class JobRegisterManagementController extends Controller
                         ], [
                             'estimate_id' => $estimate->id,
                             'document_name' => $request->document_name,
+                            'estimate_type' => 'no_estimate',
                             'type' => "NA",
                             'unit' => "0",
                             'rate' => 0,
@@ -185,6 +186,8 @@ class JobRegisterManagementController extends Controller
             return redirect()->back(); 
         }
         $jobRegister = JobRegister::findOrFail($id);
+        $jobRegister->languages = $jobRegister->estimate_details->pluck('lang')->toArray();
+        $jobRegister->languagesNames = Language::whereIn('id', $jobRegister->languages)->get('name')->pluck('name')->toArray();
         $jobRegister->clientName = Client::where('id',$jobRegister->client_id)->first('name')->name;
        
         return view('jobregistermanagement::edit', compact('jobRegister'));

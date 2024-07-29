@@ -88,6 +88,18 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                      --}}
 
 
+                    {{-- no estimate start --}}
+                    <div class="form-group col-md-2 no_estimate">
+                        <label for="lang">Language</label>
+                        <x-adminlte-select2 name="lang[]" disabled value="{{implode(',',$jobRegister->languagesNames)}}" id="lang" multiple>
+                            @foreach ($languages as $language)
+                                <option value="{{ $language->id }}" {{ in_array($language->id, $jobRegister->languages) ? 'selected' : '' }}>
+                                    {{ $language->name }}</option>
+                            @endforeach
+                        </x-adminlte-select2>
+                        <span class="invalid-feedback is-invalid" id="requiredMsg">Please select at least one language.</span>
+                    </div>
+                    {{-- no estimate end --}}
                     <x-adminlte-select2 name="handled_by_id" fgroup-class="col-md-2" required label="Manager">
                         <option value="">Select Manager</option>
                         @foreach ($users as $user)
@@ -189,31 +201,15 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('#estimate_number').on('change', function() {
-            // $.ajax({
-            //     url: "/estimate-management/estimate/" + $('#estimate_number').val(),
-            //     method: 'GET',
-            //     success: function(data) {
-            //         if (data != false) {
-            //             document.getElementById("client_contact_person_id").value = data
-            //                 .client_contact_person_id;
-            //             document.getElementById("client_id").value = data.client_id;
-            //         }
-            //     }
-            // });
-            $.ajax({
-                url: "/estimate-management/estimate-details/" + $('#estimate_number').val(),
-                method: 'GET',
-                success: function(data) {
-                    $('#estimate_document_id').html(data.html);
-                }
-            });
-        });
-    });
 
-    document.getElementById('category').dispatchEvent(new Event('change'));
     $(document).ready(function() {
+        const estimate = @json($jobRegister->estimateDetail?$jobRegister->estimateDetail->estimate_type:'');
+        console.log(@json($jobRegister->languages),@json($languages));
+        if( estimate == "no_estimate"){
+            $('.no_estimate').show();
+        }else{
+            $('.no_estimate').hide();
+        }
         $('#estimate_number').on('change', function() {
             $.ajax({
                 url: "/estimate-management/estimate/" + $('#estimate_number').val(),
@@ -234,9 +230,9 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                 $('#type').css("display", "none");
             }
         });
-
     })
 
+    document.getElementById('category').dispatchEvent(new Event('change'));
     document.getElementById('status').addEventListener('change', function() {
         if (this.value == 2 || this.value == '2') {
             document.getElementById('cancel').innerHTML =
