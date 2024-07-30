@@ -274,7 +274,7 @@ class JobRegisterManagementController extends Controller
         $jobRegister->languages = Language::whereIn('id', $language_ids)->pluck('name')->toArray();
         
         try{
-            Mail::to($jobRegister->estimate->client_person->email)->send(new JobConfirmationMail($jobRegister));
+            Mail::to($jobRegister->estimate?$jobRegister->estimate->client_person->email:$jobRegister->no_estimate->client_person->email)->send(new JobConfirmationMail($jobRegister));
         }catch (\Exception $e) {
             // Handle email sending error
             return back()->with('alert', 'Failed to send confirmation email: ' . $e->getMessage());

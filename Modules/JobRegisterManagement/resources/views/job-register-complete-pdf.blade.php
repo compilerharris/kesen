@@ -79,10 +79,10 @@
                 <h2>JOB CONFIRMATION LETTER</h2>
                 <p style="float:right">Date: {{date('d-M-Y')}}</p><br>
                 <p>To:</p>
-                <p>{{$jobRegister->estimate->client_person->name ?? ''}}<br>
-                    {{$jobRegister->estimate->client->name ?? ''}}<br>
+                <p>{{$jobRegister->estimate ? $jobRegister->estimate->client_person->name : ($jobRegister->no_estimate->client_person->name??"")}}<br>
+                    {{$jobRegister->estimate ? $jobRegister->estimate->client->name: ($jobRegister->no_estimate->client->name??'')}}<br>
                     Document Name: <b>{{$jobRegister->estimateDetail->document_name ?? ''}}</b><br>
-                    Estimate No:  <b>{{$jobRegister->estimate->estimate_no ?? ''}}</b><br>
+                    Estimate No:  <b>{{$jobRegister->estimate ? $jobRegister->estimate->estimate_no : ($jobRegister->estimateDetail->estimate_type??'')}}</b><br>
                     Job No: <b>{{$jobRegister->sr_no ?? ''}}</b></p>
                 <p>Dear Sir/Madam,</p>
             </div>
