@@ -109,11 +109,11 @@
 <body>
     <div class="container">
         <div class="header">
-            @if ($job->estimate->client->client_metric->code == 'KCP')
+            @if ($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code == 'KCP')
                 <img src="{{ public_path('img/kesen-communication.jpeg') }}" alt="Iceberg Image" width="100%">
-            @elseif ($job->estimate->client->client_metric->code == 'KLB')
+            @elseif ($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code == 'KLB')
                 <img src="{{ public_path('img/kesen-language-buea.jpeg') }}" alt="Iceberg Image" width="100%">
-            @elseif ($job->estimate->client->client_metric->code == 'LGS')
+            @elseif ($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code == 'LGS')
                 <img src="{{ public_path('img/kesen-linguist-system.jpeg') }}" alt="Iceberg Image" width="100%">
             @else
                 <img src="{{ public_path('img/kesen-linguist-Servi-llp.jpeg') }}" alt="Iceberg Image" width="100%">
@@ -126,7 +126,7 @@
         <table class="client-info">
             <tr>
                 <th>Client</th>
-                <td style="font-size:25px"><b>{{ $job->estimate->client->name ?? '' }}</b></td>
+                <td style="font-size:25px"><b>{{ $job->estimate?$job->estimate->client->name:($job->no_estimate?$job->no_estimate->client->name: '') }}</b></td>
                 <th>Job No.</th>
                 <td style="font-size:25px"><b>{{ $job->sr_no ?? '' }}</b></td>
             </tr>
@@ -146,13 +146,13 @@
                 <th>Verion Date.</th>
                 <td>{{ $job->version_date ? \Carbon\Carbon::parse($job->version_date)->format('j M Y') : '' }}</td>
                 <th>Contact Name</th>
-                <td>{{ $job->estimate->client_person->name ?? '' }}</td>
+                <td>{{ $job->estimate?$job->estimate->client_person->name:($job->no_estimate?$job->no_estimate->client_person->name: '') }}</td>
             </tr>
             <tr>
                 <th>Estimate No.</th>
-                <td>{{ $job->estimate->estimate_no ?? '' }}</td>
+                <td>{{ $job->estimate?$job->estimate->estimate_no:($job->no_estimate?'No Estimate':'') }}</td>
                 <th>Contact Number</th>
-                <td>{{ $job->estimate->client_person->phone_no ?? '' }}</td>
+                <td>{{ $job->estimate?$job->estimate->client_person->phone_no:($job->no_estimate?$job->no_estimate->client_person->phone_no: '') }}</td>
             </tr>
             <tr>
                 <th>Add. Estimate No.</th>

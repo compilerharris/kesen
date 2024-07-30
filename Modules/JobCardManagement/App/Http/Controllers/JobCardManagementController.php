@@ -337,10 +337,9 @@ class JobCardManagementController extends Controller
         return redirect(route('jobcardmanagement.index'))->with('message', 'Bill Date updated successfully.');
     }
 
-
     public function changeStatus($id,$status){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized person.');
         }
         if(in_array($status,[0,1,2])){
             $job_register = JobRegister::where('id', $id)->first();

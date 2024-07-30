@@ -68,7 +68,7 @@
             <p>“Dear Accounts Team, </p>
             <br>
             <p>
-                {{$jobDetails->handle_by->name ?? ''}} has completed the {{$jobDetails->estimate_document_id}} of {{$jobDetails->estimate->client->name}} having job no {{$jobDetails->sr_no}} and quotation no: {{$jobDetails->estimate->estimate_no}}
+                {{$jobDetails->handle_by->name ?? ''}} has completed the {{$jobDetails->estimate_document_id}} of {{$jobDetails->estimate?$jobDetails->estimate->client->name:$jobDetails->no_estimate->client->name}} having job no {{$jobDetails->sr_no}} {{$jobDetails->estimate?? 'and quotation no: '.$jobDetails->estimate->estimate_no}}
             </p>
             <br>
             <p>
