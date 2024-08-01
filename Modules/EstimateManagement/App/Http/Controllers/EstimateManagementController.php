@@ -12,6 +12,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Modules\ClientManagement\App\Models\Client;
 use Modules\ClientManagement\App\Models\ContactPerson;
+use Modules\ClientManagement\App\Models\Ratecard;
 use Modules\EstimateManagement\App\Models\Estimates;
 use Modules\EstimateManagement\App\Models\EstimatesDetails;
 use Modules\JobRegisterManagement\App\Models\JobRegister;
@@ -125,6 +126,7 @@ class EstimateManagementController extends Controller
             'currency' => 'required',
             'date'=> 'required',
             'discount' => 'nullable',
+            'rorn' => 'required|string',
             'status' => 'required|in:1,0,2',
             'document_name.*' => 'required|string|max:255',
             'type.*' => 'required|string|max:255',
@@ -148,6 +150,7 @@ class EstimateManagementController extends Controller
         $estimate->currency = $request->currency;
         $estimate->status = $request->status;
         $estimate->discount = $request->discount ?? 0;
+        $estimate->rorn = $request->rorn;
         $estimate->created_by = Auth()->user()->id;
         $estimate->updated_by = Auth()->user()->id;
         $estimate->save();
@@ -169,18 +172,22 @@ class EstimateManagementController extends Controller
                         'type' => $request->type,
                         'unit' => $request['unit'][$index],
                         'rate' => $request['rate'][$index],
+                        'v1' => $request['v_one'][$index]=='on'?true:false,
                         'verification' => $request['verification'][$index]??null,
+                        'btv' => $request['btv'][$index]=='on'?true:false,
                         'verification_2' => $request['verification_2'][$index]??null,
                         'back_translation' => $request['back_translation'][$index]??null,
                         'layout_charges' => $request['layout_charges'][$index]??null,
+                        'layout_pages' => $request['layout_pages'][$index]??null,
                         'layout_charges_2' => $request['layout_charges_second'][$index]??null,
+                        'bt_layout_pages' => $request['bt_layout_pages'][$index]??null,
                         'lang' => $languages[$i],
+                        'v2' => $request['v_two'][$index]=='on'?true:false,
                         'two_way_qc_t' => $request['two_way_qc_t'][$index]??null,
                         'two_way_qc_bt' => $request['two_way_qc_bt'][$index]??null,
                     ]);
                    }
                 }
-                
             }
         }
         Session::flash('message', 'Estimate created successfully');
@@ -345,7 +352,6 @@ class EstimateManagementController extends Controller
         return response()->json(['success' => 'Detail deleted successfully']);
     }
 
-
     public function getEstimateDetails($id)
     {
         $html = '<option value="">Select Estimate Document</option>';
@@ -361,5 +367,11 @@ class EstimateManagementController extends Controller
             }
         }
         return response()->json(['html' => $html]);
+    }
+
+    // to get rate card
+    public function getRatecard($clientId, $rorn, $type, $lang){
+        $ratecard = Ratecard::where('client_id', $clientId)->where('type', $rorn)->where('lang', $lang)->first();
+        return response()->json($ratecard);
     }
 }

@@ -301,7 +301,7 @@ class JobRegisterManagementController extends Controller
     public function sendFeedBackForm($job_id){
         $job_register = JobRegister::where('id', $job_id)->first();
         $job_register->imageUrl = public_path('img/logo.png');
-        Mail::to($job_register->estimate->client_person->email)->send(new JobCompleted($job_register));
+        Mail::to($job_register->estimate?$job_register->estimate->client_person->email:$job_register->no_estimate->client_person->email)->send(new JobCompleted($job_register));
         return redirect('/job-register-management')->with('message', 'email letter has been sent successfully!');
     }
 }

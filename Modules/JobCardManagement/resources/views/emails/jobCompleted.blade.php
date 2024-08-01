@@ -79,8 +79,8 @@
                 <h2>JOB COMPLETION LETTER & FEEDBACK FORM</h2>
                 <p style="float:right">Date: {{date('d-M-Y')}}</p><br>
                 <p>To:</p>
-                <p>{{$jobDetails->estimate->client_person->name ?? ''}}<br>
-                    {{$jobDetails->estimate->client->name ?? ''}}<br>
+                <p>{{$jobDetails->estimate?$jobDetails->estimate->client_person->name: ($jobDetails->no_estimate?$jobDetails->estimate->client_person->name:'')}}<br>
+                    {{$jobDetails->estimate?$jobDetails->estimate->client->name:($jobDetails->no_estimate?$jobDetails->no_estimate->client->name:'')}}<br>
                     Job No: <b>{{$jobDetails->sr_no ?? ''}}</b></p>
                 <p>Dear Sir/Madam,</p>
             </div>

@@ -113,12 +113,12 @@
         <div>
             <hr style="opacity: 0.5;">
         </div>
-        <p style="font-size: 12px"> <strong>{{ $estimate->client_person->name }}</strong><span style="font-size: 12px;float:right;width:300px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</span></p>
-        <p style="font-size: 12px"> <strong>{{ $estimate->client->name }}</strong><span style="font-size: 12px;float:right;width:300px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</span></p>
-        <p style="font-size: 12px">{{ $estimate->client->address }}</p>
+        <p style="font-size: 12px"> <strong>{{ $estimate->client_person->name }}</strong><span style="font-size: 12px;float:right;width:300px;line-height: 1;"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</span></p>
+        <p style="font-size: 12px"> <strong>{{ $estimate->client->name }}</strong></p>
+        <p style="font-size: 12px">{{ $estimate->client->address }}<span style="font-size: 12px;float:right;width:300px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</span></p>
         <!-- <p style="font-size: 12px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</p>
         <p style="font-size: 12px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</p> -->
-        <p style="font-size:12px;line-height:1.6;"><strong>Languages Required:</strong>
+        <p style="font-size:12px;line-height:1.6"><strong>Languages Required:</strong>
             @php $languages_list=[] @endphp
             @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
                 @php $languages_list[]=Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()->name??'' @endphp
@@ -192,7 +192,7 @@
                             <td class="nowrap">{{ $detail->two_way_qc_t }}</td>
                         @endif
                         @if ($estimate->details[0]->layout_charges)
-                            <td class="nowrap">{{ $detail->layout_charges }}</td>
+                            <td class="nowrap">{{ "Rs. ".$detail->layout_charges."x".$detail->layout_pages."pgs = Rs. ".($detail->layout_pages*$detail->layout_charges)."/-" }}</td>
                         @endif
                         @if ($estimate->details[0]->back_translation)
                             <td class="nowrap">{{ $detail->back_translation*$detail->unit }}</td>
@@ -204,17 +204,17 @@
                             <td class="nowrap">{{ $detail->two_way_qc_bt }}</td>
                         @endif
                         @if ($estimate->details[0]->layout_charges_2)
-                            <td class="nowrap">{{ $detail->layout_charges_2 }}</td>
+                            <td class="nowrap">{{ "Rs. ".$detail->layout_charges_2."x".$detail->bt_layout_pages."pgs = Rs. ".($detail->bt_layout_pages*$detail->layout_charges_2)."/-" }}</td>
                         @endif
                         @php 
                             $languages_ids=Modules\EstimateManagement\App\Models\EstimatesDetails::where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->get('lang')->pluck('lang')
                         @endphp
                         <td>{{ Modules\LanguageManagement\App\Models\Language::whereIn('id', $languages_ids)->pluck('code')->implode('/') }}</td>
                         <td class="nowrap">
-                            {{ number_format( (($detail->unit * $detail->rate) + ($detail->layout_charges) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2??0) ) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()),2) }}
+                            {{ number_format( (($detail->unit * $detail->rate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()),2) }}
                         </td>
                         @php
-                            $sub_total = ($sub_total + (($detail->unit * $detail->rate) + ($detail->layout_charges) +  ($detail->unit*($detail->back_translation??0)) + ($detail->verification) + ($detail->two_way_qc_t) + ($detail->two_way_qc_bt) + ($detail->verification_2) + ($detail->layout_charges_2)) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()));
+                            $sub_total = ($sub_total + (($detail->unit * $detail->rate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) +  ($detail->unit*($detail->back_translation??0)) + ($detail->verification) + ($detail->two_way_qc_t) + ($detail->two_way_qc_bt) + ($detail->verification_2) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0)) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()));
                         @endphp
                     </tr>
                 @endif

@@ -1,5 +1,7 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\preloaderHelper')
+@section('plugins.Datatables', true)
+@section('plugins.Sweetalert2', true);
 @php $metrics=App\Models\Metrix::get(); @endphp
 @php $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
         ->where('id', '!=', Auth()->user()->id)
@@ -35,6 +37,52 @@
     ];
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
+@endphp
+@php
+    $head = [
+        [
+            'label' => 'Sr. No.',
+        ],
+        [
+            'label' => 'Language',
+        ],
+        [
+            'label' => 'Type',
+        ],
+        [
+            'label' => 'T Rate',
+        ],
+        [
+            'label' => 'V1 Rate',
+        ],
+        [
+            'label' => 'V2 Rate',
+        ],
+        [
+            'label' => 'BT Rate',
+        ],
+        [
+            'label' => 'BTV Rate',
+        ],
+        [
+            'label' => 'T Minimum Rate',
+        ],
+        [
+            'label' => 'V1 Minimum Rate',
+        ],
+        [
+            'label' => 'V2 Minimum Rate',
+        ],
+        [
+            'label' => 'BT Minimum Rate',
+        ],
+        [
+            'label' => 'BTV Minimum Rate',
+        ],
+        [
+            'label' => 'Action',
+        ],
+    ];
 @endphp
 @if ($layoutHelper->isLayoutTopnavEnabled())
     @php($def_container_class = 'container')
@@ -138,41 +186,74 @@
                             style="float:right;">Add Contact</button></a>
                     </div>
                     <div class="card-body">
-                        
-                    
-                        <x-adminlte-datatable id="table8" class="mt-3" :heads="$heads" head-theme="dark" striped
-                    :config="$config" with-buttons>
-                    @foreach ($contact_persons as $index => $row)
-                        <tr>
+                        <x-adminlte-datatable id="table8" class="mt-3" :heads="$heads" head-theme="dark" striped :config="$config" with-buttons>
+                            @foreach ($contact_persons as $index => $row)
+                                <tr>
 
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $row->name }}</td>
-                            <td>{{ $row->email }}</td>
-                            <td>{{ $row->phone_no }}</td>
-                            {{-- <td>{{ $row->landline }}</td> --}}
-                            <td>{{ $row->designation }}</td>
-                            <td width="250px">
-                                <a href="{{ route('clientmanagement.editContactForm', [$client->id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
-                                @if ($row->status == 1)
-                                    <a
-                                        href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}" class="btn btn-danger btn-sm mb-2">Disable</a>
-                                @else
-                                    <a
-                                        href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}" class="btn btn-success btn-sm mb-2">Enable</a>
-                                @endif
-                                <!-- <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="Delete"
-                                    onclick="disableEnable('{{ route('clientmanagement.deleteContact', [$client->id, $row->id]) }}')">
-                                   Delete
-                                </button> -->
-                                <a class="btn btn-danger btn-sm mb-2" title="Delete" onclick="disableEnable('{{ route('clientmanagement.deleteContact', [$client->id, $row->id]) }}')">
-                                    <i class="fa fa-lg fa-fw fa-trash"></i>
-                                </a>
-                            </td>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $row->name }}</td>
+                                    <td>{{ $row->email }}</td>
+                                    <td>{{ $row->phone_no }}</td>
+                                    {{-- <td>{{ $row->landline }}</td> --}}
+                                    <td>{{ $row->designation }}</td>
+                                    <td width="250px">
+                                        <a href="{{ route('clientmanagement.editContactForm', [$client->id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
+                                        @if ($row->status == 1)
+                                            <a
+                                                href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}" class="btn btn-danger btn-sm mb-2">Disable</a>
+                                        @else
+                                            <a
+                                                href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}" class="btn btn-success btn-sm mb-2">Enable</a>
+                                        @endif
+                                        <!-- <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="Delete"
+                                            onclick="disableEnable('{{ route('clientmanagement.deleteContact', [$client->id, $row->id]) }}')">
+                                        Delete
+                                        </button> -->
+                                        <a class="btn btn-danger btn-sm mb-2" title="Delete" onclick="disableEnable('{{ route('clientmanagement.deleteContact', [$client->id, $row->id]) }}')">
+                                            <i class="fa fa-lg fa-fw fa-trash"></i>
+                                        </a>
+                                    </td>
 
-                        </tr>
-                    @endforeach
-                </x-adminlte-datatable>
+                                </tr>
+                            @endforeach
+                        </x-adminlte-datatable>
+                    </div>
+                </div>
+            @endif
+            @if (count($ratecards) > 0)
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="margin-top: 10px">Rate Cards</h3>
+                        <a href="{{ route('clientmanagement.redirectToRatecardAdd', $client->id) }}"><button class="btn btn-md btn-success "
+                            style="float:right;">Add Rate Card</button></a>
+                    </div>
+                    <div class="card-body">
+                        <x-adminlte-datatable id="table9" class="mt-3" :heads="$head" head-theme="dark" striped>
+                            @foreach ($ratecards as $index => $row)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ \Modules\LanguageManagement\App\Models\Language::where('id',$row->lang)->first()->name }}</td>
+                                    <td>{{ $row->type=="rush"?"Rush":"Normal" }}</td>
+                                    <td>{{ $row->t_rate }}</td>
+                                    <td>{{ $row->v1_rate }}</td>
+                                    <td>{{ $row->v2_rate }}</td>
+                                    <td>{{ $row->bt_rate }}</td>
+                                    <td>{{ $row->btv_rate }}</td>
+                                    <td>{{ $row->t_minimum_rate }}</td>
+                                    <td>{{ $row->v1_minimum_rate }}</td>
+                                    <td>{{ $row->v2_minimum_rate }}</td>
+                                    <td>{{ $row->bt_minimum_rate }}</td>
+                                    <td>{{ $row->btv_minimum_rate }}</td>
+                                    <td width="250px">
+                                        <a href="{{ route('clientmanagement.redirectToRatecardEdit', [$client->id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
+                                        <a class="btn btn-danger btn-sm mb-2" title="ratecardDelete" onclick="disableEnable('{{ route('clientmanagement.ratecardDelete', [$client->id, $row->id]) }}')">
+                                            <i class="fa fa-lg fa-fw fa-trash"></i>
+                                        </a>
+                                    </td>
 
+                                </tr>
+                            @endforeach
+                        </x-adminlte-datatable>
                     </div>
                 </div>
             @endif

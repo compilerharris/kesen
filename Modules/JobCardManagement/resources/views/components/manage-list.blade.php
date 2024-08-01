@@ -222,8 +222,6 @@
                 </ol>
             </nav>
             @include('components.notification')
-
-            <br><br>
             <div class="card card-info" style="margin:10px">
                 <div class="card-header">
                     <h3 style="margin:0">All languages of job no "{{$job_register->sr_no}}"</h3>

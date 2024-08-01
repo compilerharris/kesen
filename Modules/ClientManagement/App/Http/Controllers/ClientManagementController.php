@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Modules\ClientManagement\App\Models\Client;
 use Modules\ClientManagement\App\Models\ContactPerson;
+use Modules\ClientManagement\App\Models\Ratecard;
 
 class ClientManagementController extends Controller
 {
@@ -85,7 +86,8 @@ class ClientManagementController extends Controller
         }
         $client=Client::find($id);
         $contact_persons=ContactPerson::where('client_id',$id)->orderBy('created_at','desc')->get();
-        return view('clientmanagement::edit',compact('client','contact_persons'));
+        $ratecards=Ratecard::where('client_id',$id)->orderBy('created_at','desc')->get();
+        return view('clientmanagement::edit',compact('client','contact_persons','ratecards'));
     }
 
     /**
@@ -170,8 +172,6 @@ class ClientManagementController extends Controller
         $contact_persons->save();
         return redirect(route('clientmanagement.viewContacts', $id))->with('message', 'Contact added successfully.');;
     }
-
-
     
     public function editContactForm($id,$contact_id){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
@@ -223,5 +223,136 @@ class ClientManagementController extends Controller
         $contact_person->phone_no=$contact_person->phone_no.'-deleted'.date('Y-m-d H:i:s');
         $contact_person->delete();
         return redirect(route('clientmanagement.viewContacts', $id));
+    }
+
+    // rate card
+
+    public function redirectToRatecardList($id){
+        $ratecards=Ratecard::where('client_id',$id)->orderBy('created_at','desc')->get();
+        return view('clientmanagement::list_ratecards')->with('id',$id)->with('ratecards',$ratecards);
+    }
+
+    public function redirectToRatecardAdd($id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
+        return view('clientmanagement::add_ratecard')->with('id',$id);
+    }
+
+    public function ratecardAdd(Request $request,$id){
+        $request->validate([
+            'type'=>'required',
+            't_rate'=>'required',
+            'v1_rate'=>'required',
+            'v2_rate'=>'required',
+            'bt_rate'=>'required',
+            'btv_rate'=>'required',
+            't_minimum_rate'=>'required',
+            'v1_minimum_rate'=>'required',
+            'v2_minimum_rate'=>'required',
+            'bt_minimum_rate'=>'required',
+            'btv_minimum_rate'=>'required',
+            'lang.*' => 'string'
+        ],[
+            'type.required'=>'Please select type.',
+            't_rate.required'=>'Please select T Rate.',
+            'v1_rate.required'=>'Please select V1 Rate.',
+            'v2_rate.required'=>'Please select V2 Rate.',
+            'bt_rate.required'=>'Please select BT Rate.',
+            'btv_rate.required'=>'Please select BTV Rate.',
+            't_minimum_rate.required'=>'Please select T Minimum Rate.',
+            'v1_minimum_rate.required'=>'Please select V1 Minimum Rate.',
+            'v2_minimum_rate.required'=>'Please select V2 Minimum Rate.',
+            'bt_minimum_rate.required'=>'Please select BT Minimum Rate.',
+            'btv_minimum_rate.required'=>'Please select BTV Minimum Rate.'
+        ]);
+
+        if( count($request->lang) > 0){
+            foreach($request->lang as $language){
+                $ratecard = new Ratecard();
+                $ratecard->client_id=$id;
+                $ratecard->type=$request->type;
+                $ratecard->t_rate=$request->t_rate;
+                $ratecard->v1_rate=$request->v1_rate;
+                $ratecard->v2_rate=$request->v2_rate;
+                $ratecard->bt_rate=$request->bt_rate;
+                $ratecard->btv_rate=$request->btv_rate;
+                $ratecard->t_minimum_rate=$request->t_minimum_rate;
+                $ratecard->v1_minimum_rate=$request->v1_minimum_rate;
+                $ratecard->v2_minimum_rate=$request->v2_minimum_rate;
+                $ratecard->bt_minimum_rate=$request->bt_minimum_rate;
+                $ratecard->btv_minimum_rate=$request->btv_minimum_rate;
+                $ratecard->lang=$language;
+                $ratecard->save();
+            }
+            return redirect(route('clientmanagement.redirectToRatecardList', $id))->with('message', 'Rate Card added successfully.');
+        }
+        return redirect(back())->with('alert', 'Please select at least one language.');
+    }
+    
+    public function redirectToRatecardEdit($id,$ratecardId){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
+        $ratecard=Ratecard::find($ratecardId);
+        return view('clientmanagement::edit_ratecard')->with('id',$id)->with('ratecard',$ratecard);
+    }
+
+    public function ratecardEdit(Request $request,$id,$ratecardId){
+        $request->validate([
+            'type'=>'required',
+            't_rate'=>'required',
+            'v1_rate'=>'required',
+            'v2_rate'=>'required',
+            'bt_rate'=>'required',
+            'btv_rate'=>'required',
+            't_minimum_rate'=>'required',
+            'v1_minimum_rate'=>'required',
+            'v2_minimum_rate'=>'required',
+            'bt_minimum_rate'=>'required',
+            'btv_minimum_rate'=>'required'
+        ],[
+            'type.required'=>'Please select type.',
+            't_rate.required'=>'Please select T Rate.',
+            'v1_rate.required'=>'Please select V1 Rate.',
+            'v2_rate.required'=>'Please select V2 Rate.',
+            'bt_rate.required'=>'Please select BT Rate.',
+            'btv_rate.required'=>'Please select BTV Rate.',
+            't_minimum_rate.required'=>'Please select T Minimum Rate.',
+            'v1_minimum_rate.required'=>'Please select V1 Minimum Rate.',
+            'v2_minimum_rate.required'=>'Please select V2 Minimum Rate.',
+            'bt_minimum_rate.required'=>'Please select BT Minimum Rate.',
+            'btv_minimum_rate.required'=>'Please select BTV Minimum Rate.'
+        ]);
+
+        $ratecard = Ratecard::where('id',$ratecardId)->first();
+        $ratecard->type=$request->type;
+        $ratecard->t_rate=$request->t_rate;
+        $ratecard->v1_rate=$request->v1_rate;
+        $ratecard->v2_rate=$request->v2_rate;
+        $ratecard->bt_rate=$request->bt_rate;
+        $ratecard->btv_rate=$request->btv_rate;
+        $ratecard->t_minimum_rate=$request->t_minimum_rate;
+        $ratecard->v1_minimum_rate=$request->v1_minimum_rate;
+        $ratecard->v2_minimum_rate=$request->v2_minimum_rate;
+        $ratecard->bt_minimum_rate=$request->bt_minimum_rate;
+        $ratecard->btv_minimum_rate=$request->btv_minimum_rate;
+        $ratecard->save();
+        return redirect(route('clientmanagement.redirectToRatecardList', $id))->with('message', 'Rate Card updated successfully.');
+    }
+
+    public function ratecardDelete($id,$ratecardId){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+            return redirect()->back(); 
+        }
+        $ratecard = Ratecard::find($ratecardId);
+        $ratecard->t_rate=$ratecard->t_rate.'-deleted'.date('Y-m-d H:i:s');
+        $ratecard->v1_rate=$ratecard->v1_rate.'-deleted'.date('Y-m-d H:i:s');
+        $ratecard->v2_rate=$ratecard->v2_rate.'-deleted'.date('Y-m-d H:i:s');
+        $ratecard->bt_rate=$ratecard->bt_rate.'-deleted'.date('Y-m-d H:i:s');
+        $ratecard->btv_rate=$ratecard->btv_rate.'-deleted'.date('Y-m-d H:i:s');
+        $ratecard->minimum_rate=$ratecard->minimum_rate.'-deleted'.date('Y-m-d H:i:s');
+        $ratecard->delete();
+        return redirect(route('clientmanagement.redirectToRatecardList', $id));
     }
 }

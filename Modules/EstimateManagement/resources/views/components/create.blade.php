@@ -49,7 +49,7 @@ $config = [
             <form action="{{ route('estimatemanagement.store') }}" method="POST">
                 @csrf
                 <div class="row pt-2">
-                    <x-adminlte-select2  :config="$config"  name="client_id" id="client_id" fgroup-class="col-md-3" required label="Client">
+                    <x-adminlte-select2  :config="$config"  name="client_id" id="client_id" fgroup-class="col-md-2" required label="Client">
                         <option value="">Select Client</option>
                         @foreach ($clients as $client)
                             <option value="{{ $client->id }}" @if (old('client_id') == $client->id) selected @endif>
@@ -57,30 +57,35 @@ $config = [
                         @endforeach
                     </x-adminlte-select2>
                     <x-adminlte-select2 name="client_contact_person_id" id="client_contact_person_id"
-                        fgroup-class="col-md-3" required label="Contact Person">
+                        fgroup-class="col-md-2" required label="Contact Person">
                         <option value="">Select Contact Person</option>
                     </x-adminlte-select2>
-                    <x-adminlte-input name="headline" placeholder="Headline" fgroup-class="col-md-3" type="text"
+                    <x-adminlte-input name="headline" placeholder="Headline" fgroup-class="col-md-2" type="text"
                         value="{{ old('headline') }}" required label="Headline" />
 
-                    <x-adminlte-select2 name="currency" placeholder="Currency" fgroup-class="col-md-3" required
+                    <x-adminlte-select2 name="currency" placeholder="Currency" fgroup-class="col-md-2" required
                         value="{{ old('currency') }}" label="Currency">
 
                         <option value="">Select Currency</option>
                         {!! getCurrencyDropDown() !!}
                     </x-adminlte-select2>
-                    <x-adminlte-input name="date" placeholder="Date" fgroup-class="col-md-3" type='date'
+                    <x-adminlte-input name="date" placeholder="Date" fgroup-class="col-md-2" type='date'
                         value="{{ old('date', date('Y-m-d')) }}" required label="Mail Received on" />
-                    <x-adminlte-input name="discount" placeholder="Discount" fgroup-class="col-md-3" type="text"
+                    <x-adminlte-input name="discount" placeholder="Discount" fgroup-class="col-md-2" type="text"
                         value="{{ old('discount') }}" label="Discount" />
-                    <x-adminlte-select2 name="type" fgroup-class="col-md-3" required value="{{ old('type') }}"
+                    <x-adminlte-select2 name="rorn" id="rorn" fgroup-class="col-md-2" required value="{{ old('rorn') }}"
+                        label="Rush/Normal">
+                        <option value="normal">Normal</option>
+                        <option value="rush">Rush</option>
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 name="type" id="type" fgroup-class="col-md-2" required value="{{ old('type') }}"
                         label="Type">
                         <option value="">Select Type</option>
                         <option value="words">Words</option>
                         <option value="unit">Unit</option>
                         <option value="minimum">Minimum</option>
                     </x-adminlte-select2>
-                    <x-adminlte-select2 name="status" fgroup-class="col-md-3" required value="{{ old('status') }}"
+                    <x-adminlte-select2 name="status" fgroup-class="col-md-2" required value="{{ old('status') }}"
                         label="Status">
                         <option value="">Select Status</option>
                         <option value="0" selected>Pending</option>
@@ -100,53 +105,8 @@ $config = [
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <x-adminlte-input name="document_name[0]" placeholder="Document Name"
-                                        fgroup-class="col-md-3" type="text" value="{{ old('document_name[0]') }}"
-                                        required label="Document Name" />
-
-                                    <x-adminlte-input name="unit[0]" placeholder="Unit" fgroup-class="col-md-1"
-                                        type="number" value="{{ old('unit[0]') }}" required label="Unit/Words"
-                                        onkeyup="calculateAmount(this)" min="1" value="1" />
-                                    <x-adminlte-input name="rate[0]" placeholder="Translation Rate"
-                                        fgroup-class="col-md-2" type="tell" value="{{ old('rate[0]') }}" required
-                                        label="Translation Rate" onkeyup="calculateAmount(this)" />
-                                    <x-adminlte-input name="amount[0]" placeholder="Amount" fgroup-class="col-md-2"
-                                        type="text" value="{{ old('amount[0]') }}" label="Amount" readonly />
-                                    <x-adminlte-input name="verification[0]" placeholder="Verification 1"
-                                        fgroup-class="col-md-2" type="text" value="{{ old('verification[0]') }}"
-                                        label="Verification 1" />
-                                    <x-adminlte-input name="two_way_qc_t[0]" placeholder="Verification 2"
-                                        fgroup-class="col-md-2" type="text" value="{{ old('two_way_qc_t[0]') }}"
-                                        label="Verification 2" />
-                                    <x-adminlte-input name="layout_charges[0]" placeholder="Layout Charges"
-                                        fgroup-class="col-md-2" type="text"
-                                        value="{{ old('layout_charges[0]') }}" label="Layout Charges" />
-                                    <x-adminlte-input name="back_translation[0]" placeholder="Back Translation Rate"
-                                        fgroup-class="col-md-2" type="text"
-                                        value="{{ old('back_translation[0]') }}" label="Back Translation Rate"
-                                        onkeyup="calculateAmount_2(this)" />
-                                    <x-adminlte-input name="amount_bt[0]" placeholder="Amount"
-                                        fgroup-class="col-md-2" type="text" value="{{ old('amount_bt[0]') }}"
-                                        label="Amount" readonly />
-                                    <x-adminlte-input name="verification_2[0]"
-                                        placeholder="Back Translation Verification" fgroup-class="col-md-3"
-                                        type="text" value="{{ old('verification_2[0]') }}"
-                                        label="Back Translation Verification" />
-                                    {{-- <x-adminlte-input name="two_way_qc_bt[0]" placeholder="Two Way QC BT"
-                                        fgroup-class="col-md-3" type="text" value="{{ old('two_way_qc_bt[0]') }}"
-                                        label="Two Way QC BT" /> --}}
-                                    <x-adminlte-input name="layout_charges_second[0]" placeholder="Back Translation Layout Charges"
-                                        fgroup-class="col-md-3" type="text"
-                                        value="{{ old('layout_charges_second[0]') }}" label="Back Translation Layout Charges" />
-                                    <!-- <x-adminlte-select  name="lang_0[]" fgroup-class="col-md-3" required
-                                        label="Language" multiple label="Language">
-                                        <option value="">Select Language</option>
-                                        @foreach ($languages as $language)
-                                            <option value="{{ $language->id }}">
-                                                {{ $language->name }}</option>
-                                        @endforeach
-                                    </x-adminlte-select> -->
-                                    <div class="{{ $fgroupClass ?? '' }}">
+                                    <!-- languages -->
+                                    <div class="{{ $fgroupClass ?? '' }} mb-3" style="padding-left:7.5px;">
                                         <label>Languages</label>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -163,6 +123,69 @@ $config = [
                                         </div>
                                         <div class="invalid-feedback is-invalid" id="requiredMsg_0">Please select at least one language.</div>
                                     </div>
+                                    <!-- document -->
+                                    <x-adminlte-input name="document_name[0]" placeholder="Document Name" fgroup-class="col-md-4"  type="text" value="{{ old('document_name[0]') }}" required label="Document Name" />
+                                    <!-- unit -->
+                                    <x-adminlte-input name="unit[0]" placeholder="Unit" fgroup-class="col-md-2" type="number"  value="{{ old('unit[0]') }}" required label="Unit/Words" onkeyup="calculateAmount(this)"  min="1" />
+                                    <!-- t rate -->
+                                    <x-adminlte-input name="rate[0]" placeholder="T Rate" fgroup-class="col-md-1"  type="tell" value="{{ old('rate[0]') }}" required label="T Rate"  onkeyup="calculateAmount(this)" />
+                                    <!-- t amount -->
+                                    <x-adminlte-input name="amount[0]" placeholder="T Amount" fgroup-class="col-md-1"
+                                        type="text" value="{{ old('amount[0]') }}" label="T Amount" readonly />
+                                    <!-- v1 -->
+                                    <div class="form-group col-md-1">
+                                        <label>V1</label>
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" onchange="calculateV1Amount(this)" class="custom-control-input" name="v_one[0]" id="v_one[0]">
+                                            <label class="custom-control-label" for="v_one[0]"></label>
+                                        </div>
+                                    </div>
+                                    <!-- v1 amount -->
+                                    <x-adminlte-input name="verification[0]" placeholder="V1 Amount" fgroup-class="col-md-1"  type="text" value="{{ old('verification[0]') }}" label="V1 Amount" readonly/>
+                                    <!-- v2 -->
+                                    <div class="form-group col-md-1">
+                                        <label>V2</label>
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" onchange="calculateV2Amount(this)" class="custom-control-input" name="v_two[0]" id="v_two[0]">
+                                            <label class="custom-control-label" for="v_two[0]"></label>
+                                        </div>
+                                    </div>
+                                    <!-- v2 amount -->
+                                    <x-adminlte-input name="two_way_qc_t[0]" placeholder="V2 Amount" fgroup-class="col-md-1"  type="text" value="{{ old('two_way_qc_t[0]') }}" label="V2 Amount" readonly/>
+                                    <!-- layout pages -->
+                                    <x-adminlte-input name="layout_pages[0]" placeholder="T Layout Pages" fgroup-class="col-md-2"
+                                        type="text" value="{{ old('layout_pages[0]') }}" label="T Layout Pages" />
+                                    <!-- Layout Charges -->
+                                    <x-adminlte-input name="layout_charges[0]" placeholder="T Layout"  fgroup-class="col-md-2" type="text" value="{{ old('layout_charges[0]') }}" label="T Layout" />
+                                    <!-- bt rate -->
+                                    <x-adminlte-input name="back_translation[0]" placeholder="BT Rate" fgroup-class="col-md-1" type="text" value="{{ old('back_translation[0]') }}" label="BT Rate" onkeyup="calculateAmount_2(this)" />
+                                    <!-- bt amount -->
+                                    <x-adminlte-input name="amount_bt[0]" placeholder="BT Amount" fgroup-class="col-md-1" type="text" value="{{ old('amount_bt[0]') }}" label="BT Amount" readonly />
+                                    <!-- btv -->
+                                    <div class="form-group col-md-1">
+                                        <label>BTV</label>
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" onchange="calculateBtvAmount(this)" class="custom-control-input" name="btv[0]" id="btv[0]">
+                                            <label class="custom-control-label" for="btv[0]"></label>
+                                        </div>
+                                    </div>
+                                    <!-- btv amount -->
+                                    <x-adminlte-input name="verification_2[0]" placeholder="BTV Amount"  fgroup-class="col-md-1" type="text" value="{{ old('verification_2[0]') }}" label="BTV Amount" readonly/>
+                                    <!-- bt layout pages -->
+                                    <x-adminlte-input name="bt_layout_pages[0]" placeholder="BT Layout Pages"  fgroup-class="col-md-2" type="text" value="{{ old('bt_layout_pages[0]') }}" label="BT Layout  Pages" />
+                                    {{-- <x-adminlte-input name="two_way_qc_bt[0]" placeholder="Two Way QC BT"
+                                        fgroup-class="col-md-3" type="text" value="{{ old('two_way_qc_bt[0]') }}"
+                                        label="Two Way QC BT" /> --}}
+                                    <!-- BT layout charges -->
+                                    <x-adminlte-input name="layout_charges_second[0]" placeholder="BT Layout" fgroup-class="col-md-2" type="text" value="{{ old('layout_charges_second[0]') }}"  label="BT Layout" />
+                                    <!-- <x-adminlte-select  name="lang_0[]" fgroup-class="col-md-3" required
+                                        label="Language" multiple label="Language">
+                                        <option value="">Select Language</option>
+                                        @foreach ($languages as $language)
+                                            <option value="{{ $language->id }}">
+                                                {{ $language->name }}</option>
+                                        @endforeach
+                                    </x-adminlte-select> -->
                                 </div>
                                 <div class="row">
                                     <button type="button" class="btn btn-danger remove-item mt-3 mb-1"
@@ -182,6 +205,7 @@ $config = [
 </div>
 
 <script type="text/javascript">
+    var rates = [];
     $(document).ready(function() {
         let itemIndex = 1;
 
@@ -316,6 +340,7 @@ $config = [
         $('#dropdownMenuButton_0 + div').on('click', function(e) {
             e.stopPropagation();
         });
+
     });
 
     function calculateAmount(input) {
@@ -356,6 +381,72 @@ $config = [
             $('#requiredMsg_'+index).hide();
         } else {
             $('#requiredMsg_'+index).show();
+        }
+        if (selected.length == 1) {
+            getRates(index);    
+        }
+    }
+
+    function getRates(index){
+        const eClientId = $('#client_id option:selected').val()?$('#client_id option:selected').val():@json($clients[0]->id);
+        const eRorn = $('#rorn option:selected').val()?$('#rorn option:selected').val():'normal';
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        const eLang = $(`input[name="lang_${index}[]"]:checked`).first().val()?$(`input[name="lang_${index}[]"]:checked`).first().val():@json($languages[0]->id);
+        $.ajax({
+            url: "/estimate-management/ratecard/" + eClientId +  "/"  + eRorn +  "/" + eType +  "/" + eLang,
+            method: 'GET',
+            success: function(data) {
+                rates[index] = data;
+                if(eType == 'minimum'){
+                    document.querySelector(`input[name="rate[${index}]"]`).value = data.t_minimum_rate?data.t_minimum_rate:0;
+                    document.querySelector(`input[name="back_translation[${index}]"]`).value = data.bt_minimum_rate?data.bt_minimum_rate:0;
+                }else{
+                    document.querySelector(`input[name="rate[${index}]"]`).value = data.t_rate?data.t_rate:0;
+                    document.querySelector(`input[name="back_translation[${index}]"]`).value = data.bt_rate?data.bt_rate:0;
+                }
+                document.querySelector(`input[name="verification[${index}]"]`).value = 0;
+                document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
+                document.querySelector(`input[name="verification_2[${index}]"]`).value = 0;
+            }
+        });
+    }
+
+    function calculateV1Amount(input){
+        const index = input.name.substring(6).replace("]", "");
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        if( $(`input[name="v_one[${index}]"]:checked`).val() != undefined ){
+            const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
+            const rate = eType == 'minimum'?parseFloat(rates[index].v1_minimum_rate):parseFloat(rates[index].v1_rate) || 0;
+            const v1Amount = Math.round(unit * rate);
+            document.querySelector(`input[name="verification[${index}]"]`).value = v1Amount;
+        }else{
+            document.querySelector(`input[name="verification[${index}]"]`).value = 0;
+        }
+    }
+
+    function calculateV2Amount(input){
+        const index = input.name.substring(6).replace("]", "");
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        if( $(`input[name="v_two[${index}]"]:checked`).val() != undefined ){
+            const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
+            const rate = eType == 'minimum'?parseFloat(rates[index].v2_minimum_rate):parseFloat(rates[index].v2_rate) || 0;
+            const amount = Math.round(unit * rate);
+            document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = amount;
+        }else{
+            document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
+        }
+    }
+
+    function calculateBtvAmount(input){
+        const index = input.name.substring(4).replace("]", "");
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        if( $(`input[name="btv[${index}]"]:checked`).val() != undefined ){
+            const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
+            const rate = eType == 'minimum'?parseFloat(rates[index].btv_minimum_rate):parseFloat(rates[index].btv_rate) || 0;
+            const amount = Math.round(unit * rate);
+            document.querySelector(`input[name="verification_2[${index}]"]`).value = amount;
+        }else{
+            document.querySelector(`input[name="verification_2[${index}]"]`).value = 0;
         }
     }
     

@@ -22,5 +22,8 @@ Route::get('estimate-management/estimate-details/{id}', [EstimateManagementContr
 Route::get('estimate-management/client/view-pdf/{id}', [EstimateManagementController::class, 'viewPdf'])->name('estimatemanagement.viewPdf');
 Route::get('estimate-management/export/pdf', [EstimateManagementController::class, 'exportEstimate'])->name('estimatemanagement.exporteestimate');
 Route::delete('estimate-management/detail/delete', [EstimateManagementController::class, 'deleteDetail'])->name('estimatemanagement.deleteDetail');
+
+// ratecard
+Route::get('/estimate-management/ratecard/{clientId}/{rorn}/{type}/{lang}', [EstimateManagementController::class, 'getRatecard']);
 });
 

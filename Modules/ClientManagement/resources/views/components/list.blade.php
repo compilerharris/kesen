@@ -112,6 +112,7 @@
                                         View
                                     </button></a> --}}
                                             <a href="{{ route('clientmanagement.viewContacts', $row->id) }}" class="btn btn-info btn-sm mb-2">View Contacts</a>
+                                            <a href="{{ route('clientmanagement.redirectToRatecardList', $row->id) }}" class="btn btn-info btn-sm mb-2">View Rate Cards</a>
                                             @if(!Auth::user()->hasRole('Accounts'))
                                                 @if ($row->status == 1)
                                                     <a href="{{ route('clientmanagement.disableEnableClient', $row->id) }}" class="btn btn-danger btn-sm mb-2">Disable</a>
