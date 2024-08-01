@@ -156,7 +156,15 @@ $config = [
                                     <x-adminlte-input name="layout_pages[0]" placeholder="T Layout Pages" fgroup-class="col-md-2"
                                         type="text" value="{{ old('layout_pages[0]') }}" label="T Layout Pages" />
                                     <!-- Layout Charges -->
-                                    <x-adminlte-input name="layout_charges[0]" placeholder="T Layout"  fgroup-class="col-md-2" type="text" value="{{ old('layout_charges[0]') }}" label="T Layout" />
+                                    <x-adminlte-input name="layout_charges[0]" placeholder="T Layout"  fgroup-class="col-md-1" type="text" value="{{ old('layout_charges[0]') }}" label="T Layout" />
+                                    <!-- bt -->
+                                    <div class="form-group col-md-1">
+                                        <label>BT</label>
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" onchange="calculateBtAmount(this)" class="custom-control-input" name="bt[0]" id="bt[0]">
+                                            <label class="custom-control-label" for="bt[0]"></label>
+                                        </div>
+                                    </div>
                                     <!-- bt rate -->
                                     <x-adminlte-input name="back_translation[0]" placeholder="BT Rate" fgroup-class="col-md-1" type="text" value="{{ old('back_translation[0]') }}" label="BT Rate" onkeyup="calculateAmount_2(this)" />
                                     <!-- bt amount -->
@@ -399,11 +407,12 @@ $config = [
                 rates[index] = data;
                 if(eType == 'minimum'){
                     document.querySelector(`input[name="rate[${index}]"]`).value = data.t_minimum_rate?data.t_minimum_rate:0;
-                    document.querySelector(`input[name="back_translation[${index}]"]`).value = data.bt_minimum_rate?data.bt_minimum_rate:0;
                 }else{
                     document.querySelector(`input[name="rate[${index}]"]`).value = data.t_rate?data.t_rate:0;
-                    document.querySelector(`input[name="back_translation[${index}]"]`).value = data.bt_rate?data.bt_rate:0;
                 }
+                document.querySelector(`input[name="unit[${index}]"]`).value = 0;
+                document.querySelector(`input[name="amount[${index}]"]`).value = 0;
+                document.querySelector(`input[name="amount_bt[${index}]"]`).value = 0;
                 document.querySelector(`input[name="verification[${index}]"]`).value = 0;
                 document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
                 document.querySelector(`input[name="verification_2[${index}]"]`).value = 0;
@@ -417,8 +426,8 @@ $config = [
         if( $(`input[name="v_one[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
             const rate = eType == 'minimum'?parseFloat(rates[index].v1_minimum_rate):parseFloat(rates[index].v1_rate) || 0;
-            const v1Amount = Math.round(unit * rate);
-            document.querySelector(`input[name="verification[${index}]"]`).value = v1Amount;
+            const amount = Math.round(unit * rate);
+            document.querySelector(`input[name="verification[${index}]"]`).value = amount;
         }else{
             document.querySelector(`input[name="verification[${index}]"]`).value = 0;
         }
@@ -434,6 +443,21 @@ $config = [
             document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = amount;
         }else{
             document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
+        }
+    }
+
+    function calculateBtAmount(input){
+        const index = input.name.substring(3).replace("]", "");
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        if( $(`input[name="bt[${index}]"]:checked`).val() != undefined ){
+            const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
+            const rate = eType == 'minimum'?parseFloat(rates[index].bt_minimum_rate):parseFloat(rates[index].bt_rate) || 0;
+            const amount = Math.round(unit * rate);
+            document.querySelector(`input[name="back_translation[${index}]"]`).value = rate;
+            document.querySelector(`input[name="amount_bt[${index}]"]`).value = amount;
+        }else{
+            document.querySelector(`input[name="back_translation[${index}]"]`).value = 0;
+            document.querySelector(`input[name="amount_bt[${index}]"]`).value = 0;
         }
     }
 

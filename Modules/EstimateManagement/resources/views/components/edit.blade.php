@@ -50,7 +50,7 @@
                 @method('PUT')
                 @csrf
                 <div class="row pt-2">
-                    <x-adminlte-select2  :config="$config"  name="client_id" id="client_id" fgroup-class="col-md-3" required label="Client">
+                    <x-adminlte-select2  :config="$config"  name="client_id" id="client_id" fgroup-class="col-md-2" required label="Client">
                         <option value="">Select Client</option>
                         @foreach ($clients as $client)
                             <option value="{{ $client->id }}"
@@ -58,7 +58,7 @@
                         @endforeach
                     </x-adminlte-select2>
                     <x-adminlte-select2 name="client_contact_person_id" id="client_contact_person_id"
-                        fgroup-class="col-md-3" required label="Contact Person">
+                        fgroup-class="col-md-2" required label="Contact Person">
                         <option value="">Select Contact Person</option>
                         @foreach ($contact_persons as $contactPerson)
                             <option value="{{ $contactPerson->id }}"
@@ -66,11 +66,9 @@
                                 {{ $contactPerson->name }}</option>
                         @endforeach
                     </x-adminlte-select2>
-                    <x-adminlte-input name="headline" placeholder="Headline" fgroup-class="col-md-3" type="text"
+                    <x-adminlte-input name="headline" placeholder="Headline" fgroup-class="col-md-2" type="text"
                         value="{{ $estimate->headline }}" required label="Headline" />
-
-                    
-                    <x-adminlte-select2 name="currency" id="currency" placeholder="Currency" fgroup-class="col-md-3" required
+                    <x-adminlte-select2 name="currency" id="currency" placeholder="Currency" fgroup-class="col-md-2" required
                         value="{{ old('currency', $estimate->currency) }}" label="Currency">
                         <option value="">Select Currency</option>
                         <option value="AFN" @if ($estimate->currency == 'AFN') selected @endif label="Afghan afghani">
@@ -390,11 +388,16 @@
                         <option value="ZWB" @if ($estimate->currency == 'ZWB') selected @endif
                             label="Zimbabwean bonds">ZWB</option>
                     </x-adminlte-select2>
-                    <x-adminlte-input name="date" placeholder="Date" fgroup-class="col-md-3" type='date'
+                    <x-adminlte-input name="date" placeholder="Date" fgroup-class="col-md-2" type='date'
                         value="{{ old('date', $estimate->date) }}" required label="Mail Received on" />
-                    <x-adminlte-input name="discount" placeholder="Discount" fgroup-class="col-md-3" type="text"
+                    <x-adminlte-input name="discount" placeholder="Discount" fgroup-class="col-md-2" type="text"
                         value="{{ old('discount', $estimate->discount) }}" label="Discount" />
-                    <x-adminlte-select2 name="type" fgroup-class="col-md-3" required label="Type">
+                    <x-adminlte-select2 name="rorn" id="rorn" fgroup-class="col-md-2" required value="{{ old('rorn') }}"
+                        label="Rush/Normal">
+                        <option value="normal" {{$estimate->rorn=="normal"?"selected":""}}>Normal</option>
+                        <option value="rush" {{$estimate->rorn=="rush"?"selected":""}}>Rush</option>
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 name="type" fgroup-class="col-md-2" required label="Type">
                             <option value="">Select Type</option>
                             <option value="words" {{ old('type.', $estimate->type) == 'words' ? 'selected' : '' }}>Words
                             </option>
@@ -403,7 +406,7 @@
                             <option value="minimum" {{ old('type', $estimate->type) == 'minimum' ? 'selected' : '' }}>
                                 Minimum</option>
                     </x-adminlte-select2>
-                    <x-adminlte-select2 name="status" fgroup-class="col-md-3" required label="Status">
+                    <x-adminlte-select2 name="status" fgroup-class="col-md-2" required label="Status">
                         <option value="">Select Status</option>
                         <option value="0" @if ($estimate->status == '0') selected @endif>Pending</option>
                         <option value="1" @if ($estimate->status == '1') selected @endif>Approve</option>
@@ -421,72 +424,12 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
-
-                                            <x-adminlte-input name="document_name[{{ $index }}]"
-                                                placeholder="Document Name" fgroup-class="col-md-3" type="text"
-                                                value="{{ old('document_name.' . $index, $detail->document_name) }}"
-                                                required label="Document Name" readonly />
-                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit"
-                                                fgroup-class="col-md-1" type="text"
-                                                value="{{ old('unit.' . $index, $detail->unit) }}" required
-                                                label="Unit" onkeyup="calculateAmount(this)" min="1" />
-                                            <x-adminlte-input name="rate[{{ $index }}]" placeholder="Rate"
-                                                fgroup-class="col-md-2" type="text"
-                                                value="{{ old('rate.' . $index, $detail->rate) }}" required
-                                                label="Translation Rate" onkeyup="calculateAmount(this)" />
-                                            <x-adminlte-input name="amount[{{ $index }}]" placeholder="Amount"
-                                                fgroup-class="col-md-2" type="text"
-                                                value="{{ ceil($detail->unit * $detail->rate) }}" label="Amount"
-                                                readonly />
-                                            <x-adminlte-input name="verification[{{ $index }}]"
-                                                placeholder="Verification 1" fgroup-class="col-md-2" type="text"
-                                                value="{{ old('verification.' . $index, $detail->verification) }}"
-                                                label="Verification 1" />
-                                            <x-adminlte-input name="two_way_qc_t[{{ $index }}]"
-                                                placeholder="Verification 2" fgroup-class="col-md-2" type="text"
-                                                value="{{ old('two_way_qc_t.' . $index, $detail->two_way_qc_t) }}"
-                                                label="Verification 2" />
-                                            <x-adminlte-input name="layout_charges[{{ $index }}]"
-                                                placeholder="Layout Charges" fgroup-class="col-md-2" type="text"
-                                                value="{{ old('layout_charges.' . $index, $detail->layout_charges) }}"
-                                                label="Layout Charges" />
-                                            <x-adminlte-input name="back_translation[{{ $index }}]"
-                                                placeholder="Back Translation" fgroup-class="col-md-2" type="text"
-                                                value="{{ old('back_translation.' . $index, $detail->back_translation) }}"
-                                                label="Back Translation Rate" onkeyup="calculateAmount_2(this)" />
-                                            <x-adminlte-input name="amount_bt[{{ $index }}]"
-                                                placeholder="Amount" fgroup-class="col-md-2" type="text"
-                                                value="{{ $detail->unit * $detail->back_translation }}" label="Amount"
-                                                readonly />
-                                            <x-adminlte-input name="verification_2[{{ $index }}]"
-                                                placeholder="Back Translation Verification" fgroup-class="col-md-3"
-                                                type="text"
-                                                value="{{ old('verification_2.' . $index, $detail->verification_2) }}"
-                                                label="Back Translation Verification" />
-                                            {{-- <x-adminlte-input name="two_way_qc_bt[{{ $index }}]"
-                                                placeholder="Two Way QC BT" fgroup-class="col-md-3" type="text"
-                                                value="{{ old('two_way_qc_bt.' . $index, $detail->two_way_qc_bt) }}"
-                                                label="Two Way QC BT" /> --}}
-                                            <x-adminlte-input name="layout_charges_second[{{ $index }}]"
-                                                placeholder="Back Translation Layout Charges" fgroup-class="col-md-3"
-                                                type="text"
-                                                value="{{ old('layout_charges_second.' . $index, $detail->layout_charges_2) }}"
-                                                label="Back Translation Layout Charges" />
-                                            <!-- <x-adminlte-select name="lang_{{ $index }}[]"
-                                                fgroup-class="col-md-3" label="Language" multiple for="lang_{{ $index }}" >
-                                                <option value="">Select Language</option>
-                                                @foreach ($languages as $language)
-                                                    <option value="{{ $language->id }}"
-                                                        {{ in_array($language->id, $detail->languages) ? 'selected' : '' }}>
-                                                        {{ $language->name }}</option>
-                                                @endforeach
-                                            </x-adminlte-select> -->
-                                            <div class="{{ $fgroupClass ?? '' }}">
+                                            <!-- laguages -->
+                                            <div class="{{ $fgroupClass ?? '' }} mb-3" style="padding-left:7.5px;">
                                                 <label>Languages</label>
                                                 <div class="dropdown">
                                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_{{ $index }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         {{count($detail->languagesNames)>0?implode(', ',$detail->languagesNames):"Select Language"}}
-                                                        <!-- Select Language -->
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton_{{ $index }}" style="max-height: 200px; overflow-y: auto; padding: 5px;">
                                                         @foreach ($languages as $option)
@@ -499,6 +442,77 @@
                                                 </div>
                                                 <div class="invalid-feedback is-invalid" id="requiredMsg_{{ $index }}">Please select at least one language.</div>
                                             </div>
+                                            <!-- document -->
+                                            <x-adminlte-input name="document_name[{{ $index }}]" placeholder="Document Name"  fgroup-class="col-md-4" type="text" value="{{ old('document_name.' . $index,  $detail->document_name) }}" required label="Document Name" readonly />
+                                            <!-- unit -->
+                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-2" type="text" value="{{ old('unit.' . $index, $detail->unit) }}" required label="Unit" onkeyup="calculateAmount(this)" min="1" />
+                                            <!-- t rate -->
+                                            <x-adminlte-input name="rate[{{ $index }}]" placeholder="T Rate" fgroup-class="col-md-1" type="text" value="{{ old('rate.' . $index, $detail->rate) }}" required label="T Rate" onkeyup="calculateAmount(this)" />
+                                            <!-- t amount -->
+                                            <x-adminlte-input name="amount[{{ $index }}]" placeholder="T Amount" fgroup-class="col-md-1" type="text" value="{{ ceil($detail->unit * $detail->rate) }}"  label="T Amount" readonly />
+                                            <!-- v1 -->
+                                            <div class="form-group col-md-1">
+                                                <label>V1</label>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" onchange="calculateV1Amount(this)"  class="custom-control-input" name="v_one[{{$index}}]" id="v_one[{{$index}}]" {{$detail->v1?"checked":""}}>
+                                                    <label class="custom-control-label" for="v_one[{{$index}}]"></label>
+                                                </div>
+                                            </div>
+                                            <!-- v1 amount -->
+                                            <x-adminlte-input name="verification[{{ $index }}]" placeholder="V1 Amount"  fgroup-class="col-md-1" type="text" value="{{ old('verification.' . $index,  $detail->verification) }}" label="V1 Amount" readonly />
+                                            <!-- v2 -->
+                                            <div class="form-group col-md-1">
+                                                <label>V2</label>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" onchange="calculateV2Amount(this)"  class="custom-control-input" name="v_two[{{$index}}]" id="v_two[{{$index}}]" {{$detail->v2?"checked":""}}>
+                                                    <label class="custom-control-label" for="v_two[{{$index}}]"></label>
+                                                </div>
+                                            </div>
+                                            <!-- v2 amount -->
+                                            <x-adminlte-input name="two_way_qc_t[{{ $index }}]" placeholder="V2 Amount"  fgroup-class="col-md-1" type="text" value="{{ old('two_way_qc_t.' . $index,  $detail->two_way_qc_t) }}" label="V2 Amount" readonly/>
+                                            <!-- layout pages -->
+                                            <x-adminlte-input name="layout_pages[{{ $index }}]" placeholder="T Layout Pages"  fgroup-class="col-md-2" type="text" value="{{ old('layout_pages.' . $index,  $detail->layout_pages) }}" label="T Layout Pages" />
+                                            <!-- layout charges -->
+                                            <x-adminlte-input name="layout_charges[{{ $index }}]" placeholder="T Layout"  fgroup-class="col-md-1" type="text" value="{{ old('layout_charges.' . $index,  $detail->layout_charges) }}" label="T Layout" />
+                                            <!-- bt -->
+                                            <div class="form-group col-md-1">
+                                                <label>BT</label>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" onchange="calculateBtAmount(this)" class="custom-control-input" name="bt[{{$index}}]" id="bt[{{$index}}]"{{$detail->bt?"checked":""}}>
+                                                    <label class="custom-control-label" for="bt[{{$index}}]"></label>
+                                                </div>
+                                            </div>
+                                            <!-- bt rate -->
+                                            <x-adminlte-input name="back_translation[{{ $index }}]" placeholder="BT Rate" fgroup-class="col-md-1" type="text" value="{{ old('back_translation.' . $index,  $detail->back_translation) }}" label="BT Rate" onkeyup="calculateAmount_2(this)" />
+                                            <!-- bt amount -->
+                                            <x-adminlte-input name="amount_bt[{{ $index }}]" placeholder="BT Amount" fgroup-class="col-md-1" type="text" value="{{ $detail->unit *  $detail->back_translation }}" label="BT Amount" readonly />
+                                            <!-- BTV -->
+                                            <div class="form-group col-md-1">
+                                                <label>BTV</label>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" onchange="calculateBtvAmount(this)"  class="custom-control-input" name="btv[{{$index}}]" id="btv[{{$index}}]" {{$detail->btv?"checked":""}}>
+                                                    <label class="custom-control-label" for="btv[{{$index}}]"></label>
+                                                </div>
+                                            </div>
+                                            <!-- btv -->
+                                            <x-adminlte-input name="verification_2[{{ $index }}]" placeholder="BTV Amount" fgroup-class="col-md-1" type="text" value="{{ old('verification_2.' .  $index, $detail->verification_2) }}" label="BTV Amount" readonly/>
+                                            {{-- <x-adminlte-input name="two_way_qc_bt[{{ $index }}]"
+                                                placeholder="Two Way QC BT" fgroup-class="col-md-3" type="text"
+                                                value="{{ old('two_way_qc_bt.' . $index, $detail->two_way_qc_bt) }}"
+                                                label="Two Way QC BT" /> --}}
+                                            <!-- bt layout pages -->
+                                            <x-adminlte-input name="bt_layout_pages[{{ $index }}]" placeholder="BT Layout Pages"  fgroup-class="col-md-2" type="text" value="{{ old('bt_layout_pages.' . $index,  $detail->bt_layout_pages) }}" label="BT Layout Pages" />
+                                            <!-- bt layout charges -->
+                                            <x-adminlte-input name="layout_charges_second[{{ $index }}]" placeholder="BT Layout Charges" fgroup-class="col-md-2" type="text" value="{{ old('layout_charges_second.' . $index, $detail->layout_charges_2) }}" label="BT Layout Charges" />
+                                            <!-- <x-adminlte-select name="lang_{{ $index }}[]"
+                                                fgroup-class="col-md-3" label="Language" multiple for="lang_{{ $index }}" >
+                                                <option value="">Select Language</option>
+                                                @foreach ($languages as $language)
+                                                    <option value="{{ $language->id }}"
+                                                        {{ in_array($language->id, $detail->languages) ? 'selected' : '' }}>
+                                                        {{ $language->name }}</option>
+                                                @endforeach
+                                            </x-adminlte-select> -->
                                         </div>
                                         <div class="row">
                                             <input type="button" name="button"
@@ -525,7 +539,9 @@
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function() {      
+    var rates = [];
+    $(document).ready(function() {  
+        loadRatecard(@json($estimate_details));
         addLangScripts();  
         let tempIndex = {{ count($estimate_details) }};
         let itemIndex = {{ count($estimate_details) }};
@@ -713,6 +729,105 @@
         } else {
             $('#requiredMsg_'+index).show();
         }
+        if (selected.length == 1) {
+            getRates(index);    
+        }
+    }
+
+    function getRates(index){
+        const eClientId = $('#client_id option:selected').val()?$('#client_id option:selected').val():@json($clients[0]->id);
+        const eRorn = $('#rorn option:selected').val()?$('#rorn option:selected').val():'normal';
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        const eLang = $(`input[name="lang_${index}[]"]:checked`).first().val()?$(`input[name="lang_${index}[]"]:checked`).first().val():@json($languages[0]->id);
+        $.ajax({
+            url: "/estimate-management/ratecard/" + eClientId +  "/"  + eRorn +  "/" + eType +  "/" + eLang,
+            method: 'GET',
+            success: function(data) {
+                rates[index] = data;
+                if(eType == 'minimum'){
+                    document.querySelector(`input[name="rate[${index}]"]`).value = data.t_minimum_rate?data.t_minimum_rate:0;
+                }else{
+                    document.querySelector(`input[name="rate[${index}]"]`).value = data.t_rate?data.t_rate:0;
+                }
+                document.querySelector(`input[name="unit[${index}]"]`).value = 0;
+                document.querySelector(`input[name="amount[${index}]"]`).value = 0;
+                document.querySelector(`input[name="amount_bt[${index}]"]`).value = 0;
+                document.querySelector(`input[name="verification[${index}]"]`).value = 0;
+                document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
+                document.querySelector(`input[name="verification_2[${index}]"]`).value = 0;
+            }
+        });
+    }
+
+    function calculateV1Amount(input){
+        const index = input.name.substring(6).replace("]", "");
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        if( $(`input[name="v_one[${index}]"]:checked`).val() != undefined ){
+            const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
+            const rate = eType == 'minimum'?parseFloat(rates[index].v1_minimum_rate):parseFloat(rates[index].v1_rate) || 0;
+            const v1Amount = Math.round(unit * rate);
+            document.querySelector(`input[name="verification[${index}]"]`).value = v1Amount;
+        }else{
+            document.querySelector(`input[name="verification[${index}]"]`).value = 0;
+        }
+    }
+
+    function calculateV2Amount(input){
+        const index = input.name.substring(6).replace("]", "");
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        if( $(`input[name="v_two[${index}]"]:checked`).val() != undefined ){
+            const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
+            const rate = eType == 'minimum'?parseFloat(rates[index].v2_minimum_rate):parseFloat(rates[index].v2_rate) || 0;
+            const amount = Math.round(unit * rate);
+            document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = amount;
+        }else{
+            document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
+        }
+    }
+    
+    function calculateBtAmount(input){
+        const index = input.name.substring(3).replace("]", "");
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        if( $(`input[name="bt[${index}]"]:checked`).val() != undefined ){
+            const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
+            const rate = eType == 'minimum'?parseFloat(rates[index].bt_minimum_rate):parseFloat(rates[index].bt_rate) || 0;
+            const amount = Math.round(unit * rate);
+            document.querySelector(`input[name="back_translation[${index}]"]`).value = rate;
+            document.querySelector(`input[name="amount_bt[${index}]"]`).value = amount;
+        }else{
+            document.querySelector(`input[name="back_translation[${index}]"]`).value = 0;
+            document.querySelector(`input[name="amount_bt[${index}]"]`).value = 0;
+        }
+    }
+
+    function calculateBtvAmount(input){
+        const index = input.name.substring(4).replace("]", "");
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+        if( $(`input[name="btv[${index}]"]:checked`).val() != undefined ){
+            const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
+            const rate = eType == 'minimum'?parseFloat(rates[index].btv_minimum_rate):parseFloat(rates[index].btv_rate) || 0;
+            const amount = Math.round(unit * rate);
+            document.querySelector(`input[name="verification_2[${index}]"]`).value = amount;
+        }else{
+            document.querySelector(`input[name="verification_2[${index}]"]`).value = 0;
+        }
+    }
+
+    function loadRatecard(estimateDetails){
+        estimateDetails.forEach((element,index) => {
+            const eClientId = $('#client_id option:selected').val()?$('#client_id option:selected').val():@json($clients[0]->id);
+            const eRorn = $('#rorn option:selected').val()?$('#rorn option:selected').val():'normal';
+            const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
+            const eLang = $(`input[name="lang_${index}[]"]:checked`).first().val()?$(`input[name="lang_${index}[]"]:checked`).first().val():@json($languages[0]->id);
+            $.ajax({
+                url: "/estimate-management/ratecard/" + eClientId +  "/"  + eRorn +  "/" + eType +  "/" + eLang,
+                method: 'GET',
+                success: function(data) {
+                    rates[index] = data;
+                }
+            });
+        });
+        console.log(rates);
     }
 
     // Validate form on submit

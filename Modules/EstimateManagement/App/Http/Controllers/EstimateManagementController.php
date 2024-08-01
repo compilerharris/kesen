@@ -172,9 +172,10 @@ class EstimateManagementController extends Controller
                         'type' => $request->type,
                         'unit' => $request['unit'][$index],
                         'rate' => $request['rate'][$index],
-                        'v1' => $request['v_one']?($request['v_one'][$index]=='on'?true:false):false,
+                        'v1' => isset($request['v_one']) && is_array($request['v_one']) && isset($request['v_one'][$index]) && $request['v_one'][$index] === 'on' ? true : false,
                         'verification' => $request['verification'][$index]??null,
-                        'btv' => $request['btv']?($request['btv'][$index]=='on'?true:false):false,
+                        'bt' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? true : false,
+                        'btv' => isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? true : false,
                         'verification_2' => $request['verification_2'][$index]??null,
                         'back_translation' => $request['back_translation'][$index]??null,
                         'layout_charges' => $request['layout_charges'][$index]??null,
@@ -182,7 +183,7 @@ class EstimateManagementController extends Controller
                         'layout_charges_2' => $request['layout_charges_second'][$index]??null,
                         'bt_layout_pages' => $request['bt_layout_pages'][$index]??null,
                         'lang' => $languages[$i],
-                        'v2' => $request['v_two']?($request['v_two'][$index]=='on'?true:false):false,
+                        'v2' => isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? true : false,
                         'two_way_qc_t' => $request['two_way_qc_t'][$index]??null,
                         'two_way_qc_bt' => $request['two_way_qc_bt'][$index]??null,
                     ]);
@@ -283,6 +284,7 @@ class EstimateManagementController extends Controller
         $estimate->type = $request->type;
         $estimate->date = $request->date;
         $estimate->discount = $request->discount ?? 0;
+        $estimate->rorn = $request->rorn;
         $estimate->currency = $request->currency;
         $estimate->status = $request->status;
         $estimate->updated_by = Auth()->user()->id;
@@ -293,11 +295,10 @@ class EstimateManagementController extends Controller
             $deleted_lang=array_diff($previous_lang,$languages);
             
             if(count($deleted_lang)>0){
-                
                 EstimatesDetails::where('document_name', $document_name)->where('unit', $request['unit'][$index])->where('estimate_id', $estimate->id)->whereIn('lang', $deleted_lang)->delete();
             }
-                for ($i = 0; $i < count($languages); $i++) {
-                    if(isset($languages[$i])&&$languages[$i]!=null&&$languages[$i]!=''){
+            for ($i = 0; $i < count($languages); $i++) {
+                if(isset($languages[$i])&&$languages[$i]!=null&&$languages[$i]!=''){
                     EstimatesDetails::updateOrCreate([
                         'estimate_id' => $estimate->id,
                         'document_name' => $document_name,
@@ -310,12 +311,18 @@ class EstimateManagementController extends Controller
                         'type' => $request->type,
                         'unit' => $request['unit'][$index],
                         'rate' => $request['rate'][$index],
+                        'v1' => isset($request['v_one']) && is_array($request['v_one']) && isset($request['v_one'][$index]) && $request['v_one'][$index] === 'on' ? true : false,
                         'verification' => $request['verification'][$index]??null,
+                        'bt' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? true : false,
+                        'btv' => isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? true : false,
                         'verification_2' => $request['verification_2'][$index]??null,
                         'back_translation' => $request['back_translation'][$index]??null,
                         'layout_charges' => $request['layout_charges'][$index]??null,
+                        'layout_pages' => $request['layout_pages'][$index]??null,
                         'layout_charges_2' => $request['layout_charges_second'][$index]??null,
+                        'bt_layout_pages' => $request['bt_layout_pages'][$index]??null,
                         'lang' => $languages[$i],
+                        'v2' => isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? true : false,
                         'two_way_qc_t' => $request['two_way_qc_t'][$index]??null,
                         'two_way_qc_bt' => $request['two_way_qc_bt'][$index]??null,
                     ]);
