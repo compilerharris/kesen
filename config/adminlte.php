@@ -87,7 +87,7 @@ return [
         'enabled' => true,
         'img' => [
             'path' => '/img/transparent-logo.png',
-            'alt' => 'Auth Logo',
+            'alt' => 'Kesen Logo',
             'class' => '',
             'width' => 144,
             'height' => 53,

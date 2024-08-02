@@ -20,6 +20,17 @@
 
 @section('auth_header', __('adminlte.login_message'))
 
+    <style>
+        /* .login-page{
+            background-image: url('{{ asset('img/login-bg.avif') }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+        } */
+    </style>
+    
+    
 @section('auth_body')
     <form action="{{ $login_url }}" method="post">
         @csrf

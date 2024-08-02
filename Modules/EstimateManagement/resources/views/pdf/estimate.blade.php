@@ -96,8 +96,6 @@
         @else
             <img src="{{ public_path('img/kesen-linguist-Servi-llp.jpeg') }}" alt="Kesen Linguist Services" width="100%">
         @endif
-
-       
     </header>
 
     <section>
@@ -241,7 +239,7 @@
                 </tr>
                 <tr class="financials" style="background-color: #f0f0f0">
                     <td colspan="{{ $counter - 1 }}" style="font-size: 14px;font-weight: bold">Net Total</td>
-                    <td colspan="1" style="font-size: 6px;font-weight: bold">{{ number_format(($net_total + ($net_total / 100) * 18),2) }}
+                    <td colspan="1" style="font-size: 8px;font-weight: bold">{{ number_format(($net_total + ($net_total / 100) * 18),2) }}
                     </td>
                 </tr>
             </tbody>
