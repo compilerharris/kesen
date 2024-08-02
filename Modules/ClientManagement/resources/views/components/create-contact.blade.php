@@ -47,7 +47,7 @@
                     fgroup-class="col-md-3" value="{{ old('landline') }}" label="Landline Number"/> --}}
                     <x-adminlte-input name="email"  placeholder="Email" fgroup-class="col-md-3" type='email'
                         value="{{ old('email') }}" label="Email" />
-                    <x-adminlte-input name="designation" required placeholder="Designation" fgroup-class="col-md-3"
+                    <x-adminlte-input name="designation" placeholder="Designation" fgroup-class="col-md-3"
                         value="{{ old('designation') }}" label="Designation" />
                     <span id="protocol" class="col-md-3">
 

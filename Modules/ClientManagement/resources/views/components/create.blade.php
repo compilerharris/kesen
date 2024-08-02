@@ -73,7 +73,7 @@
                         @endforeach
                     </x-adminlte-select>
                     <x-adminlte-textarea name="address" placeholder="Address" fgroup-class="col-md-3"
-                         label="Address" required >{{ old('address') }}</x-adminlte-textarea>
+                         label="Address" >{{ old('address') }}</x-adminlte-textarea>
                     <span id="protocol" class="col-md-3">
 
                     </span>
