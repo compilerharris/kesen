@@ -358,7 +358,7 @@ $config = [
 
         const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
         const rate = parseFloat(document.querySelector(`input[name="rate[${index}]"]`).value) || 0;
-        const amount = Math.round(unit * rate);
+        const amount = unit * rate;
         document.querySelector(`input[name="amount[${index}]"]`).value = amount;
     }
 
@@ -369,7 +369,7 @@ $config = [
 
         const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
         const rate = parseFloat(document.querySelector(`input[name="back_translation[${index}]"]`).value) || 0;
-        const amount = Math.round(unit * rate);
+        const amount = unit * rate;
         document.querySelector(`input[name="amount_bt[${index}]"]`).value = amount;
     }
 
@@ -426,7 +426,7 @@ $config = [
         if( $(`input[name="v_one[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
             const rate = eType == 'minimum'?parseFloat(rates[index].v1_minimum_rate):parseFloat(rates[index].v1_rate) || 0;
-            const amount = Math.round(unit * rate);
+            const amount = unit * rate;
             document.querySelector(`input[name="verification[${index}]"]`).value = amount;
         }else{
             document.querySelector(`input[name="verification[${index}]"]`).value = 0;
@@ -439,7 +439,7 @@ $config = [
         if( $(`input[name="v_two[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
             const rate = eType == 'minimum'?parseFloat(rates[index].v2_minimum_rate):parseFloat(rates[index].v2_rate) || 0;
-            const amount = Math.round(unit * rate);
+            const amount = unit * rate;
             document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = amount;
         }else{
             document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
@@ -452,7 +452,7 @@ $config = [
         if( $(`input[name="bt[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
             const rate = eType == 'minimum'?parseFloat(rates[index].bt_minimum_rate):parseFloat(rates[index].bt_rate) || 0;
-            const amount = Math.round(unit * rate);
+            const amount = unit * rate;
             document.querySelector(`input[name="back_translation[${index}]"]`).value = rate;
             document.querySelector(`input[name="amount_bt[${index}]"]`).value = amount;
         }else{
@@ -467,7 +467,7 @@ $config = [
         if( $(`input[name="btv[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
             const rate = eType == 'minimum'?parseFloat(rates[index].btv_minimum_rate):parseFloat(rates[index].btv_rate) || 0;
-            const amount = Math.round(unit * rate);
+            const amount = unit * rate;
             document.querySelector(`input[name="verification_2[${index}]"]`).value = amount;
         }else{
             document.querySelector(`input[name="verification_2[${index}]"]`).value = 0;

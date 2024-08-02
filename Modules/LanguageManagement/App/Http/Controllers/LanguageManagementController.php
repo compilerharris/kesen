@@ -26,7 +26,7 @@ class LanguageManagementController extends Controller
     public function create()
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         return view('languagemanagement::create');
     }
@@ -65,7 +65,7 @@ class LanguageManagementController extends Controller
     public function edit($id)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $language=Language::find($id);
         return view('languagemanagement::edit')->with('language',$language);
@@ -98,7 +98,7 @@ class LanguageManagementController extends Controller
 
     public function disableEnableClient($id){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $language=Language::find($id);
         $language->status=$language->status==1?0:1;

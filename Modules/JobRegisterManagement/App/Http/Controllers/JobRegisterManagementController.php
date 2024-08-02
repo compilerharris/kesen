@@ -37,7 +37,7 @@ class JobRegisterManagementController extends Controller
     public function create()
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         return view('jobregistermanagement::create');
     }
@@ -183,7 +183,7 @@ class JobRegisterManagementController extends Controller
     public function edit($id)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $jobRegister = JobRegister::findOrFail($id);
         $jobRegister->languages = $jobRegister->estimate_details->pluck('lang')->toArray();

@@ -109,7 +109,7 @@ class EstimateManagementController extends Controller
     public function create()
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         return view('estimatemanagement::create');
     }
@@ -206,12 +206,14 @@ class EstimateManagementController extends Controller
 
     public function changeStatus($id,$status){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.');
         }
         if(in_array($status,[0,1,2])){
             $estimate = Estimates::where('id', $id)->first();
             $estimate->status = $status;
             $estimate->save();
+            $statusMsg = $status == 0? "Pending" : ($status == 1? "Approved" : "Rejected");
+            Session::flash('message', 'Estimate '. $estimate->estimate_no .' status changed to '.$statusMsg.'.');
             return redirect('/estimate-management');    
         }   
     }
@@ -221,7 +223,7 @@ class EstimateManagementController extends Controller
     public function edit($id)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $estimate = Estimates::find($id);
         $contact_persons = ContactPerson::where('client_id', $estimate->client_id)->get();
@@ -347,7 +349,7 @@ class EstimateManagementController extends Controller
     public function deleteDetail(Request $request)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $details = EstimatesDetails::where('document_name', $request->document_name)->where('unit', $request->unit)->where('estimate_id', $request->estimate_id)->where('rate', $request->rate)->get();
         if (count($details) == 0) {

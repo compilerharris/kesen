@@ -181,30 +181,30 @@
                     @endphp
             
                     <tr>
-                        <td>{{ $detail->document_name }}</td>
-                        <td class="nowrap">{{ $detail->unit != 1 ? $detail->unit : 'Min'}}</td>
+                        <td style="width: 100px;">{{ $detail->document_name }}</td>
+                        <td>{{ $detail->unit != 1 ? $detail->unit : 'Min'}}</td>
                         <td class="nowrap">{{ $detail->rate }}</td>
-                        <td class="nowrap">{{ $detail->unit * $detail->rate }}</td>
+                        <td>{{ $detail->unit * $detail->rate }}</td>
                         @if ($estimate->details[0]->verification)
-                            <td class="nowrap">{{ $detail->verification }}</td>
+                            <td>{{ $detail->verification }}</td>
                         @endif
                         @if ($estimate->details[0]->two_way_qc_t)
-                            <td class="nowrap">{{ $detail->two_way_qc_t }}</td>
+                            <td>{{ $detail->two_way_qc_t }}</td>
                         @endif
                         @if ($estimate->details[0]->layout_charges)
-                            <td class="nowrap">{{ "Rs. ".$detail->layout_charges."x".$detail->layout_pages."pgs = Rs. ".($detail->layout_pages*$detail->layout_charges)."/-" }}</td>
+                            <td style="width: 50px;">{{ "Rs. ".$detail->layout_charges."x".$detail->layout_pages."pgs = Rs. ".($detail->layout_pages*$detail->layout_charges)."/-" }}</td>
                         @endif
                         @if ($estimate->details[0]->back_translation)
-                            <td class="nowrap">{{ $detail->back_translation*$detail->unit }}</td>
+                            <td>{{ $detail->back_translation*$detail->unit }}</td>
                         @endif
                         @if ($estimate->details[0]->verification_2)
-                            <td class="nowrap">{{ $detail->verification_2 }}</td>
+                            <td>{{ $detail->verification_2 }}</td>
                         @endif
                         @if ($estimate->details[0]->two_way_qc_bt)
-                            <td class="nowrap">{{ $detail->two_way_qc_bt }}</td>
+                            <td>{{ $detail->two_way_qc_bt }}</td>
                         @endif
                         @if ($estimate->details[0]->layout_charges_2)
-                            <td class="nowrap">{{ "Rs. ".$detail->layout_charges_2."x".$detail->bt_layout_pages."pgs = Rs. ".($detail->bt_layout_pages*$detail->layout_charges_2)."/-" }}</td>
+                            <td style="width: 50px;">{{ "Rs. ".$detail->layout_charges_2."x".$detail->bt_layout_pages."pgs = Rs. ".($detail->bt_layout_pages*$detail->layout_charges_2)."/-" }}</td>
                         @endif
                         @php 
                             $languages_ids=Modules\EstimateManagement\App\Models\EstimatesDetails::where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->get('lang')->pluck('lang')
@@ -237,11 +237,11 @@
                 @php $net_total=($sub_total-($estimate->discount)) @endphp
                 <tr class="financials">
                     <td colspan="{{ $counter - 1 }}">GST (18%)</td>
-                    <td colspan="1" style="font-size: 6px;">{{ number_format(ceil((($net_total / 100) * 18)),2) }}</td>
+                    <td colspan="1" style="font-size: 6px;">{{ number_format(($net_total / 100) * 18 ,2) }}</td>
                 </tr>
                 <tr class="financials" style="background-color: #f0f0f0">
                     <td colspan="{{ $counter - 1 }}" style="font-size: 14px;font-weight: bold">Net Total</td>
-                    <td colspan="1" style="font-size: 6px;font-weight: bold">{{ number_format(ceil(($net_total + ($net_total / 100) * 18)),2) }}
+                    <td colspan="1" style="font-size: 6px;font-weight: bold">{{ number_format(($net_total + ($net_total / 100) * 18),2) }}
                     </td>
                 </tr>
             </tbody>

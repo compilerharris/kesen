@@ -47,7 +47,7 @@ class JobCardManagementController extends Controller
     public function create($job_id,$estimate_detail_id){
         
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $job_register = JobRegister::where('id',$job_id)->first();
        
@@ -74,7 +74,7 @@ class JobCardManagementController extends Controller
     public function store(Request $request)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $request->validate([
             't_unit.*'=> 'required|string|max:255',
@@ -157,7 +157,7 @@ class JobCardManagementController extends Controller
     public function update(Request $request, $job_register_id_and_doc_mame)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $request->validate([
             't_writer.*' => 'required|string|max:255',
@@ -227,7 +227,7 @@ class JobCardManagementController extends Controller
 
     public function edit($id){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $jobCard = JobCard::find($id);
         if(!$jobCard){
@@ -254,7 +254,7 @@ class JobCardManagementController extends Controller
 
     public function manage($job_id){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $job_register = JobRegister::where('id',$job_id)->first();
         if($job_register!=null){
@@ -294,7 +294,7 @@ class JobCardManagementController extends Controller
 
     public function billForm($job_id){
         if(!(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $job=JobRegister::where('id',$job_id)->first();
         if($job->bill_date!=null){
@@ -305,7 +305,7 @@ class JobCardManagementController extends Controller
 
     public function addBill(Request $request,$job_id){
         if(!(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $job=JobRegister::where('id',$job_id)->first();
         $job->bill_date=$request->bill_date;
@@ -322,7 +322,7 @@ class JobCardManagementController extends Controller
 
     public function updateBill(Request $request,$job_id){
         if(!(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $job=JobRegister::where('id',$job_id)->first();
         $job->bill_date=$request->bill_date;
@@ -339,7 +339,7 @@ class JobCardManagementController extends Controller
 
     public function changeStatus($id,$status){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
-            return redirect()->back()->with('alert', 'You are not autherized person.');
+            return redirect()->back()->with('alert', 'You are not autherized.');
         }
         if(in_array($status,[0,1,2])){
             $job_register = JobRegister::where('id', $id)->first();

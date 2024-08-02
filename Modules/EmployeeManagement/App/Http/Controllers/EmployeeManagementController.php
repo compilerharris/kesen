@@ -25,7 +25,7 @@ class EmployeeManagementController extends Controller
     public function create()
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         return view('employeemanagement::create');
     }
@@ -83,7 +83,7 @@ class EmployeeManagementController extends Controller
     public function edit($id)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $user=User::find($id);
         return view('employeemanagement::edit')->with('user',$user);
@@ -136,7 +136,7 @@ class EmployeeManagementController extends Controller
 
     public function disableEnableClient($id){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back(); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $client=User::find($id);
         if($client->status==1){
