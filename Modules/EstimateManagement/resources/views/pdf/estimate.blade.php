@@ -261,8 +261,8 @@
                 <p style="display: inline">For </p>
                 <p style="font-weight: bold;display: inline">{{ $estimate->client->client_metric->name }}</p>
             </div>
-            @if (in_array(Auth::user()->code,['RIT','SHA','ANG']))
-                <img src="{{ public_path('img/'.Auth::user()->code.'.png') }}" alt="{{Auth::user()->name}}" width="120px" style="margin-left:20px;margin-bottom:-10px;">
+            @if (file_exists(public_path('img/'.\App\Models\User::where('id',$estimate->created_by)->first()->code.'.png')))
+                <img src="{{ public_path('img/'.\App\Models\User::where('id',$estimate->created_by)->first()->code.'.png') }}" alt="{{Auth::user()->name}}" width="120px" style="margin-left:20px;margin-bottom:-10px;">
             @else
                 <div style="height: 50px;"></div>
             @endif
