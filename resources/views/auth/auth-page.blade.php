@@ -25,7 +25,7 @@
             background-color: #dbf5ff;
         }
         .custom-body-left{
-            width: 60%;
+            width: 55%;
             /* background-image: url('{{ asset('img/login-bg.svg') }}'); */
             background-size: cover;
             background-position: center;
@@ -37,7 +37,7 @@
             background-color: #17a2b8;
         }
         .custom-body-right{
-            width: 40%;
+            width: 45%;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -45,6 +45,10 @@
         .custom-body-right button{
             background-color: #17a2b8;
             border-color: #17a2b8;
+        }
+        .custom-body-right button:hover{
+            background-color: #4ccfec;
+            border-color: #4ccfec;
         }
         .custom-body-right .card-success{
             /* background-color: #17a2b8; */
