@@ -42,6 +42,14 @@
             display: flex;
             align-items: center;
         }
+        .custom-body-right button{
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+        .custom-body-right .card-success{
+            /* background-color: #17a2b8; */
+            border-color: #17a2b8;
+        }
         @media only screen and (max-width: 1080px) {
             .custom-body-left {
                 display: none;
@@ -53,7 +61,7 @@
     </style>
     <div class="custom-main">
         <div class="custom-body-left">
-            <img src="{{asset('img/login-left-bg.png')}}" style="width: 100%" alt="">
+            <img src="{{asset('img/login-left-bg.png')}}" style="width: 100%" alt="Kesen Logo">
             <!-- <img src="{{asset('img/login-bg.png')}}" alt=""> -->
         </div>
         <div class="custom-body-right">
