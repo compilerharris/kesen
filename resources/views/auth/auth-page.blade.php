@@ -22,10 +22,10 @@
             height: 100%;
             width: 100%;
             align-items: center;
-            background-color:white;
+            background-color: #dbf5ff;
         }
         .custom-body-left{
-            width: 50%;
+            width: 60%;
             /* background-image: url('{{ asset('img/login-bg.svg') }}'); */
             background-size: cover;
             background-position: center;
@@ -37,7 +37,7 @@
             background-color: #17a2b8;
         }
         .custom-body-right{
-            width: 50%;
+            width: 40%;
             height: 100vh;
             display: flex;
             align-items: center;
