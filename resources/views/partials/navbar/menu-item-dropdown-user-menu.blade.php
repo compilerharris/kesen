@@ -33,10 +33,10 @@
                     <i class="fas fa-envelope mr-2" style="margin: 0; padding: 0;"></i>
                     <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
                     @if(Auth::user()->hasRole('Accounts'))
-                        Job no: {{ $notification->sr_no }} of {{ $notification->estimate->client->name }} is ready for billing
+                        Job no: {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is ready for billing
                     @endif    
                     @if(Auth::user()->hasRole('Admin'))
-                        Deadline for Job no {{ $notification->sr_no }} of {{ $notification->estimate->client->name }} is at {{ $notification->date }}
+                        Deadline for Job no {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is at {{ $notification->date }}
                     @endif
                     </span>
                     
@@ -65,7 +65,7 @@
                 <p class="dropdown-item" style="display: flex; align-items: center;">
                     <i class="fas fa-envelope mr-2" style="margin: 0; padding: 0;"></i>
                     <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
-                        Job no: {{ $notification->sr_no }} of {{ $notification->estimate->client->name }} is ready for billing
+                        Job no: {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is ready for billing
                    
                     </span>
                     
