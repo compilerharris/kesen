@@ -34,7 +34,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #28a745;
+            background-color: #17a2b8;
         }
         .custom-body-right{
             width: 50%;
