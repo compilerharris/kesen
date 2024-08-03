@@ -114,7 +114,7 @@ return [
         'mode' => 'fullscreen',
         'img' => [
             'path' => '/img/transparent-logo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'alt' => 'Kesne Preloader Image',
             'effect' => 'animation__shake',
             'width' => 80,
             'height' => 33,
