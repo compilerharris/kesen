@@ -31,4 +31,8 @@ class NoEstimates extends Model
       return $this->hasMany(EstimatesDetails::class,'estimate_id');
    }
 
+   public function metrics(){   
+      return $this->belongsTo(Metrix::class,'metrix','id');
+   }
+
 }
