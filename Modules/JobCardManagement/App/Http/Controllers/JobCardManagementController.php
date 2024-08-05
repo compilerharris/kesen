@@ -338,7 +338,7 @@ class JobCardManagementController extends Controller
         return redirect(route('jobcardmanagement.index'))->with('message', 'Bill Date updated successfully.');
     }
 
-    public function changeStatus($id,$status){
+    public function changeStatus(Request $request,$id,$status){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
             return redirect()->back()->with('alert', 'You are not autherized.');
         }
@@ -373,6 +373,7 @@ class JobCardManagementController extends Controller
                 }
             }
             $job_register->status = $status;
+            $job_register->cancel_reason = $request->reason??null;
             $job_register->updated_at = Carbon::now();
             $job_register->save();
             if($status==1){
@@ -380,9 +381,9 @@ class JobCardManagementController extends Controller
                 foreach ($recipients as $recipient) {
                     Mail::to($recipient)->send(new JobCompletedBilling($job_register));
                 }
-                return redirect('/job-card-management')->with('message', 'Job completed and email has been sent.');    
+                return redirect('/job-card-management')->with('message', 'Job completed and email has been sent.');
             }
-            return redirect('/job-card-management')->with('message', 'Status changed successfully.');
+            return redirect()->back()->with('message', 'Status changed successfully.');
         }
         return back()->with('alert', 'Can not find job status.');
     }

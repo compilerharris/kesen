@@ -207,7 +207,7 @@
                     </div>
                 </div>
                 
-                <button type="button" class="btn btn-primary mt-2" id="add-item">Add Partition</button>
+                <button type="button" class="btn btn-primary mt-2" id="add-item">Add Part Copy</button>
                 <br>
                 <x-adminlte-button label="Submit" type="submit" class="mt-3" />
 

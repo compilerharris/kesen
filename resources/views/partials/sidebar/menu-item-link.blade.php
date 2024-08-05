@@ -1,5 +1,5 @@
 @if(Auth::user()->hasRole('Project Manager'))
-    @php $access_menu=['Job Card Management'] @endphp
+    @php $access_menu=['Job Card Management','Reports','Writer Workload'] @endphp
 @elseif(Auth::user()->hasRole('Quality Control Executive'))
     @php $access_menu=[] @endphp
 @else

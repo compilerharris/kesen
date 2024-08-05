@@ -8,18 +8,20 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            margin: 10px;
-            padding: 10px;
+            padding: 8px;
             line-height: 0.80;
             border: 2px solid #000;
         }
 
-        header,
+        header{
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
         footer {
             margin-top: 5px;
             width: 100%;
             text-align: center;
-            margin-bottom: 20px;
         }
 
         table {
@@ -31,7 +33,7 @@
 
         td {
             border: 1px solid black;
-            padding: 8px;
+            padding: 5px;
             font-size: 8px;
             line-height: 1;
             text-align: center;
@@ -41,11 +43,11 @@
 
         th {
             border: 1px solid black;
-            padding: 8px;
+            padding: 5px;
             font-size: 8px;
             line-height: 1;
             text-align: center;
-            font-size: 8px;
+            font-size: 10px;
             background-color: #f2f2f2;
         }
 
@@ -81,6 +83,9 @@
         p {
             line-height: .5;
         }
+        .mainTable > td{
+            font-size: 11px;
+        }
     </style>
 </head>
 @php $sub_total=0; @endphp
@@ -99,7 +104,7 @@
     </header>
 
     <section>
-        <div style="margin-top:5px;">
+        <div>
             <div class="right-align" style="font-weight: bold;">F/P/7.2.3</div>
         </div>
         <div style="margin-top: 10px;margin-bottom: 10px">
@@ -116,7 +121,7 @@
         <p style="font-size: 12px">{{ $estimate->client->address }}<span style="font-size: 12px;float:right;width:300px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</span></p>
         <!-- <p style="font-size: 12px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</p>
         <p style="font-size: 12px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</p> -->
-        <p style="font-size:12px;line-height:1.6"><strong>Languages Required:</strong>
+        <p style="font-size:12px;line-height:0.5"><strong>Languages Required:</strong>
             @php $languages_list=[] @endphp
             @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
                 @php $languages_list[]=Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()->name??'' @endphp
@@ -142,7 +147,7 @@
                     @endif
                     @if ($estimate->details[0]->layout_charges)
                         @php $counter=$counter+1; @endphp
-                        <th>Layout Charges</th>
+                        <th class="nowrap">Layout Charges</th>
                     @endif
                     @if ($estimate->details[0]->back_translation)
                         @php $counter=$counter+1; @endphp
@@ -158,9 +163,9 @@
                     @endif
                     @if ($estimate->details[0]->layout_charges_2)
                         @php $counter=$counter+1; @endphp
-                        <th>Layout Charges</th>
+                        <th class="nowrap">Layout Charges</th>
                     @endif
-                    <th style="width: 20%">Lang</th>
+                    <th style="width: 20%">Languages</th>
                     <th style="width: 20%">Amount (Rs.)</th>
                 </tr>
             </thead>
@@ -178,7 +183,7 @@
                         $uniqueDetails->push($combination);
                     @endphp
             
-                    <tr>
+                    <tr class="mainTable">
                         <td style="width: 100px;">{{ $detail->document_name }}</td>
                         <td>{{ $detail->unit != 1 ? $detail->unit : 'Min'}}</td>
                         <td class="nowrap">{{ $detail->rate }}</td>
@@ -220,26 +225,26 @@
             
                 <tr class="financials" style="background-color: #f0f0f0">
                     <td colspan="{{ $counter - 1 }}" style="font-size: 12px;font-weight: bold">Sub Total</td>
-                    <td colspan="1" style="font-size: 8px;font-weight: bold">{{ number_format($sub_total,2) }}</td>
+                    <td colspan="1" style="font-size: 9px;font-weight: bold">{{ number_format($sub_total,2) }}</td>
                 </tr>
                 @if ($estimate->discount)
                     <tr class="financials">
-                        <td colspan="{{ $counter - 1 }}">Discount</td>
-                        <td colspan="1" style="font-size: 6px;">{{ number_format($estimate->discount,2) ?? 0 }}</td>
+                        <td colspan="{{ $counter - 1 }}" style="font-size: 10px;">Discount</td>
+                        <td colspan="1" style="font-size: 8px;">{{ number_format($estimate->discount,2) ?? 0 }}</td>
                     </tr>
                     <tr class="financials" style="background-color: #f0f0f0">
-                        <td colspan="{{ $counter - 1 }}"><strong>Gross Total</strong></td>
-                        <td colspan="1" style="font-size: 6px;"><strong>{{  number_format(($sub_total - $estimate->discount),2) }}</strong></td>
+                        <td colspan="{{ $counter - 1 }}" style="font-size: 12px;"><strong>Gross Total</strong></td>
+                        <td colspan="1" style="font-size: 9px;"><strong>{{  number_format(($sub_total - $estimate->discount),2) }}</strong></td>
                     </tr>
                 @endif
                 @php $net_total=($sub_total-($estimate->discount)) @endphp
                 <tr class="financials">
                     <td colspan="{{ $counter - 1 }}">GST (18%)</td>
-                    <td colspan="1" style="font-size: 6px;">{{ number_format(($net_total / 100) * 18 ,2) }}</td>
+                    <td colspan="1" style="font-size: 8px;">{{ number_format(($net_total / 100) * 18 ,2) }}</td>
                 </tr>
                 <tr class="financials" style="background-color: #f0f0f0">
                     <td colspan="{{ $counter - 1 }}" style="font-size: 14px;font-weight: bold">Net Total</td>
-                    <td colspan="1" style="font-size: 8px;font-weight: bold">{{ number_format(($net_total + ($net_total / 100) * 18),2) }}
+                    <td colspan="1" style="font-size: 9px;font-weight: bold">{{ number_format(($net_total + ($net_total / 100) * 18),2) }}
                     </td>
                 </tr>
             </tbody>
@@ -247,15 +252,15 @@
     </section>
 
     <footer style="text-align: left;float: left;">
-        <p style="font-weight: bold;font-size: 12px">SAC Code: 998395</p>
-        <p style="font-weight: bold;font-size: 12px">PS: TAXES AS APPLICABLE FROM TIME TO TIME.</p>
-        <p style="font-size: 12px">The Job will be completed as per TAT provided.</p>
-        <p style="font-size: 12px">Kindly let us have your approval.</p>
-        <p style="font-size: 12px"> In case you need any clarification, please do not hesitate to call the undersigned.
+        <p style="font-weight: bold;font-size: 8px; line-height: 0.2;">SAC Code: 998395</p>
+        <p style="font-weight: bold;font-size: 8px; line-height: 0.2;">PS: TAXES AS APPLICABLE FROM TIME TO TIME.</p>
+        <p style="font-size: 8px; line-height: 0.2;">The Job will be completed as per TAT provided.</p>
+        <p style="font-size: 8px; line-height: 0.2;">Kindly let us have your approval.</p>
+        <p style="font-size: 8px; line-height: 0.2;"> In case you need any clarification, please do not hesitate to call the undersigned.
         </p>
-        <p style="font-size: 12px">Assuring you of our best services at all times.</p><br>
+        <p style="font-size: 8px; line-height: 0.2;">Assuring you of our best services at all times.</p>
         <div>
-            <div style="display: block">
+            <div style="display: block;font-size: 12px;">
                 <p style="display: inline">For </p>
                 <p style="font-weight: bold;display: inline">{{ $estimate->client->client_metric->name }}</p>
             </div>
@@ -264,12 +269,11 @@
             @else
                 <div style="height: 50px;"></div>
             @endif
-            <div>
+            <div style="margin-bottom: 5px;">
                 _________________________
             </div>
-            <br>
             <div >
-                <span style="display: inline;padding-left: 35px;"><strong>Authorized Signatory</strong></span>
+                <span style="display: inline;padding-left: 35px;font-size: 12px"><strong>Authorized Signatory</strong></span>
                 <span style="float: right;font-weight: bold;font-size: 12px;display: inline">Help us to Serve you Better
                 </span>
             </div>

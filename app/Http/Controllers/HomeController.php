@@ -105,6 +105,9 @@ class HomeController extends Controller
     }
 
     public function writerWorkloadRedirect(){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
+        }
         return view('reports.writer-workload-report');
     }
 
