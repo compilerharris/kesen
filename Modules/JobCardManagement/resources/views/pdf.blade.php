@@ -209,7 +209,7 @@
                             <td>{{ $card->t_cr ? \Carbon\Carbon::parse($card->t_cr)->format('j M Y') : '' }}</td>
                             <td>{{ $card->t_cnc }}</td>
                             <td>{{ $card->t_dv }}</td>
-                            <td>{{ $card->t_fqc!=null? App\Models\User::where('id', $card->t_fqc)->first()->name??'':''  }}</td>
+                            <td>{{ $card->t_fqc!=null? App\Models\User::where('id', $card->t_fqc)->first()->name??$card->t_fqc:''  }}</td>
                             <td>{{ $card->t_sentdate ? \Carbon\Carbon::parse($card->t_sentdate)->format('j M Y') : '' }}</td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
@@ -251,7 +251,7 @@
                             <td>{{ $card->bt_cr ? \Carbon\Carbon::parse($card->bt_cr)->format('j M Y') : '' }}</td>
                             <td>{{ $card->bt_cnc }}</td>
                             <td>{{ $card->bt_dv }}</td>
-                            <td>{{ $card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->name??'':''  }}</td>
+                            <td>{{ $card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->name??$card->bt_fqc:''  }}</td>
                             <td>{{ $card->bt_sentdate ? \Carbon\Carbon::parse($card->bt_sentdate)->format('j M Y') : '' }}</td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>

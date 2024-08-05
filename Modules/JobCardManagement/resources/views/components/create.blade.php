@@ -3,19 +3,14 @@
 @section('plugins.Select2', true)
 
 @php
-    $users = App\Models\User::where('email', '!=', 'developer@kesen.com')
-        ->where('id', '!=', Auth()->user()->id)
-        ->get();
     $writer_ids=Modules\WriterManagement\App\Models\WriterLanguageMap::where('language_id',$estimate_detail->language->id)->pluck('writer_id')->toArray();
     $writers = Modules\WriterManagement\App\Models\Writer::where('status', 1)->whereIn('id', $writer_ids)->get();
-@endphp
-@php
     $qce_users = App\Models\User::where('email', '!=', 'developer@kesen.com')
         ->where('id', '!=', Auth()->user()->id)
         ->whereHas('roles', function ($query) {
             $query->where('name', 'Quality Control Executive');
         })
-        ->where('language_id',$estimate_detail->language->id)
+        ->where('language_id', 'LIKE', '%'.$estimate_detail->language->id.'%')
         ->get();
 @endphp
 @php
@@ -127,8 +122,9 @@
                                                     value="{{ old('t_fqc[0]') }}" label="T F/QC">
                                                     <option value="">T F/QC</option>
                                                     @foreach ($qce_users as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                        @if($user->code == 'PAD') <option value="{{ $user->id }}">{{ $user->name }}</option> @endif
                                                     @endforeach
+                                                    <option value="NA">NA</option>
                                                 </x-adminlte-select>
                                                 <x-adminlte-input name="t_sentdate[0]" placeholder="Sent Date"
                                                     fgroup-class="col-md-2" type='date'
@@ -183,8 +179,9 @@
                                                     value="{{ old('bt_fqc[0]') }}" label="BT F/QC">
                                                     <option value="">BT F/QC</option>
                                                     @foreach ($qce_users as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                        @if($user->code == 'PAD') <option value="{{ $user->id }}">{{ $user->name }}</option> @endif
                                                     @endforeach
+                                                    <option value="NA">NA</option>
                                                 </x-adminlte-select>
                                                 <x-adminlte-input name="bt_sentdate[0]" placeholder="Sent Date"
                                                     fgroup-class="col-md-2" type='date'

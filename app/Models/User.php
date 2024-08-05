@@ -59,9 +59,9 @@ class User extends Authenticatable
         $this->attributes['plain_password'] = Crypt::encryptString($value);
     }
 
-    public function getLanguageIdAttribute($value){
-        return Language::where('id',$value)->first()->name;
-    }
+    // public function getLanguageIdAttribute($value){
+    //     return implode(', ',Language::whereIn('id', explode(',',$value))->pluck('name')->toArray());
+    // }
     
     protected function getCreatedByAttribute($value){
         return User::where('id',$value)->first()->name;

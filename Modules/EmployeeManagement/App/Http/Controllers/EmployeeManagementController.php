@@ -47,9 +47,6 @@ class EmployeeManagementController extends Controller
             'role' => 'required',
             'language' => 'required',
         ]);
-
-        
-
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
@@ -59,7 +56,7 @@ class EmployeeManagementController extends Controller
         $user->landline = $request->landline;
         $user->password = bcrypt($request->password);
         $user->plain_password = $request->password;
-        $user->language_id = $request->language;
+        $user->language_id = implode(',',$request->language);
         $user->created_by = Auth()->user()->id;
         $user->updated_by = Auth()->user()->id;
         $user->status = 1;
@@ -105,7 +102,6 @@ class EmployeeManagementController extends Controller
             'role' => 'required',
             'language' => 'required',
         ]);
-
         $user = User::find($id);
         $user->name = $request->name;
         $user->email = $request->email;
@@ -118,7 +114,7 @@ class EmployeeManagementController extends Controller
             $user->password = bcrypt($request->password);
          
         }
-        $user->language_id = $request->language;
+        $user->language_id = implode(',',$request->language);
         $user->updated_by = Auth()->user()->id;
         $user->save();
         $user->syncRoles($request->role);

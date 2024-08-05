@@ -1,12 +1,22 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\preloaderHelper')
+@section('plugins.Select2', true)
 @php $languages=Modules\LanguageManagement\App\Models\Language::where('status',1)->get(); @endphp
 @php $roles=Spatie\Permission\Models\Role::where('name','!=','Developer')->get(); @endphp
 @if ($layoutHelper->isLayoutTopnavEnabled())
-    @php($def_container_class = 'container')
+    @php($def_container_class = 'container')@endphp
 @else
-    @php($def_container_class = 'container-fluid')
+    @php($def_container_class = 'container-fluid')@endphp
 @endif
+@php
+    $config = [
+        'title' => 'Select Language',
+        'liveSearch' => true,
+        'placeholder' => 'Search ...',
+        'showTick' => true,
+        'actionsBox' => true,
+    ];
+@endphp
 {{-- Default Content Wrapper --}}
 <div class="{{ $layoutHelper->makeContentWrapperClasses() }}">
 
@@ -57,13 +67,12 @@
                     <x-adminlte-textarea name="address" placeholder="Address" fgroup-class="col-md-3"
                         value="{{ old('address') }}" label="Address" />
 
-                    <x-adminlte-select name="language" fgroup-class="col-md-3" required value="{{ old('language') }}"
-                        label="Language">
+                    <x-adminlte-select2 name="language[]" :config="$config" id="language" fgroup-class="col-md-3" required value="{{ old('language') }}" label="Language" multiple>
                         <option value="">Select Language</option>
                         @foreach ($languages as $language)
                             <option value="{{ $language->id }}">{{ $language->name }}</option>
                         @endforeach
-                    </x-adminlte-select>
+                    </x-adminlte-select2>
 
                     <x-adminlte-select name="role" fgroup-class="col-md-3" required value="{{ old('role') }}"
                         label="Role">

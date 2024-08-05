@@ -37,8 +37,7 @@
 
         {{-- Email field --}}
         <div class="input-group mb-3">
-            <input type="text" name="code" class="form-control @error('code') is-invalid @enderror"
-                   value="{{ old('code') }}" placeholder="Employee Code" autofocus>
+            <input type="text" name="code" class="form-control @error('code') is-invalid  @enderror" value="{{ old('code') }}" placeholder="Employee Code" style="text-transform: uppercase" autofocus>
 
             <div class="input-group-append">
                 <div class="input-group-text">

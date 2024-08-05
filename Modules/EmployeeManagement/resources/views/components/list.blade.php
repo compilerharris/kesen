@@ -10,6 +10,9 @@
             'label' => 'Employee Name',
         ],
         [
+            'label' => 'Employee Code',
+        ],
+        [
             'label' => 'Employee Role',
         ],
         [
@@ -26,11 +29,7 @@
             'label' => 'Address',
         ],
         [
-            'label' => 'Created By',
-        ],
-
-        [
-            'label' => 'Updated By',
+            'label' => 'Languages',
         ],
 
         [
@@ -101,27 +100,23 @@
                                 with-buttons>
                                 @foreach ($employee as $index => $row)
                                     <tr>
-        
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $row->name }}</td>
+                                        <td>{{ $row->code }}</td>
                                         <td>
-                                            @foreach($row->roles as $role)
-                                                {{ $role->name }}
-                                            @endforeach
+                                            {{ $row->roles[0]->name }}
                                         </td>
                                         <td>{{ $row->email }}</td>
                                         <td>{{ $row->phone }}</td>
-                                        {{-- <td>{{ $row->landline }}</td> --}}
                                         <td>{{ $row->address }}</td>
-                                        <td>{{ $row->created_by }}</td>
-                                        <td>{{ $row->updated_by }}</td>
+                                        <td>{{ implode(', ', Modules\LanguageManagement\App\Models\Language::whereIn('id', explode(',', $row->language_id))->pluck('name')->toArray()) }}</td>
                                         <td>
                                             @if(!Auth::user()->hasRole('Accounts'))
                                                 <a href="{{ route('employeemanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">Edit</a>
                                             @endif
                                             {{-- <a href="{{route('employeemanagement.show', $row->id)}}"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                        View
-                                    </button></a> --}}
+                                                View
+                                            </button></a> --}}
                                             </button>
                                             @if(!Auth::user()->hasRole('Accounts'))
                                             @if ($row->status == 1)

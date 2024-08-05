@@ -13,15 +13,7 @@
         ->whereHas('roles', function ($query) {
             $query->where('name', 'Quality Control Executive');
         })
-        ->where('language_id',$estimate_detail->language->id)
-        ->get();
-@endphp
-@php
-    $users = App\Models\User::where('email', '!=', 'developer@kesen.com')
-        ->where('id', '!=', Auth()->user()->id)
-        ->whereHas('roles', function ($query) {
-            $query->where('name', 'Quality Control Executive');
-        })
+        ->where('language_id', 'LIKE', '%'.$estimate_detail->language->id.'%')
         ->get();
 @endphp
 @php
@@ -91,12 +83,12 @@
                                                 <x-adminlte-input name="t_unit[{{ $index }}]" placeholder="Unit"
                                                 fgroup-class="col-md-2" type='text'
                                                 value="{{ old('t_unit.' . $index, $job->t_unit) }}"
-                                                label="T Unit" required/>
+                                                label="T Unit*" required/>
                                               
                                                 <x-adminlte-select name="t_writer[{{ $index }}]"
                                                     fgroup-class="col-md-2" required
                                                     value="{{ old('t_writer.' . $index, $job->t_writer_code) }}"
-                                                    label="T Writer">
+                                                    label="T Writer*">
                                                     <option value="">Select Writer</option>
                                                     @foreach ($writers as $writer)
                                                         <option value="{{ $writer->id }}"
@@ -107,7 +99,7 @@
                                                
                                                 <x-adminlte-input name="t_pd[{{ $index }}]" placeholder="T PD"
                                                     fgroup-class="col-md-2" type='date'
-                                                    value="{{ old('t_pd.' . $index, $job->t_pd) }}" label="T PD"  required/>
+                                                    value="{{ old('t_pd.' . $index, $job->t_pd) }}" label="T PD*"  required/>
                                                 <x-adminlte-input name="t_cr[{{ $index }}]" placeholder="T CR"
                                                     fgroup-class="col-md-2" type='date'
                                                     value="{{ old('t_cr.' . $index, $job->t_cr) }}" label="T CR"/>
@@ -151,8 +143,11 @@
                                                     value="{{ old('t_fqc.' . $index, $job->t_fqc) }}" label="T F/QC">
                                                     <option value="">T F/QC</option>
                                                     @foreach ($qce_users as $tfc_user)
-                                                        <option value="{{ $tfc_user->id }}" {{ $job->t_fqc == $tfc_user->id ? 'selected' : '' }}>{{ $tfc_user->name }}</option>
+                                                        @if ($tfc_user->code == "PAD")
+                                                            <option value="{{ $tfc_user->id }}" {{ $job->t_fqc == $tfc_user->id ? 'selected' : '' }}>{{ $tfc_user->name }}</option>
+                                                        @endif
                                                     @endforeach
+                                                    <option value="NA">NA</option>
                                                 </x-adminlte-select>
                                                 <x-adminlte-input name="t_sentdate[{{ $index }}]"
                                                     placeholder="T Sent Date" fgroup-class="col-md-2" type='date'
@@ -221,8 +216,11 @@
                                                     value="{{ old('bt_fqc.' . $index, $job->bt_fqc) }}" label="BT F/QC">
                                                     <option value="">BT F/QC</option>
                                                     @foreach ($qce_users as $btfc_user)
-                                                        <option value="{{ $btfc_user->id }}" {{ $job->bt_fqc == $btfc_user->id ? 'selected' : '' }}>{{ $btfc_user->name }}</option>
+                                                        @if ($tfc_user->code == "PAD")
+                                                            <option value="{{ $btfc_user->id }}" {{ $job->bt_fqc == $btfc_user->id ? 'selected' : '' }}>{{ $btfc_user->name }}</option>
+                                                        @endif
                                                     @endforeach
+                                                    <option value="NA">NA</option>
                                                 </x-adminlte-select>
                                                 <x-adminlte-input name="bt_sentdate[{{ $index }}]"
                                                     placeholder="Sent Date" fgroup-class="col-md-2" type='date'
