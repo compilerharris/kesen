@@ -1,7 +1,10 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\preloaderHelper')
 @section('plugins.Select2', true)
-@php $languages=Modules\LanguageManagement\App\Models\Language::where('status',1)->get(); @endphp
+@php 
+    $languages = Modules\LanguageManagement\App\Models\Language::where('status', 1)->get();
+    $languages = sort_languages($languages);
+@endphp
 @php $estimates=Modules\EstimateManagement\App\Models\Estimates::where('status',1)->orderBy('created_at','desc')->get(); @endphp
 @php $clients=Modules\ClientManagement\App\Models\Client::where('status',1)->get(); @endphp
 @php $contact_persons=Modules\ClientManagement\App\Models\ContactPerson::where('status',1)->get(); @endphp

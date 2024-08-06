@@ -122,10 +122,15 @@
         <!-- <p style="font-size: 12px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</p>
         <p style="font-size: 12px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</p> -->
         <p style="font-size:12px;line-height:0.5"><strong>Languages Required:</strong>
-            @php $languages_list=[] @endphp
+            @php $languages_list=collect(); @endphp
             @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
-                @php $languages_list[]=Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()->name??'' @endphp
+                @php 
+                    $languages_list->push(Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()??'');
+                @endphp
             @endforeach
+            @php 
+                $languages_list = sort_languages($languages_list)->pluck('name')->toArray();
+            @endphp
             
             {{ implode(', ',array_filter(array_unique($languages_list), function($value) {return !is_null($value) && $value !== '';})) }}
         </p>

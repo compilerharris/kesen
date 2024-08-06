@@ -12,7 +12,10 @@
 @endphp
 
 @php $clients=Modules\ClientManagement\App\Models\Client::where('status',1)->get(); @endphp
-@php $languages=Modules\LanguageManagement\App\Models\Language::where('status',1)->get(); @endphp
+@php 
+    $languages = Modules\LanguageManagement\App\Models\Language::where('status', 1)->get();
+    $languages = sort_languages($languages);
+@endphp
 @if ($layoutHelper->isLayoutTopnavEnabled())
     @php($def_container_class = 'container')
 @else

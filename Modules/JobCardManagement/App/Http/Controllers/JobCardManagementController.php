@@ -66,6 +66,8 @@ class JobCardManagementController extends Controller
         ->where('id', $job_id)
         ->first();
 
+        $job->jobCard = sort_languages_job_card_preview($job->jobCard);
+
         // return view('jobcardmanagement::pdf', compact('job'));
         $pdf = FacadePdf::loadView('jobcardmanagement::pdf', compact('job'));
 
@@ -288,7 +290,9 @@ class JobCardManagementController extends Controller
         foreach($estimate_detail as $estimate){
             $estimate->partCopyCreateCount = count(JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate->id)->get());
             $estimate->partCopyCreate = $estimate->partCopyCreateCount>0?'Yes':'No';
+            $estimate->language = Language::where('id', $estimate->lang)->first();
         }
+        $estimate_detail = sort_languages_job_card_lang_list($estimate_detail);
         if($estimate_detail!=null){
             return view('jobcardmanagement::manage',compact('job_id','estimate_detail','list_estimate_language','job_register'));
         }
