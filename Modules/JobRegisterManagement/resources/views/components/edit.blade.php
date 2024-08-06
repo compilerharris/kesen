@@ -34,6 +34,7 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
         'placeholder' => 'Search Estimate Number...',
         'showTick' => true,
         'actionsBox' => true,
+        'closeOnSelect' => false
     ];
 @endphp
 @php
@@ -94,7 +95,7 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                     {{-- no estimate start --}}
                     <div class="form-group col-md-2 no_estimate">
                         <label for="lang">Language</label>
-                        <x-adminlte-select2 name="lang[]" disabled value="{{implode(',',$jobRegister->languagesNames)}}" id="lang" multiple>
+                        <x-adminlte-select2 name="lang[]" disabled value="{{implode(',',$jobRegister->languagesNames)}}" id="lang" multiple :config="['closeOnSelect' => false]">
                             @foreach ($languages as $language)
                                 <option value="{{ $language->id }}" {{ in_array($language->id, $jobRegister->languages) ? 'selected' : '' }}>
                                     {{ $language->name }}</option>

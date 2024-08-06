@@ -66,7 +66,7 @@
                     <x-adminlte-textarea name="address" placeholder="Address" fgroup-class="col-md-3"
                         label="Address">{{ $user->address }}</x-adminlte-textarea>
 
-                    <x-adminlte-select2 name="language[]" :config="$config" id="language" fgroup-class="col-md-3" required label="Language" multiple>
+                    <x-adminlte-select2 name="language[]" :config="$config" id="language" fgroup-class="col-md-3" required label="Language" multiple :config="['closeOnSelect' => false]">
                         <option value="">Select Language</option>
                         @foreach ($languages as $language)
                             <option value="{{ $language->id }}" {{in_array($language->id,explode(',',$user->language_id))? " selected":"" }}>

@@ -69,7 +69,7 @@
                         value="{{ old('btv_minimum_rate') }}" label="BTV Minimum Rate" />
                     <div class="form-group col-md-2">
                         <label for="lang">Language</label>
-                        <x-adminlte-select2 name="lang[]" id="lang" multiple>
+                        <x-adminlte-select2 name="lang[]" id="lang" multiple :config="['closeOnSelect' => false]">
                             @foreach ($languages as $language)
                                 <option value="{{ $language->id }}">{{ $language->name }}</option>
                             @endforeach
