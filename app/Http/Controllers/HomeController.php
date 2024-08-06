@@ -115,7 +115,7 @@ class HomeController extends Controller
         $writerWorkload = JobCard::where('t_writer_code',$request->writer)->orWhere('bt_writer_code',$request->writer)->get();
         $writerWorkload = $writerWorkload->sortBy('job_no');
         $writerWorkload->writerId = $request->writer;
-        // dd("testing...");
+        // return view('reports.pdf.pdf-writer-workload', compact('writerWorkload'));
         $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload'));
         return $pdf->stream();
     }

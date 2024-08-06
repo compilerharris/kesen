@@ -343,8 +343,8 @@
                         @endif
                     @endforeach
                 @else
-                    @foreach (\Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $job->estimate_id)->where('document_name',$job->estimate_document_id)->get() as $card) 
-                        <tr>
+                    @foreach (\Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $job->estimate_id)->where('document_name',$job->estimate_document_id)->get() as $index=>$card) 
+                        <tr style="{{ $index != 0 && !in_array($card->id, $estimate_details_list) ? 'border-top: 3px solid;' : '' }}">
                             @if (!in_array($card->id, $estimate_details_list))
                                 @php $estimate_details_list[] = $card->id; @endphp
                                 <td rowspan="4" style="font-size: 8pt"><b>{{ $card->language->name }}</b></td>
