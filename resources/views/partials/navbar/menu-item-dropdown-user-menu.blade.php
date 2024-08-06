@@ -17,7 +17,7 @@
 
 
     {{-- User menu dropdown --}}
-    @if(isset($job_registers_near_deadline)&&(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('Developer')))
+    @if(isset($job_registers_near_deadline)&&(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('Developer')||Auth::user()->hasRole('Project Manager')  ))
     <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
             <i class="far fa-bell"></i>
@@ -34,9 +34,9 @@
                     <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
                     @if(Auth::user()->hasRole('Accounts'))
                         Job no: {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is ready for billing
-                    @endif    
-                    @if(Auth::user()->hasRole('Admin'))
-                        Deadline for Job no {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is at {{ $notification->date }}
+                    @endif
+                    @if(Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Project Manager'))
+                        Deadline for Job no {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is at {{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->format('j M Y') : "today"}}.
                     @endif
                     </span>
                     
