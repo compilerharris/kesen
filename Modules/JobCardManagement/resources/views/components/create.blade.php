@@ -12,6 +12,12 @@
         })
         ->where('language_id', 'LIKE', '%'.$estimate_detail->language->id.'%')
         ->get();
+    $managers = App\Models\User::where('email', '!=', 'developer@kesen.com')
+        ->where('id', '!=', Auth()->user()->id)
+        ->whereHas('roles', function ($query) {
+            $query->where('name', 'Project Manager');
+        })
+        ->get();
 @endphp
 @php
     $config = [
@@ -89,10 +95,15 @@
                                                         <option value="C">C</option>
                                                         <option value="NC">NC</option>
                                                 </x-adminlte-select>
-                                                <x-adminlte-input name="t_dv[0]" placeholder="DV" fgroup-class="col-md-2"
-                                                    value="{{ old('t_dv[0]') }}" label="T DV" />
+                                                <x-adminlte-select name="t_dv[0]" fgroup-class="col-md-2" 
+                                                    value="{{ old('t_dv[0]') }}" label="T DV">
+                                                    <option value="">Select T DV</option>
+                                                    @foreach ($managers as $user)
+                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                    @endforeach
+                                                </x-adminlte-select>
                                                 
-                                                    <x-adminlte-input name="v_unit[0]" placeholder="V1 Unit" fgroup-class="col-md-2"
+                                                <x-adminlte-input name="v_unit[0]" placeholder="V1 Unit" fgroup-class="col-md-2"
                                                     value="{{ old('v_unit[0]') }}" label="V1 Unit" />
                                                 <x-adminlte-select name="v_employee_code[0]" fgroup-class="col-md-2" 
                                                     value="{{ old('v_employee_code[0]') }}" label="V1 Employee">
@@ -105,9 +116,9 @@
                                                     value="{{ old('v_pd[0]') }}" label="V1 PD" type='date' />
                                                 <x-adminlte-input name="v_cr[0]" placeholder="V1 CR" fgroup-class="col-md-2"
                                                     value="{{ old('v_cr[0]') }}" label="V1 CR" type='date' />
-                                                    <x-adminlte-input name="v2_unit[0]" placeholder="V2 Unit" fgroup-class="col-md-2"
+                                                <x-adminlte-input name="v2_unit[0]" placeholder="V2 Unit" fgroup-class="col-md-2"
                                                     value="{{ old('v2_unit[0]') }}" label="V2 Unit" />
-                                                    <x-adminlte-select name="v2_employee_code[0]" fgroup-class="col-md-2" 
+                                                <x-adminlte-select name="v2_employee_code[0]" fgroup-class="col-md-2" 
                                                     value="{{ old('v2_employee_code[0]') }}" label="V2 Employee">
                                                     <option value="">Select Employee</option>
                                                     @foreach ($qce_users as $user)
@@ -159,10 +170,14 @@
                                                     <option value="C">C</option>
                                                     <option value="NC">NC</option>
                                                 </x-adminlte-select>
-                                                <x-adminlte-input name="bt_dv[0]" placeholder="DV" fgroup-class="col-md-2"
-                                                    value="{{ old('bt_dv[0]') }}" label="BT DV" />
-                                                
-                                                    <x-adminlte-input name="btv_unit[0]" placeholder="BTV Unit" fgroup-class="col-md-2"
+                                                <x-adminlte-select name="bt_dv[0]" fgroup-class="col-md-2" 
+                                                    value="{{ old('bt_dv[0]') }}" label="BT DV">
+                                                    <option value="">Select BT DV</option>
+                                                    @foreach ($managers as $user)
+                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                    @endforeach
+                                                </x-adminlte-select>
+                                                <x-adminlte-input name="btv_unit[0]" placeholder="BTV Unit" fgroup-class="col-md-2"
                                                     value="{{ old('btv_unit[0]') }}" label="BTV Unit" />
                                                 <x-adminlte-select name="btv_employee_code[0]" fgroup-class="col-md-2" 
                                                     value="{{ old('btv_employee_code[0]') }}" label="BTV Employee">
