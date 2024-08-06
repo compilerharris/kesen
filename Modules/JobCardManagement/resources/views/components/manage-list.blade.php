@@ -236,7 +236,7 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $detail->document_name }}</td>
                                             <td>{{ Modules\LanguageManagement\App\Models\Language::where('id', $detail->lang)->first()->name }}</td>
-                                            <td class="{{ $detail->partCopyCreate=='Yes'?'bg-success':'' }}">{{ $detail->partCopyCreate == 'Yes'?'Yes - '.$detail->partCopyCreateCount.' Copy':"" }}</td>
+                                            <td class="{{ $detail->partCopyCreate=='Yes'?'fw-bold':'' }}">{{ $detail->partCopyCreate == 'Yes'?'Yes - '.$detail->partCopyCreateCount.' Copy':"" }}</td>
                                             <td width="250px">
                                                 @if(!Auth::user()->hasRole('Accounts'))
                                                     <a href="{{route('jobcardmanagement.manage.add', ['job_id' => $job_register->id, 'estimate_detail_id' => $detail->id])}}" class="btn btn-info btn-sm mb-2">{{ $detail->partCopyCreate=='Yes'?'Edit':'Add' }}</a>
