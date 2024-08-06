@@ -235,7 +235,7 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $detail->document_name }}</td>
-                                            <td>{{ Modules\LanguageManagement\App\Models\Language::where('id', $detail->lang)->first()->name }}</td>
+                                            <td>{{ $detail->language->name }}</td>
                                             <td class="{{ $detail->partCopyCreate=='Yes'?'fw-bold':'' }}">{{ $detail->partCopyCreate == 'Yes'?'Yes - '.$detail->partCopyCreateCount.' Copy':"" }}</td>
                                             <td width="250px">
                                                 @if(!Auth::user()->hasRole('Accounts'))

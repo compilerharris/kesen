@@ -133,7 +133,7 @@
                                                     value="{{ old('t_fqc[0]') }}" label="T F/QC">
                                                     <option value="">T F/QC</option>
                                                     @foreach ($qce_users as $user)
-                                                        @if($user->code == 'PAD') <option value="{{ $user->id }}">{{ $user->name }}</option> @endif
+                                                        @if($user->code == 'PAN') <option value="{{ $user->id }}">{{ $user->name }}</option> @endif
                                                     @endforeach
                                                     <option value="NA">NA</option>
                                                 </x-adminlte-select>
@@ -194,7 +194,7 @@
                                                     value="{{ old('bt_fqc[0]') }}" label="BT F/QC">
                                                     <option value="">BT F/QC</option>
                                                     @foreach ($qce_users as $user)
-                                                        @if($user->code == 'PAD') <option value="{{ $user->id }}">{{ $user->name }}</option> @endif
+                                                        @if($user->code == 'PAN') <option value="{{ $user->id }}">{{ $user->name }}</option> @endif
                                                     @endforeach
                                                     <option value="NA">NA</option>
                                                 </x-adminlte-select>
