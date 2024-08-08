@@ -116,7 +116,7 @@
                                                     <a href="{{ route('jobregistermanagement.sendFeedBackForm', $row->id) }}" class="btn btn-info btn-sm mb-2">Email Feedback Letter</a>
                                                 @endif
                                             @endif
-                                            @if($row->status == 0 || $row->status == 1)
+                                            @if($row->status == 0)
                                                 <button data-id="{{ $row->id }}" id="cancelJob" data-toggle="modal" data-target="#cancelModal" class="btn btn-danger btn-sm mb-2">Cancel</button>
                                             @elseif($row->status == 1 || $row->status == 2)
                                                 <a href="{{route('jobcardmanagement.status', [$row->id,0])}}" class="btn btn-info btn-sm mb-2">In Progress</a>

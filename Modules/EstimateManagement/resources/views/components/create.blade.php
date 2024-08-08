@@ -65,10 +65,8 @@ $config = [
                     </x-adminlte-select2>
                     <x-adminlte-input name="headline" placeholder="Headline" fgroup-class="col-md-2" type="text"
                         value="{{ old('headline') }}" required label="Headline" />
-
                     <x-adminlte-select2 name="currency" placeholder="Currency" fgroup-class="col-md-2" required
                         value="{{ old('currency') }}" label="Currency">
-
                         <option value="">Select Currency</option>
                         {!! getCurrencyDropDown() !!}
                     </x-adminlte-select2>
@@ -95,9 +93,6 @@ $config = [
                         <option value="1">Approve</option>
                         <option value="2">Reject</option>
                     </x-adminlte-select2>
-
-
-
                 </div>
                 <div id="repeater">
                     <div class="repeater-item mt-3">
@@ -129,66 +124,79 @@ $config = [
                                     <!-- document -->
                                     <x-adminlte-input name="document_name[0]" placeholder="Document Name" fgroup-class="col-md-4"  type="text" value="{{ old('document_name[0]') }}" required label="Document Name" />
                                     <!-- unit -->
-                                    <x-adminlte-input name="unit[0]" placeholder="Unit" fgroup-class="col-md-2" type="number"  value="{{ old('unit[0]') }}" required label="Unit/Words" onkeyup="calculateAmount(this)"  min="1" />
-                                    <!-- t rate -->
+                                    {{-- onkeyup="calculateAmount(this)" --}}
+                                    <x-adminlte-input name="unit[0]" placeholder="Unit" fgroup-class="col-md-1" type="number"  value="{{ old('unit[0]') }}" required label="Unit/Words"  min="1" />
+                                    <!-- t -->
+                                    <div class="form-group col-md-1">
+                                        <label>Translation</label>
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" checked class="custom-control-input" name="t[0]" id="t[0]" disabled>
+                                            <label class="custom-control-label" for="t[0]"></label>
+                                        </div>
+                                    </div>
+                                    {{-- <!-- t rate -->
                                     <x-adminlte-input name="rate[0]" placeholder="T Rate" fgroup-class="col-md-1"  type="tell" value="{{ old('rate[0]') }}" required label="T Rate"  onkeyup="calculateAmount(this)" />
                                     <!-- t amount -->
                                     <x-adminlte-input name="amount[0]" placeholder="T Amount" fgroup-class="col-md-1"
-                                        type="text" value="{{ old('amount[0]') }}" label="T Amount" readonly />
+                                        type="text" value="{{ old('amount[0]') }}" label="T Amount" readonly /> --}}
                                     <!-- v1 -->
+                                    {{--  onchange="calculateV1Amount(this)" --}}
                                     <div class="form-group col-md-1">
                                         <label>V1</label>
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" onchange="calculateV1Amount(this)" class="custom-control-input" name="v_one[0]" id="v_one[0]">
+                                            <input type="checkbox" class="custom-control-input" name="v_one[0]" id="v_one[0]">
                                             <label class="custom-control-label" for="v_one[0]"></label>
                                         </div>
                                     </div>
-                                    <!-- v1 amount -->
-                                    <x-adminlte-input name="verification[0]" placeholder="V1 Amount" fgroup-class="col-md-1"  type="text" value="{{ old('verification[0]') }}" label="V1 Amount" readonly/>
+                                    {{-- <!-- v1 amount -->
+                                    <x-adminlte-input name="verification[0]" placeholder="V1 Amount" fgroup-class="col-md-1"  type="text" value="{{ old('verification[0]') }}" label="V1 Amount" readonly/> --}}
                                     <!-- v2 -->
+                                    {{-- onchange="calculateV2Amount(this)" --}}
                                     <div class="form-group col-md-1">
                                         <label>V2</label>
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" onchange="calculateV2Amount(this)" class="custom-control-input" name="v_two[0]" id="v_two[0]">
+                                            <input type="checkbox" class="custom-control-input" name="v_two[0]" id="v_two[0]">
                                             <label class="custom-control-label" for="v_two[0]"></label>
                                         </div>
                                     </div>
-                                    <!-- v2 amount -->
-                                    <x-adminlte-input name="two_way_qc_t[0]" placeholder="V2 Amount" fgroup-class="col-md-1"  type="text" value="{{ old('two_way_qc_t[0]') }}" label="V2 Amount" readonly/>
-                                    <!-- layout pages -->
-                                    <x-adminlte-input name="layout_pages[0]" placeholder="T Layout Pages" fgroup-class="col-md-2"
-                                        type="text" value="{{ old('layout_pages[0]') }}" label="T Layout Pages" />
-                                    <!-- Layout Charges -->
-                                    <x-adminlte-input name="layout_charges[0]" placeholder="T Layout"  fgroup-class="col-md-1" type="text" value="{{ old('layout_charges[0]') }}" label="T Layout" />
+                                    {{-- <!-- v2 amount -->
+                                    <x-adminlte-input name="two_way_qc_t[0]" placeholder="V2 Amount" fgroup-class="col-md-1"  type="text" value="{{ old('two_way_qc_t[0]') }}" label="V2 Amount" readonly/> --}}
                                     <!-- bt -->
+                                    {{-- onchange="calculateBtAmount(this)" --}}
                                     <div class="form-group col-md-1">
                                         <label>BT</label>
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" onchange="calculateBtAmount(this)" class="custom-control-input" name="bt[0]" id="bt[0]">
+                                            <input type="checkbox" class="custom-control-input" name="bt[0]" id="bt[0]">
                                             <label class="custom-control-label" for="bt[0]"></label>
                                         </div>
                                     </div>
-                                    <!-- bt rate -->
+                                    {{-- <!-- bt rate -->
                                     <x-adminlte-input name="back_translation[0]" placeholder="BT Rate" fgroup-class="col-md-1" type="text" value="{{ old('back_translation[0]') }}" label="BT Rate" onkeyup="calculateAmount_2(this)" />
                                     <!-- bt amount -->
-                                    <x-adminlte-input name="amount_bt[0]" placeholder="BT Amount" fgroup-class="col-md-1" type="text" value="{{ old('amount_bt[0]') }}" label="BT Amount" readonly />
+                                    <x-adminlte-input name="amount_bt[0]" placeholder="BT Amount" fgroup-class="col-md-1" type="text" value="{{ old('amount_bt[0]') }}" label="BT Amount" readonly /> --}}
                                     <!-- btv -->
+                                    {{-- onchange="calculateBtvAmount(this)" --}}
                                     <div class="form-group col-md-1">
                                         <label>BTV</label>
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" onchange="calculateBtvAmount(this)" class="custom-control-input" name="btv[0]" id="btv[0]">
+                                            <input type="checkbox" class="custom-control-input" name="btv[0]" id="btv[0]">
                                             <label class="custom-control-label" for="btv[0]"></label>
                                         </div>
                                     </div>
-                                    <!-- btv amount -->
+                                    <!-- layout pages -->
+                                    <x-adminlte-input name="layout_pages[0]" placeholder="Pages" fgroup-class="col-md-1"
+                                        type="text" value="{{ old('layout_pages[0]') }}" label="Layout Pages" />
+                                    <!-- Layout Charges -->
+                                    <x-adminlte-input name="layout_charges[0]" placeholder="Charges"  fgroup-class="col-md-1" type="text" value="{{ old('layout_charges[0]') }}" label="Charge" />
+                                    {{-- <!-- btv amount -->
                                     <x-adminlte-input name="verification_2[0]" placeholder="BTV Amount"  fgroup-class="col-md-1" type="text" value="{{ old('verification_2[0]') }}" label="BTV Amount" readonly/>
                                     <!-- bt layout pages -->
-                                    <x-adminlte-input name="bt_layout_pages[0]" placeholder="BT Layout Pages"  fgroup-class="col-md-2" type="text" value="{{ old('bt_layout_pages[0]') }}" label="BT Layout  Pages" />
+                                    <x-adminlte-input name="bt_layout_pages[0]" placeholder="BT Layout Pages"  fgroup-class="col-md-2" type="text" value="{{ old('bt_layout_pages[0]') }}" label="BT Layout  Pages" /> --}}
                                     {{-- <x-adminlte-input name="two_way_qc_bt[0]" placeholder="Two Way QC BT"
                                         fgroup-class="col-md-3" type="text" value="{{ old('two_way_qc_bt[0]') }}"
                                         label="Two Way QC BT" /> --}}
-                                    <!-- BT layout charges -->
-                                    <x-adminlte-input name="layout_charges_second[0]" placeholder="BT Layout" fgroup-class="col-md-2" type="text" value="{{ old('layout_charges_second[0]') }}"  label="BT Layout" />
+                                    {{-- <!-- BT layout charges -->
+                                    <x-adminlte-input name="layout_charges_second[0]" placeholder="BT Layout" fgroup-class="col-md-2" type="text" value="{{ old('layout_charges_second[0]') }}"  label="BT Layout" /> --}}
                                     <!-- <x-adminlte-select  name="lang_0[]" fgroup-class="col-md-3" required
                                         label="Language" multiple label="Language">
                                         <option value="">Select Language</option>
@@ -247,7 +255,23 @@ $config = [
             newItem.find('input, checkbox').each(function() {
                 $(this).prop('checked', false);
                 let name = $(this).attr('name');
-                if (name === 'verification_2[0]') {
+                if (name === 't[0]') {
+                    $(this).prop('checked', true);
+                    $(this).attr("disabled", true);
+                    name = name.replace(/\d+/, itemIndex);
+                }else if (name === 'v_one[0]') {
+                    $(this).prop('checked', false);
+                    name = 'v_one[' + itemIndex + ']';
+                }else if (name === 'v_two[0]') {
+                    $(this).prop('checked', false);
+                    name = 'v_two[' + itemIndex + ']';
+                }else if (name === 'bt[0]') {
+                    $(this).prop('checked', false);
+                    name = 'bt[' + itemIndex + ']';
+                }else if (name === 'btv[0]') {
+                    $(this).prop('checked', false);
+                    name = 'btv[' + itemIndex + ']';
+                }else if (name === 'verification_2[0]') {
                     $(this).val('');
                     name = 'verification_2[' + itemIndex + ']';
                 } else if (name === "lang_0[]") {
@@ -393,9 +417,9 @@ $config = [
         } else {
             $('#requiredMsg_'+index).show();
         }
-        if (selected.length == 1) {
-            getRates(index);    
-        }
+        // if (selected.length == 1) {
+        //     getRates(index);    
+        // }
     }
 
     function getRates(index){

@@ -448,65 +448,78 @@
                                             <!-- document -->
                                             <x-adminlte-input name="document_name[{{ $index }}]" placeholder="Document Name"  fgroup-class="col-md-4" type="text" value="{{ old('document_name.' . $index,  $detail->document_name) }}" required label="Document Name" readonly />
                                             <!-- unit -->
-                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-2" type="text" value="{{ old('unit.' . $index, $detail->unit) }}" required label="Unit" onkeyup="calculateAmount(this)" min="1" />
-                                            <!-- t rate -->
+                                            {{-- onkeyup="calculateAmount(this)" --}}
+                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-1" type="text" value="{{ old('unit.' . $index, $detail->unit) }}" required label="Unit" min="1" />
+                                            {{-- <!-- t rate -->
                                             <x-adminlte-input name="rate[{{ $index }}]" placeholder="T Rate" fgroup-class="col-md-1" type="text" value="{{ old('rate.' . $index, $detail->rate) }}" required label="T Rate" onkeyup="calculateAmount(this)" />
                                             <!-- t amount -->
-                                            <x-adminlte-input name="amount[{{ $index }}]" placeholder="T Amount" fgroup-class="col-md-1" type="text" value="{{ ceil($detail->unit * $detail->rate) }}"  label="T Amount" readonly />
+                                            <x-adminlte-input name="amount[{{ $index }}]" placeholder="T Amount" fgroup-class="col-md-1" type="text" value="{{ ceil($detail->unit * $detail->rate) }}"  label="T Amount" readonly /> --}}
+                                            <!-- t -->
+                                            <div class="form-group col-md-1">
+                                                <label>Translation</label>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" name="t[{{$index}}]" id="t[{{$index}}]" checked disabled>
+                                                    <label class="custom-control-label" for="t[{{$index}}]"></label>
+                                                </div>
+                                            </div>
                                             <!-- v1 -->
+                                             {{-- onchange="calculateV1Amount(this)" --}}
                                             <div class="form-group col-md-1">
                                                 <label>V1</label>
                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" onchange="calculateV1Amount(this)"  class="custom-control-input" name="v_one[{{$index}}]" id="v_one[{{$index}}]" {{$detail->v1?"checked":""}}>
+                                                    <input type="checkbox" class="custom-control-input" name="v_one[{{$index}}]" id="v_one[{{$index}}]" {{$detail->v1?"checked":""}}>
                                                     <label class="custom-control-label" for="v_one[{{$index}}]"></label>
                                                 </div>
                                             </div>
-                                            <!-- v1 amount -->
-                                            <x-adminlte-input name="verification[{{ $index }}]" placeholder="V1 Amount"  fgroup-class="col-md-1" type="text" value="{{ old('verification.' . $index,  $detail->verification) }}" label="V1 Amount" readonly />
+                                            {{-- <!-- v1 amount -->
+                                            <x-adminlte-input name="verification[{{ $index }}]" placeholder="V1 Amount"  fgroup-class="col-md-1" type="text" value="{{ old('verification.' . $index,  $detail->verification) }}" label="V1 Amount" readonly /> --}}
                                             <!-- v2 -->
+                                            {{-- onchange="calculateV2Amount(this)" --}}
                                             <div class="form-group col-md-1">
                                                 <label>V2</label>
                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" onchange="calculateV2Amount(this)"  class="custom-control-input" name="v_two[{{$index}}]" id="v_two[{{$index}}]" {{$detail->v2?"checked":""}}>
+                                                    <input type="checkbox" class="custom-control-input" name="v_two[{{$index}}]" id="v_two[{{$index}}]" {{$detail->v2?"checked":""}}>
                                                     <label class="custom-control-label" for="v_two[{{$index}}]"></label>
                                                 </div>
                                             </div>
-                                            <!-- v2 amount -->
-                                            <x-adminlte-input name="two_way_qc_t[{{ $index }}]" placeholder="V2 Amount"  fgroup-class="col-md-1" type="text" value="{{ old('two_way_qc_t.' . $index,  $detail->two_way_qc_t) }}" label="V2 Amount" readonly/>
-                                            <!-- layout pages -->
-                                            <x-adminlte-input name="layout_pages[{{ $index }}]" placeholder="T Layout Pages"  fgroup-class="col-md-2" type="text" value="{{ old('layout_pages.' . $index,  $detail->layout_pages) }}" label="T Layout Pages" />
-                                            <!-- layout charges -->
-                                            <x-adminlte-input name="layout_charges[{{ $index }}]" placeholder="T Layout"  fgroup-class="col-md-1" type="text" value="{{ old('layout_charges.' . $index,  $detail->layout_charges) }}" label="T Layout" />
+                                            {{-- <!-- v2 amount -->
+                                            <x-adminlte-input name="two_way_qc_t[{{ $index }}]" placeholder="V2 Amount"  fgroup-class="col-md-1" type="text" value="{{ old('two_way_qc_t.' . $index,  $detail->two_way_qc_t) }}" label="V2 Amount" readonly/> --}}
                                             <!-- bt -->
+                                            {{-- onchange="calculateBtAmount(this)" --}}
                                             <div class="form-group col-md-1">
                                                 <label>BT</label>
                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" onchange="calculateBtAmount(this)" class="custom-control-input" name="bt[{{$index}}]" id="bt[{{$index}}]"{{$detail->bt?"checked":""}}>
+                                                    <input type="checkbox" class="custom-control-input" name="bt[{{$index}}]" id="bt[{{$index}}]"{{$detail->bt?"checked":""}}>
                                                     <label class="custom-control-label" for="bt[{{$index}}]"></label>
                                                 </div>
                                             </div>
-                                            <!-- bt rate -->
+                                            {{-- <!-- bt rate -->
                                             <x-adminlte-input name="back_translation[{{ $index }}]" placeholder="BT Rate" fgroup-class="col-md-1" type="text" value="{{ old('back_translation.' . $index,  $detail->back_translation) }}" label="BT Rate" onkeyup="calculateAmount_2(this)" />
                                             <!-- bt amount -->
-                                            <x-adminlte-input name="amount_bt[{{ $index }}]" placeholder="BT Amount" fgroup-class="col-md-1" type="text" value="{{ $detail->unit *  $detail->back_translation }}" label="BT Amount" readonly />
+                                            <x-adminlte-input name="amount_bt[{{ $index }}]" placeholder="BT Amount" fgroup-class="col-md-1" type="text" value="{{ $detail->unit *  $detail->back_translation }}" label="BT Amount" readonly /> --}}
                                             <!-- BTV -->
+                                            {{-- onchange="calculateBtvAmount(this)" --}}
                                             <div class="form-group col-md-1">
                                                 <label>BTV</label>
                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" onchange="calculateBtvAmount(this)"  class="custom-control-input" name="btv[{{$index}}]" id="btv[{{$index}}]" {{$detail->btv?"checked":""}}>
+                                                    <input type="checkbox" class="custom-control-input" name="btv[{{$index}}]" id="btv[{{$index}}]" {{$detail->btv?"checked":""}}>
                                                     <label class="custom-control-label" for="btv[{{$index}}]"></label>
                                                 </div>
                                             </div>
-                                            <!-- btv -->
-                                            <x-adminlte-input name="verification_2[{{ $index }}]" placeholder="BTV Amount" fgroup-class="col-md-1" type="text" value="{{ old('verification_2.' .  $index, $detail->verification_2) }}" label="BTV Amount" readonly/>
+                                            <!-- layout pages -->
+                                            <x-adminlte-input name="layout_pages[{{ $index }}]" placeholder="Layout Pages"  fgroup-class="col-md-1" type="text" value="{{ old('layout_pages.' . $index,  $detail->layout_pages) }}" label="Layout Pages" />
+                                            <!-- layout charges -->
+                                            <x-adminlte-input name="layout_charges[{{ $index }}]" placeholder="Charges"  fgroup-class="col-md-1" type="text" value="{{ old('layout_charges.' . $index,  $detail->layout_charges) }}" label="Charges" />
+                                            {{-- <!-- btv -->
+                                            <x-adminlte-input name="verification_2[{{ $index }}]" placeholder="BTV Amount" fgroup-class="col-md-1" type="text" value="{{ old('verification_2.' .  $index, $detail->verification_2) }}" label="BTV Amount" readonly/> --}}
                                             {{-- <x-adminlte-input name="two_way_qc_bt[{{ $index }}]"
                                                 placeholder="Two Way QC BT" fgroup-class="col-md-3" type="text"
                                                 value="{{ old('two_way_qc_bt.' . $index, $detail->two_way_qc_bt) }}"
                                                 label="Two Way QC BT" /> --}}
-                                            <!-- bt layout pages -->
+                                            {{-- <!-- bt layout pages -->
                                             <x-adminlte-input name="bt_layout_pages[{{ $index }}]" placeholder="BT Layout Pages"  fgroup-class="col-md-2" type="text" value="{{ old('bt_layout_pages.' . $index,  $detail->bt_layout_pages) }}" label="BT Layout Pages" />
                                             <!-- bt layout charges -->
-                                            <x-adminlte-input name="layout_charges_second[{{ $index }}]" placeholder="BT Layout Charges" fgroup-class="col-md-2" type="text" value="{{ old('layout_charges_second.' . $index, $detail->layout_charges_2) }}" label="BT Layout Charges" />
+                                            <x-adminlte-input name="layout_charges_second[{{ $index }}]" placeholder="BT Layout Charges" fgroup-class="col-md-2" type="text" value="{{ old('layout_charges_second.' . $index, $detail->layout_charges_2) }}" label="BT Layout Charges" /> --}}
                                             <!-- <x-adminlte-select name="lang_{{ $index }}[]"
                                                 fgroup-class="col-md-3" label="Language" multiple for="lang_{{ $index }}" >
                                                 <option value="">Select Language</option>
@@ -544,7 +557,7 @@
 <script type="text/javascript">
     var rates = [];
     $(document).ready(function() {  
-        loadRatecard(@json($estimate_details));
+        {{-- loadRatecard(@json($estimate_details)); --}}
         addLangScripts();  
         let tempIndex = {{ count($estimate_details) }};
         let itemIndex = {{ count($estimate_details) }};
@@ -555,7 +568,23 @@
             newItem.find('input, checkbox').each(function() {
                 $(this).prop('checked', false);
                 let name = $(this).attr('name');
-                if(name != "lang_0[]"){
+                if (name === 't[0]') {
+                    $(this).prop('checked', true);
+                    $(this).attr("disabled", true);
+                    name = name.replace(/\d+/, itemIndex);
+                }else if (name === 'v_one[0]') {
+                    $(this).prop('checked', false);
+                    name = 'v_one[' + itemIndex + ']';
+                }else if (name === 'v_two[0]') {
+                    $(this).prop('checked', false);
+                    name = 'v_two[' + itemIndex + ']';
+                }else if (name === 'bt[0]') {
+                    $(this).prop('checked', false);
+                    name = 'bt[' + itemIndex + ']';
+                }else if (name === 'btv[0]') {
+                    $(this).prop('checked', false);
+                    name = 'btv[' + itemIndex + ']';
+                }else if(name != "lang_0[]"){
                     $(this).val('');
                 }
                 if (name == "button") {
@@ -686,10 +715,10 @@
         });
 
         // Initial script for amount calculation
-        $('input[name^="unit"], input[name^="rate"], input[name^="back_translation"]').on('input', function() {
-            calculateAmount(this);
-            calculateAmount_2(this);
-        });
+        // $('input[name^="unit"], input[name^="rate"], input[name^="back_translation"]').on('input', function() {
+        //     calculateAmount(this);
+        //     calculateAmount_2(this);
+        // });
     });
 
     function calculateAmount(input) {
@@ -732,9 +761,9 @@
         } else {
             $('#requiredMsg_'+index).show();
         }
-        if (selected.length == 1) {
-            getRates(index);    
-        }
+        // if (selected.length == 1) {
+        //     getRates(index);    
+        // }
     }
 
     function getRates(index){
