@@ -49,9 +49,9 @@
                     </x-adminlte-select2>
                     <x-adminlte-input name="t_rate" placeholder="T Rate" fgroup-class="col-md-2" required
                         value="{{ old('t_rate') }}" label="T Rate" />
-                    <x-adminlte-input name="v1_rate" placeholder="V1 Rate" fgroup-class="col-md-2" required
+                    <x-adminlte-input name="v1_rate" placeholder="V1 Rate" fgroup-class="col-md-1" required
                         value="{{ old('v1_rate') }}" label="V1 Rate" />
-                    <x-adminlte-input name="v2_rate" placeholder="V2 Rate" fgroup-class="col-md-2" required
+                    <x-adminlte-input name="v2_rate" placeholder="V2 Rate" fgroup-class="col-md-1" required
                         value="{{ old('v2_rate') }}" label="V2 Rate" />
                     <x-adminlte-input name="bt_rate" placeholder="BT Rate" fgroup-class="col-md-2" required
                         value="{{ old('bt_rate') }}" label="BT Rate" />
@@ -67,6 +67,8 @@
                         value="{{ old('bt_minimum_rate') }}" label="BT Minimum Rate" />
                     <x-adminlte-input name="btv_minimum_rate" placeholder="BTV Minimum Rate" fgroup-class="col-md-2" required
                         value="{{ old('btv_minimum_rate') }}" label="BTV Minimum Rate" />
+                    <x-adminlte-input name="customize_rate" placeholder="Customize Rate" fgroup-class="col-md-2" required
+                        value="{{ old('customize_rate') }}" label="Customize Rate" />
                     <div class="form-group col-md-2">
                         <label for="lang">Language</label>
                         <x-adminlte-select2 name="lang[]" id="lang" multiple :config="['closeOnSelect' => false]">

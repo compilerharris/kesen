@@ -252,6 +252,7 @@ class ClientManagementController extends Controller
             'v2_minimum_rate'=>'required',
             'bt_minimum_rate'=>'required',
             'btv_minimum_rate'=>'required',
+            'customize_rate'=>'required',
             'lang.*' => 'string'
         ],[
             'type.required'=>'Please select type.',
@@ -264,7 +265,8 @@ class ClientManagementController extends Controller
             'v1_minimum_rate.required'=>'Please select V1 Minimum Rate.',
             'v2_minimum_rate.required'=>'Please select V2 Minimum Rate.',
             'bt_minimum_rate.required'=>'Please select BT Minimum Rate.',
-            'btv_minimum_rate.required'=>'Please select BTV Minimum Rate.'
+            'btv_minimum_rate.required'=>'Please select BTV Minimum Rate.',
+            'customize_rate.required'=>'Please select Customize Rate.'
         ]);
 
         if( count($request->lang) > 0){
@@ -282,6 +284,7 @@ class ClientManagementController extends Controller
                 $ratecard->v2_minimum_rate=$request->v2_minimum_rate;
                 $ratecard->bt_minimum_rate=$request->bt_minimum_rate;
                 $ratecard->btv_minimum_rate=$request->btv_minimum_rate;
+                $ratecard->customize_rate=$request->customize_rate;
                 $ratecard->lang=$language;
                 $ratecard->save();
             }
@@ -310,7 +313,8 @@ class ClientManagementController extends Controller
             'v1_minimum_rate'=>'required',
             'v2_minimum_rate'=>'required',
             'bt_minimum_rate'=>'required',
-            'btv_minimum_rate'=>'required'
+            'btv_minimum_rate'=>'required',
+            'customize_rate'=>'required'
         ],[
             'type.required'=>'Please select type.',
             't_rate.required'=>'Please select T Rate.',
@@ -322,7 +326,8 @@ class ClientManagementController extends Controller
             'v1_minimum_rate.required'=>'Please select V1 Minimum Rate.',
             'v2_minimum_rate.required'=>'Please select V2 Minimum Rate.',
             'bt_minimum_rate.required'=>'Please select BT Minimum Rate.',
-            'btv_minimum_rate.required'=>'Please select BTV Minimum Rate.'
+            'btv_minimum_rate.required'=>'Please select BTV Minimum Rate.',
+            'customize_rate.required'=>'Please select Customize Rate.'
         ]);
 
         $ratecard = Ratecard::where('id',$ratecardId)->first();
@@ -337,6 +342,7 @@ class ClientManagementController extends Controller
         $ratecard->v2_minimum_rate=$request->v2_minimum_rate;
         $ratecard->bt_minimum_rate=$request->bt_minimum_rate;
         $ratecard->btv_minimum_rate=$request->btv_minimum_rate;
+        $ratecard->customize_rate=$request->customize_rate;
         $ratecard->save();
         return redirect(route('clientmanagement.redirectToRatecardList', $id))->with('message', 'Rate Card updated successfully.');
     }

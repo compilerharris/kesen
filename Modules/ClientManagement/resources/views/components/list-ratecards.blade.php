@@ -44,6 +44,9 @@
             'label' => 'BTV Minimum Rate',
         ],
         [
+            'label' => 'Customize Rate',
+        ],
+        [
             'label' => 'Action',
         ],
     ];
@@ -127,6 +130,7 @@
                                         <td>{{ $row->v2_minimum_rate }}</td>
                                         <td>{{ $row->bt_minimum_rate }}</td>
                                         <td>{{ $row->btv_minimum_rate }}</td>
+                                        <td>{{ $row->customize_rate }}</td>
                                         <td width="250px">
                                             @if(!Auth::user()->hasRole('Accounts'))
                                             <a href="{{ route('clientmanagement.redirectToRatecardEdit', [$id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>

@@ -79,12 +79,13 @@ $config = [
                         <option value="normal">Normal</option>
                         <option value="rush">Rush</option>
                     </x-adminlte-select2>
-                    <x-adminlte-select2 name="type" id="type" fgroup-class="col-md-2" required value="{{ old('type') }}"
+                    <x-adminlte-select2 name="type" id="type" onchange="checkTypeValue()" fgroup-class="col-md-2" required value="{{ old('type') }}"
                         label="Type">
                         <option value="">Select Type</option>
                         <option value="words">Words</option>
                         <option value="unit">Unit</option>
                         <option value="minimum">Minimum</option>
+                        <option value="customize">Customize</option>
                     </x-adminlte-select2>
                     <x-adminlte-select2 name="status" fgroup-class="col-md-2" required value="{{ old('status') }}"
                         label="Status">
@@ -107,9 +108,7 @@ $config = [
                                     <div class="{{ $fgroupClass ?? '' }} mb-3" style="padding-left:7.5px;">
                                         <label>Languages</label>
                                         <div class="dropdown">
-                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Select Language
-                                            </button>
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Language</button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton_0" style="max-height: 200px; overflow-y: auto; padding: 5px;">
                                                 @foreach ($languages as $option)
                                                     <div class="custom-control custom-checkbox dropdown-item">
@@ -520,4 +519,19 @@ $config = [
             i++;
         });
     }
+
+    // if customize remove required from unt/words
+    function checkTypeValue(){
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'';
+        let index = 0;
+        $('.repeater-item').each(function() {
+            if(eType === 'customize'){
+                $(this).find('input[name="unit['+index+']"]').removeAttr('required');
+            }else{
+                $(this).find('input[name="unit['+index+']"]').attr('required',true);
+            }
+            index++;
+        });
+    }
+
 </script>

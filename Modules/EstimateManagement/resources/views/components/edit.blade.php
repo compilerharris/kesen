@@ -400,7 +400,7 @@
                         <option value="normal" {{$estimate->rorn=="normal"?"selected":""}}>Normal</option>
                         <option value="rush" {{$estimate->rorn=="rush"?"selected":""}}>Rush</option>
                     </x-adminlte-select2>
-                    <x-adminlte-select2 name="type" fgroup-class="col-md-2" required label="Type">
+                    <x-adminlte-select2 name="type" onchange="checkTypeValue()" fgroup-class="col-md-2" required label="Type">
                             <option value="">Select Type</option>
                             <option value="words" {{ old('type.', $estimate->type) == 'words' ? 'selected' : '' }}>Words
                             </option>
@@ -408,6 +408,7 @@
                             </option>
                             <option value="minimum" {{ old('type', $estimate->type) == 'minimum' ? 'selected' : '' }}>
                                 Minimum</option>
+                            <option value="customize" {{ old('type', $estimate->type) == 'customize' ? 'selected' : '' }}> Customize</option>
                     </x-adminlte-select2>
                     <x-adminlte-select2 name="status" fgroup-class="col-md-2" required label="Status">
                         <option value="">Select Status</option>
@@ -431,9 +432,7 @@
                                             <div class="{{ $fgroupClass ?? '' }} mb-3" style="padding-left:7.5px;">
                                                 <label>Languages</label>
                                                 <div class="dropdown">
-                                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_{{ $index }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        {{count($detail->languagesNames)>0?implode(', ',$detail->languagesNames):"Select Language"}}
-                                                    </button>
+                                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_{{ $index }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{count($detail->languagesNames)>0?implode(', ',$detail->languagesNames):"Select Language"}}</button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton_{{ $index }}" style="max-height: 200px; overflow-y: auto; padding: 5px;">
                                                         @foreach ($languages as $option)
                                                             <div class="custom-control custom-checkbox dropdown-item">
@@ -449,7 +448,7 @@
                                             <x-adminlte-input name="document_name[{{ $index }}]" placeholder="Document Name"  fgroup-class="col-md-4" type="text" value="{{ old('document_name.' . $index,  $detail->document_name) }}" required label="Document Name" readonly />
                                             <!-- unit -->
                                             {{-- onkeyup="calculateAmount(this)" --}}
-                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-1" type="text" value="{{ old('unit.' . $index, $detail->unit) }}" required label="Unit" min="1" />
+                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-1" type="text" value="{{ old('unit.' . $index, $detail->unit) }}" required label="Unit" min="1" readonly />
                                             {{-- <!-- t rate -->
                                             <x-adminlte-input name="rate[{{ $index }}]" placeholder="T Rate" fgroup-class="col-md-1" type="text" value="{{ old('rate.' . $index, $detail->rate) }}" required label="T Rate" onkeyup="calculateAmount(this)" />
                                             <!-- t amount -->
@@ -594,6 +593,9 @@
                     name = name.replace(/\d+/, itemIndex);
                     $(this).attr('name', name);
                     if (name == 'document_name[' + itemIndex + ']') {
+                        $(this).removeAttr('readonly');
+                    }
+                    if (name == 'unit[' + itemIndex + ']') {
                         $(this).removeAttr('readonly');
                     }
                 }
@@ -888,4 +890,19 @@
             scriptIndex++;
         });
     }
+
+    // if customize remove required from unt/words
+    function checkTypeValue(){
+        const eType = $('#type option:selected').val()?$('#type option:selected').val():'';
+        let index = 0;
+        $('.repeater-item').each(function() {
+            if(eType === 'customize'){
+                $(this).find('input[name="unit['+index+']"]').removeAttr('required');
+            }else{
+                $(this).find('input[name="unit['+index+']"]').attr('required',true);
+            }
+            index++;
+        });
+    }
+
 </script>

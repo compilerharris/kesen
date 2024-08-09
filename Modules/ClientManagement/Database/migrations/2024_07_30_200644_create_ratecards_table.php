@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('v2_minimum_rate');
             $table->string('bt_minimum_rate');
             $table->string('btv_minimum_rate');
+            $table->string('customize_rate');
             $table->string('lang');
             $table->softDeletes();
             $table->timestamps();
