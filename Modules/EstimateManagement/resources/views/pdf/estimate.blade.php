@@ -134,7 +134,24 @@
             
             {{ implode(', ',array_filter(array_unique($languages_list), function($value) {return !is_null($value) && $value !== '';})) }}
         </p>
-        @php $counter=6; @endphp
+        @php 
+            $counter=6;
+            $filteredV1 = array_filter($estimate->details->pluck('v1')->toArray(), function($value) {
+                return $value != false;
+            });
+            $filteredV2 = array_filter($estimate->details->pluck('v2')->toArray(), function($value) {
+                return $value != false;
+            });
+            $filteredLayout = array_filter($estimate->details->pluck('layout_charges')->toArray(), function($value) {
+                return $value != null;
+            });
+            $filteredBt = array_filter($estimate->details->pluck('bt')->toArray(), function($value) {
+                return $value != null;
+            });
+            $filteredBtv = array_filter($estimate->details->pluck('btv')->toArray(), function($value) {
+                return $value != null;
+            });
+        @endphp
         <table>
             <thead>
                 <tr>
@@ -142,23 +159,23 @@
                     <th>{{ ucfirst($estimate->type) }}</th>
                     <th>Rate</th>
                     <th>Translation</th>
-                    @if ($estimate->details[0]->verification)
+                    @if (count($filteredV1)>0)
                         @php $counter=$counter+1; @endphp
                         <th>Verification</th>
                     @endif
-                    @if ($estimate->details[0]->two_way_qc_t)
+                    @if (count($filteredV2)>0)
                         @php $counter=$counter+1; @endphp
                         <th>2 Way QC</th>
                     @endif
-                    @if ($estimate->details[0]->layout_charges)
+                    @if (count($filteredLayout)>0)
                         @php $counter=$counter+1; @endphp
                         <th class="nowrap">Layout Charges</th>
                     @endif
-                    @if ($estimate->details[0]->back_translation)
+                    @if (count($filteredBt)>0)
                         @php $counter=$counter+1; @endphp
                         <th>Back Translation</th>
                     @endif
-                    @if ($estimate->details[0]->verification_2)
+                    @if (count($filteredBtv)>0)
                         @php $counter=$counter+1; @endphp
                         <th>Verification</th>
                     @endif
@@ -166,11 +183,11 @@
                         @php $counter=$counter+1; @endphp
                         <th>BT 2 Way QC</th>
                     @endif
-                    @if ($estimate->details[0]->layout_charges_2)
+                    @if (count($filteredLayout)>0)
                         @php $counter=$counter+1; @endphp
                         <th class="nowrap">Layout Charges</th>
                     @endif
-                    <th style="width: 20%">Languages</th>
+                    <th style="width: 20%">No. of Languages</th>
                     <th style="width: 20%">Amount (Rs.)</th>
                 </tr>
             </thead>
@@ -193,25 +210,25 @@
                         <td>{{ $detail->unit != 1 ? $detail->unit : 'Min'}}</td>
                         <td class="nowrap">{{ $detail->rate }}</td>
                         <td>{{ $detail->unit * $detail->rate }}</td>
-                        @if ($estimate->details[0]->verification)
+                        @if (count($filteredV1)>0)
                             <td>{{ $detail->verification }}</td>
                         @endif
-                        @if ($estimate->details[0]->two_way_qc_t)
+                        @if (count($filteredV2)>0)
                             <td>{{ $detail->two_way_qc_t }}</td>
                         @endif
-                        @if ($estimate->details[0]->layout_charges)
+                        @if (count($filteredLayout)>0)
                             <td style="width: 50px;">{{ "Rs. ".$detail->layout_charges."x".$detail->layout_pages."pgs = Rs. ".($detail->layout_pages*$detail->layout_charges)."/-" }}</td>
                         @endif
-                        @if ($estimate->details[0]->back_translation)
+                        @if (count($filteredBt)>0)
                             <td>{{ $detail->back_translation*$detail->unit }}</td>
                         @endif
-                        @if ($estimate->details[0]->verification_2)
+                        @if (count($filteredBtv)>0)
                             <td>{{ $detail->verification_2 }}</td>
                         @endif
                         @if ($estimate->details[0]->two_way_qc_bt)
                             <td>{{ $detail->two_way_qc_bt }}</td>
                         @endif
-                        @if ($estimate->details[0]->layout_charges_2)
+                        @if (count($filteredLayout)>0)
                             <td style="width: 50px;">{{ "Rs. ".$detail->layout_charges_2."x".$detail->bt_layout_pages."pgs = Rs. ".($detail->bt_layout_pages*$detail->layout_charges_2)."/-" }}</td>
                         @endif
                         @php 
