@@ -27,11 +27,11 @@
     <div class="content" style="padding-top: 20px; margin-left: 10px">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">Bill Report</li>
+                <li class="breadcrumb-item active" aria-current="page">Client Bill Report</li>
                 
             </ol>
         </nav>
-        <x-adminlte-card style="background-color: #eaecef;" title="Bill Export" theme="info" icon="fas fa-lg fa-person">
+        <x-adminlte-card style="background-color: #eaecef;" title="Client Bill Export" theme="info" icon="fas fa-lg fa-person">
             <form action="{{ route('report.bills') }}" method="POST" target="_blank">
                 @csrf
                 <div class="row pt-2">

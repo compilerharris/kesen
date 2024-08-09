@@ -32,11 +32,11 @@
         @include('components.notification')
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">Payment Report</li>
+                <li class="breadcrumb-item active" aria-current="page">Writer Payment Report</li>
                 
             </ol>
         </nav>
-        <x-adminlte-card style="background-color: #eaecef;" title="Payment Report" theme="info" icon="fas fa-lg fa-person">
+        <x-adminlte-card style="background-color: #eaecef;" title="Writer Payment Report" theme="info" icon="fas fa-lg fa-person">
             <form action="{{ route('report.payments') }}" method="POST" target="_blank">
                 @csrf
                 <div class="row pt-2">

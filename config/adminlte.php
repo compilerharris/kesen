@@ -372,7 +372,7 @@ return [
             'active'=>['bill-report','payment-report','writer-report','writer-workload-report'],
             'submenu' => [
                 [
-                    'text' => 'Bill Export',
+                    'text' => 'Client Bill Export',
                     'url' => '/bill-report',
                     'active' => ['bill-report'],
                     'href' => '/bill-report',
@@ -384,7 +384,7 @@ return [
                     'href' => '/writer-report',
                 ],
                 [
-                    'text' => 'Payment Report',
+                    'text' => 'Writer Payment Report',
                     'url' => '/payment-report',
                     'active' => ['payment-report'],
                     'href' => '/payment-report',
