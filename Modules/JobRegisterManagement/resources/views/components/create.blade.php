@@ -128,12 +128,12 @@
                         value="{{ old('version_date') }}" label="Version Date" />
                     <x-adminlte-input name="old_job_no" placeholder="Old Job No" fgroup-class="col-md-2"
                         type='text' label="Old Job No" />
-                    <x-adminlte-select2 name="operator" fgroup-class="col-md-2" value="{{ old('operator') }}"
+                    {{-- <x-adminlte-select2 name="operator" fgroup-class="col-md-2" value="{{ old('operator') }}"
                         label="Checked with Operator">
                         <option value="">Select Yes/No</option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
-                    </x-adminlte-select2>
+                    </x-adminlte-select2> --}}
                     <x-adminlte-input name="date" placeholder="Delivery Date " fgroup-class="col-md-2" type='date' value="{{ old('date', date('Y-m-d')) }}" required label="Delivery Date"/>
                     <x-adminlte-select2 name="status" fgroup-class="col-md-2" required value="{{ old('status') }}"
                         label="Status">
