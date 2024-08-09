@@ -558,6 +558,7 @@
     $(document).ready(function() {  
         {{-- loadRatecard(@json($estimate_details)); --}}
         addLangScripts();  
+        checkTypeValue();
         let tempIndex = {{ count($estimate_details) }};
         let itemIndex = {{ count($estimate_details) }};
 

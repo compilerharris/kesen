@@ -156,7 +156,7 @@
             <thead>
                 <tr>
                     <th>Documents</th>
-                    <th>{{ ucfirst($estimate->type) }}</th>
+                    <th>{{ $estimate->type == 'customize'?'Words':ucfirst($estimate->type) }}</th>
                     <th>Rate</th>
                     <th>Translation</th>
                     @if (count($filteredV1)>0)

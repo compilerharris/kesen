@@ -179,7 +179,7 @@ class EstimateManagementController extends Controller
                                 'v2' => isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? true : false,
                                 'two_way_qc_t' => $request->type == "customize" ? null : (isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? (($request['unit'][$index]*$rateCard->v2_rate) < $rateCard->v2_minimum_rate?$rateCard->v2_minimum_rate:($request['unit'][$index]*$rateCard->v2_rate)) : null),
                                 'bt' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? true : false,
-                                'back_translation' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? (($request['unit'][$index]*$rateCard->bt_rate) < $rateCard->bt_minimum_rate?$rateCard->bt_minimum_rate:$rateCard->bt_rate) : null),
+                                'back_translation' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request->type == "customize" ? $rateCard->customize_rate : (($request['unit'][$index]*$rateCard->bt_rate) < $rateCard->bt_minimum_rate?$rateCard->bt_minimum_rate:$rateCard->bt_rate)) : null,
                                 'btv' => isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? true : false,
                                 'verification_2' => $request->type == "customize" ? null : (isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? (($request['unit'][$index]*$rateCard->btv_rate) < $rateCard->btv_minimum_rate?$rateCard->btv_minimum_rate:($request['unit'][$index]*$rateCard->btv_rate)) : null),
                                 'layout_charges' => $request->type == "customize" ? null : ($request['layout_charges'][$index]??null),
@@ -309,7 +309,7 @@ class EstimateManagementController extends Controller
             $deleted_lang=array_diff($previous_lang,$languages);
             
             if(count($deleted_lang)>0){
-                EstimatesDetails::where('document_name', $document_name)->where('unit', $request['unit'][$index])->where('estimate_id', $estimate->id)->whereIn('lang', $deleted_lang)->delete();
+                EstimatesDetails::where('document_name', $document_name)->where('unit', $request->type == "customize"?1:$request['unit'][$index])->where('estimate_id', $estimate->id)->whereIn('lang', $deleted_lang)->delete();
             }
             for ($i = 0; $i < count($languages); $i++) {
                 if(isset($languages[$i])&&$languages[$i]!=null&&$languages[$i]!=''){
@@ -332,7 +332,7 @@ class EstimateManagementController extends Controller
                             'v2' => isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? true : false,
                             'two_way_qc_t' => $request->type == "customize" ? null : (isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? (($request['unit'][$index]*$rateCard->v2_rate) < $rateCard->v2_minimum_rate?$rateCard->v2_minimum_rate:($request['unit'][$index]*$rateCard->v2_rate)) : null),
                             'bt' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? true : false,
-                            'back_translation' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? (($request['unit'][$index]*$rateCard->bt_rate) < $rateCard->bt_minimum_rate?$rateCard->bt_minimum_rate:$rateCard->bt_rate) : null),
+                            'back_translation' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request->type == "customize" ? $rateCard->customize_rate : (($request['unit'][$index]*$rateCard->bt_rate) < $rateCard->bt_minimum_rate?$rateCard->bt_minimum_rate:$rateCard->bt_rate)) : null,
                             'btv' => isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? true : false,
                             'verification_2' => $request->type == "customize" ? null : (isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? (($request['unit'][$index]*$rateCard->btv_rate) < $rateCard->btv_minimum_rate?$rateCard->btv_minimum_rate:($request['unit'][$index]*$rateCard->btv_rate)) : null),
                             'layout_charges' => $request->type == "customize" ? null : ($request['layout_charges'][$index]??null),
