@@ -210,13 +210,14 @@ class EstimateManagementController extends Controller
         return view('estimatemanagement::pdf.estimate', ['estimate' => $estimate]);
     }
 
-    public function changeStatus($id,$status){
+    public function changeStatus(Request $request,$id,$status){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
             return redirect()->back()->with('alert', 'You are not autherized.');
         }
         if(in_array($status,[0,1,2])){
             $estimate = Estimates::where('id', $id)->first();
             $estimate->status = $status;
+            $estimate->reject_reason = $request->reason??null;
             $estimate->save();
             $statusMsg = $status == 0? "Pending" : ($status == 1? "Approved" : "Rejected");
             Session::flash('message', 'Estimate '. $estimate->estimate_no .' status changed to '.$statusMsg.'.');

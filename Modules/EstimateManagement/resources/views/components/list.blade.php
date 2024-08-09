@@ -158,7 +158,7 @@
                                         <td>{{ $row->currency }}</td>
                                         <td
                                             class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
-                                            {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected') }}
+                                            {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected - '.$row->reject_reason) }}
                                         </td>
                                         <td>{{ App\Models\User::where('id', $row->created_by)->first()->name }}</td>
                                         <td width="300px">
@@ -181,9 +181,7 @@
                                                     <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">
                                                             Approve
                                                     </a>
-
-                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 2]) }}" class="btn btn-info btn-sm mb-2">Reject
-                                                        </a>
+                                                    <button data-id="{{ $row->id }}" id="cancelEstimate" data-toggle="modal" data-target="#cancelModal" class="btn btn-danger btn-sm mb-2">Reject</button>
                                                 @elseif($row->status == 1)
                                                     <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}" class="btn btn-info btn-sm mb-2">Pending
                                                         </a>
@@ -210,5 +208,46 @@
             </div>
         </div>
     </div>
-
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Cancel Estimate</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="cancelForm" method="GET">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="reason">Reason for Cancellation</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="2" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="closeModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section('js')
+<script>
+    $(document).ready(function() {
+        $('#cancelEstimate').click(function() {
+            var estimateId = $(this).data('id');
+            var actionUrl = 'estimate-management/status/' + estimateId + '/2';
+            $('#cancelForm').attr('action', actionUrl);
+        });
+        $('#closeModal').click(function() {
+            $('#cancelForm').removeAttr('action');
+        });
+    });
+</script>
+@endsection
