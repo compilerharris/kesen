@@ -422,4 +422,14 @@ class JobCardManagementController extends Controller
         $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', ['jobCard'=> $jobCard])->setPaper('a4', 'landscape');
         return $pdf->stream();
     }
+
+    public function changeRemark(Request $request,$id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
+            return redirect()->back()->with('alert', 'You are not autherized.');
+        }
+        $job_register = JobRegister::where('id', $id)->first();
+        $job_register->remark = $request->remark??null;
+        $job_register->save();
+        return redirect()->back()->with('message', 'Remark updated successfully.');
+    }
 }

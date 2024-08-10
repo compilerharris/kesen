@@ -27,3 +27,4 @@ Route::post('job-card-management/bill/{job_id}', [JobCardManagementController::c
 Route::put('job-card-management/bill/{job_id}', [JobCardManagementController::class, 'updateBill'])->name('jobcardmanagement.bill.update');
 Route::get('job-card-management/status/{id}/{status}', [JobCardManagementController::class, 'changeStatus'])->name('jobcardmanagement.status');
 Route::get('job-card-management/export/pdf', [JobCardManagementController::class, 'exportJobCard'])->name('jobcardmanagement.exportJobCard');
+Route::get('job-card-management/remark/{id}', [JobCardManagementController::class, 'changeRemark'])->name('jobcardmanagement.remark');

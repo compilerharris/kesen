@@ -166,8 +166,6 @@
                                                     @else
                         
                                                         <a href="{{route('jobcardmanagement.status', [$row->id,0])}}" class="btn btn-info btn-sm mb-2">In Progress</a>
-                            
-                                                        <a href="{{route('jobcardmanagement.status', [$row->id,1])}}" class="btn btn-info btn-sm mb-2">Completed</a>
                                                     @endif
         
                                                 @endif
@@ -182,6 +180,7 @@
                                                 @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
                                                 <a href="{{ route('jobcardmanagement.bill', ['job_id' => $row->id]) }}" class="btn btn-info btn-sm mb-2">Billing</a>
                                                 @endif
+                                                <button data-id="{{ $row->id }}" id="cancelJob" data-toggle="modal" data-target="#cancelModal" class="btn btn-warning btn-sm mb-2">Remark</button>
                                                 
                                             </td>
                                         </tr>
@@ -194,6 +193,48 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Job Remark</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="cancelForm" method="GET">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="remark">Remark</label>
+                            <textarea class="form-control" id="remark" name="remark" rows="2" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="closeModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @section('js')
+    <script>
+        $(document).ready(function() {
+            $('#cancelJob').click(function() {
+                var jobId = $(this).data('id');
+                var actionUrl = 'job-card-management/remark/' + jobId;
+                $('#cancelForm').attr('action', actionUrl);
+            });
+            $('#closeModal').click(function() {
+                $('#cancelForm').removeAttr('action');
+            });
+        });
+    </script>
+    @endsection
 
 @else
 
