@@ -44,10 +44,11 @@ class EstimateManagementController extends Controller
             return redirect('/estimate-management');
         }
 
-        
+        $min = request()->get("min")??null;
+        $max = request()->get("max")??null;
         $estimates_approved_count=$estimates->where('status',1)->count();
         $estimates_rejected_count=$estimates->where('status',2)->count();
-        return view('estimatemanagement::index')->with('estimates', $estimates)->with('estimates_approved_count', $estimates_approved_count)->with('estimates_rejected_count', $estimates_rejected_count);
+        return view('estimatemanagement::index')->with('estimates', $estimates)->with('estimates_approved_count', $estimates_approved_count)->with('estimates_rejected_count', $estimates_rejected_count)->with('min',$min)->with('max',$max);
     }
 
     public function viewPdf($id)

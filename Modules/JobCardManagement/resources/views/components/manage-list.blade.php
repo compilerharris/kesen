@@ -101,9 +101,9 @@
                                 <tr>
                                     <td>From Date:</td>
                                     <form action="job-card-management">
-                                        <td><input type="date" id="min" name="min"></td>
+                                        <td><input type="date" id="min" name="min" value="{{$min??''}}"></td>
                                         <td>To Date:</td>
-                                        <td><input type="date" id="max" name="max"></td>
+                                        <td><input type="date" id="max" name="max" value="{{$max??''}}"></td>
                                         <td><input class="btn btn-info" type="submit" value="Filter"></td>
                                         <td><input class="btn btn-info" type="submit" value="Reset" name="reset"></td>
                                     </form>
@@ -124,7 +124,7 @@
                                     Export
                                 </button></a>
                         @else
-                            <a href="{{ route('jobcardmanagement.exportJobCard') }}" target="_blank"><button
+                            <a href="{{ route('jobcardmanagement.exportJobCard') }}?max={{ \Carbon\Carbon::now()->format('Y-m-d') }}" target="_blank"><button
                                     class="btn btn-sm btn-info " title="Edit"
                                     style="width:132px;margin-left:5px;height:33px" >
                                     Export

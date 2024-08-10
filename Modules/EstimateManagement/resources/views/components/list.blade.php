@@ -103,9 +103,9 @@
                                 <td width="90%">
                                     <form action="estimate-management">
                                         From Date:
-                                        <input type="date" id="min" name="min">
+                                        <input type="date" id="min" name="min" value="{{$min??''}}">
                                         To Date:
-                                        <input type="date" id="max" name="max">
+                                        <input type="date" id="max" name="max" value="{{$max??''}}">
                                         <input class="btn btn-info" type="submit" value="Filter">
                                         <input class="btn btn-info" type="submit" value="Reset" name="reset">
                                     </form>
@@ -133,7 +133,7 @@
                                 Export
                             </button></a>
                     @else
-                        <a href="{{ route('estimatemanagement.exporteestimate') }}" target="_blank"><button
+                        <a href="{{ route('estimatemanagement.exporteestimate') }}?max={{ \Carbon\Carbon::now()->format('Y-m-d') }}" target="_blank"><button
                                 class="btn btn-sm btn-info " title="Edit"
                                 style="width:132px;margin-left:5px;height:33px" >
                                 Export

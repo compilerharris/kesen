@@ -39,9 +39,11 @@ class JobCardManagementController extends Controller
             return redirect('/job-card-management');
         }
         
+        $min = request()->get("min")??null;
+        $max = request()->get("max")??null;
         $job_register->complete_count=$job_register->where('status',1)->count();
         $job_register->cancel_count=$job_register->where('status',2)->count();
-        return view('jobcardmanagement::manage',compact('job_register'));
+        return view('jobcardmanagement::manage',compact(['job_register','min','max']));
         
     }
 
