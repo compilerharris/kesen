@@ -110,13 +110,13 @@
     <div class="container">
         <div class="header">
             @if (($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code) == 'KCP')
-                <img src="{{ public_path('img/kesen-communication.jpeg') }}" alt="Kesen Communication" width="100%">
+                <img src="{{ public_path('img/kesen-communication.png') }}" alt="Kesen Communication" width="100%">
             @elseif (($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code) == 'KLB')
-                <img src="{{ public_path('img/kesen-language-buea.jpeg') }}" alt="Kesen Language Bureau" width="100%">
+                <img src="{{ public_path('img/kesen-language-buea.png') }}" alt="Kesen Language Bureau" width="100%">
             @elseif (($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code) == 'LGS')
-                <img src="{{ public_path('img/kesen-linguist-system.jpeg') }}" alt="Kesen Linguist System" width="100%">
+                <img src="{{ public_path('img/kesen-linguist-system.png') }}" alt="Kesen Linguist System" width="100%">
             @else
-                <img src="{{ public_path('img/kesen-linguist-Servi-llp.jpeg') }}" alt="Kesen Linguist Servi LLP" width="100%">
+                <img src="{{ public_path('img/kesen-linguist-Servi-llp.png') }}" alt="Kesen Linguist Servi LLP" width="100%">
             @endif
             <br>
             <br>

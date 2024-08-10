@@ -93,13 +93,13 @@
 <body>
     <header>
         @if ($estimate->client->client_metric->code == 'KCP')
-            <img src="{{ public_path('img/kesen-communication.jpeg') }}" alt="Kesen Communication" width="100%">
+            <img src="{{ public_path('img/kesen-communication.png') }}" alt="Kesen Communication" width="100%">
         @elseif ($estimate->client->client_metric->code == 'KLB')
-            <img src="{{ public_path('img/kesen-language-buea.jpeg') }}" alt="Kesen Language Bureau" width="100%">
+            <img src="{{ public_path('img/kesen-language-buea.png') }}" alt="Kesen Language Bureau" width="100%">
         @elseif ($estimate->client->client_metric->code == 'LGS')
-            <img src="{{ public_path('img/kesen-linguist-system.jpeg') }}" alt="Kesen Linguist Systems" width="100%">
+            <img src="{{ public_path('img/kesen-linguist-system.png') }}" alt="Kesen Linguist Systems" width="100%">
         @else
-            <img src="{{ public_path('img/kesen-linguist-Servi-llp.jpeg') }}" alt="Kesen Linguist Services" width="100%">
+            <img src="{{ public_path('img/kesen-linguist-Servi-llp.png') }}" alt="Kesen Linguist Services" width="100%">
         @endif
     </header>
 
