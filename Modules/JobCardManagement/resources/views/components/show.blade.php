@@ -3,7 +3,7 @@
 @section('plugins.Select2', true)
 @php $estimates=Modules\EstimateManagement\App\Models\Estimates::where('status',1)->get(); @endphp
 @php $clients=Modules\ClientManagement\App\Models\Client::where('status',1)->get(); @endphp
-@php $users=App\Models\User::where('email','!=','developer@kesen.com')->where('id','!=',Auth()->user()->id)->get(); @endphp
+@php $users=App\Models\User::where('email','!=','developer@kesen.com')->get(); @endphp
 @php
     $config = [
         "title" => "Select Estimate Number",

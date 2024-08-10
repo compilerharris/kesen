@@ -6,14 +6,12 @@
     $writer_ids=Modules\WriterManagement\App\Models\WriterLanguageMap::where('language_id',$estimate_detail->language->id)->pluck('writer_id')->toArray();
     $writers = Modules\WriterManagement\App\Models\Writer::where('status', 1)->whereIn('id', $writer_ids)->get();
     $qce_users = App\Models\User::where('email', '!=', 'developer@kesen.com')
-        ->where('id', '!=', Auth()->user()->id)
         ->whereHas('roles', function ($query) {
             $query->where('name', 'Quality Control Executive');
         })
         ->where('language_id', 'LIKE', '%'.$estimate_detail->language->id.'%')
         ->get();
     $managers = App\Models\User::where('email', '!=', 'developer@kesen.com')
-        ->where('id', '!=', Auth()->user()->id)
         ->whereHas('roles', function ($query) {
             $query->where('name', 'Project Manager');
         })

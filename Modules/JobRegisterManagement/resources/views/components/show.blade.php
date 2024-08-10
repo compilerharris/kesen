@@ -6,10 +6,10 @@
 @php $estimates=Modules\EstimateManagement\App\Models\Estimates::where('status',1)->get(); @endphp
 @php $estimates_details=Modules\EstimateManagement\App\Models\EstimatesDetails::get(); @endphp
 @php $clients=Modules\ClientManagement\App\Models\Client::where('status',1)->get(); @endphp
-@php $users=App\Models\User::where('email','!=','developer@kesen.com')->where('id','!=',Auth()->user()->id)->whereDoesntHave('roles', function($query) {
+@php $users=App\Models\User::where('email','!=','developer@kesen.com')->whereDoesntHave('roles', function($query) {
     $query->where('name','Accounts');
 })->get(); @endphp
-@php $accountants=App\Models\User::where('email','!=','developer@kesen.com')->where('id','!=',Auth()->user()->id)->whereHas('roles', function($query) {
+@php $accountants=App\Models\User::where('email','!=','developer@kesen.com')->whereHas('roles', function($query) {
     $query->where('name','Accounts');
 })->get(); @endphp
 @php $metrics=App\Models\Metrix::get(); @endphp

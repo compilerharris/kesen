@@ -3,7 +3,6 @@
 @php $metrics=App\Models\Metrix::get(); @endphp
 @php
     $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
-        ->where('id', '!=', Auth()->user()->id)
         ->whereHas('roles', function ($query) {
             $query->where('name', 'Accounts');
         })
