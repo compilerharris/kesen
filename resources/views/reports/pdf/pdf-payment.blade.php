@@ -106,7 +106,7 @@
                     <td>V</td>
                     <td>{{$job->v_unit}}</td>
                     <td>{{ $job->estimateDetail->language->name }}</td>
-                    <td>{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges}}</td>
+                    <td>{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges}}</td>
                     <td>{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit}}</td>
                     @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit @endphp
                 </tr>
@@ -118,8 +118,8 @@
                     <td>BT</td>
                     <td>{{$job->bt_unit}}</td>
                     <td>{{ $job->estimateDetail->language->name }}</td>
-                    <td>{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges}}</td>
-                    <td>{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->bt_unit}}</td>
+                    <td>{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges}}</td>
+                    <td>{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit}}</td>
                     @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit @endphp
                 </tr>
                 @endif
