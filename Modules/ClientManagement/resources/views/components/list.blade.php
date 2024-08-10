@@ -79,12 +79,10 @@
             <div class="card-header">
                 <h3 style="margin:0">All Clients</h3>
             </div>
-            @if(!Auth::user()->hasRole('Accounts'))
-                <div style="background-color: #eaecef;">
-                    <a href="{{ route('clientmanagement.create') }}"><button class="btn btn-md btn-success "
-                        style="float:right;margin:10px">Add Client</button></a>
-                </div>
-            @endif
+            <div style="background-color: #eaecef;">
+                <a href="{{ route('clientmanagement.create') }}"><button class="btn btn-md btn-success "
+                    style="float:right;margin:10px">Add Client</button></a>
+            </div>
             <div class="card-body" style="background-color: #eaecef;padding-top:0">
                 <div class="card">
                     <div class="card-body">
@@ -105,9 +103,7 @@
                                         </td>
                                         <td>{{ $row->address }}</td>
                                         <td width="250px">
-                                            @if(!Auth::user()->hasRole('Accounts'))
                                             <a href="{{ route('clientmanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">Edit</a>
-                                            @endif
                                             {{-- <a href="{{route('clientmanagement.show', $row->id)}}"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
                                         View
                                     </button></a> --}}

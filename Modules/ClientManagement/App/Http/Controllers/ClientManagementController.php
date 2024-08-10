@@ -27,7 +27,7 @@ class ClientManagementController extends Controller
      */
     public function create()
     {
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         return view('clientmanagement::create');
@@ -68,7 +68,7 @@ class ClientManagementController extends Controller
      */
     public function show($id)
     {
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $client=Client::find($id);
@@ -81,7 +81,7 @@ class ClientManagementController extends Controller
      */
     public function edit($id)
     {
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $client=Client::find($id);
@@ -129,7 +129,7 @@ class ClientManagementController extends Controller
     }
 
     public function disableEnableClient($id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $client=Client::find($id);
@@ -148,7 +148,7 @@ class ClientManagementController extends Controller
     }
 
     public function addContactForm($id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         return view('clientmanagement::add_contact')->with('id',$id);
@@ -174,7 +174,7 @@ class ClientManagementController extends Controller
     }
     
     public function editContactForm($id,$contact_id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $contact_person=ContactPerson::find($contact_id);
@@ -201,7 +201,7 @@ class ClientManagementController extends Controller
     }
 
     public function disableEnableContact($id,$contact_id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $contact_person=ContactPerson::find($contact_id);
@@ -214,7 +214,7 @@ class ClientManagementController extends Controller
         return redirect(route('clientmanagement.viewContacts', $id));
     }
     public function deleteContact($id,$contact_id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $contact_person=ContactPerson::find($contact_id);
@@ -233,7 +233,7 @@ class ClientManagementController extends Controller
     }
 
     public function redirectToRatecardAdd($id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         return view('clientmanagement::add_ratecard')->with('id',$id);
@@ -294,7 +294,7 @@ class ClientManagementController extends Controller
     }
     
     public function redirectToRatecardEdit($id,$ratecardId){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $ratecard=Ratecard::find($ratecardId);
@@ -348,7 +348,7 @@ class ClientManagementController extends Controller
     }
 
     public function ratecardDelete($id,$ratecardId){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $ratecard = Ratecard::find($ratecardId);

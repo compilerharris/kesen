@@ -102,12 +102,10 @@
             <div class="card-header">
                 <h3 style="margin:0">All Rate Cards of "{{Modules\ClientManagement\App\Models\Client::where('id',$id)->first()->name}}"</h3>
             </div>
-            @if(!Auth::user()->hasRole('Accounts'))
-                <div style="background-color: #eaecef;">
-                    <a href="{{ route('clientmanagement.redirectToRatecardAdd', $id) }}"><button class="btn btn-md btn-success "
-                        style="float:right;margin:10px">Add Rate Card</button></a>
-                </div>
-            @endif
+            <div style="background-color: #eaecef;">
+                <a href="{{ route('clientmanagement.redirectToRatecardAdd', $id) }}"><button class="btn btn-md btn-success "
+                    style="float:right;margin:10px">Add Rate Card</button></a>
+            </div>
             <div class="card-body" style="background-color: #eaecef;padding-top:0">
                 <div class="card">
                     <div class="card-body">
@@ -132,13 +130,11 @@
                                         <td>{{ $row->btv_minimum_rate }}</td>
                                         <td>{{ $row->customize_rate }}</td>
                                         <td width="250px">
-                                            @if(!Auth::user()->hasRole('Accounts'))
                                             <a href="{{ route('clientmanagement.redirectToRatecardEdit', [$id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
                                             <a class="btn btn-danger btn-sm mb-2" title="Delete"
                                                 onclick="disableEnable('{{ route('clientmanagement.ratecardDelete', [$id, $row->id]) }}')">
                                                 <i class="fa fa-lg fa-fw fa-trash"></i>
                                             </a>
-                                            @endif
                                         </td>
         
                                     </tr>

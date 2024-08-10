@@ -47,7 +47,7 @@ class JobCardManagementController extends Controller
 
     public function create($job_id,$estimate_detail_id){
         
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $job_register = JobRegister::where('id',$job_id)->first();
@@ -76,7 +76,7 @@ class JobCardManagementController extends Controller
 
     public function store(Request $request)
     {
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $request->validate([
@@ -159,7 +159,7 @@ class JobCardManagementController extends Controller
 
     public function update(Request $request, $job_register_id_and_doc_mame)
     {
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $request->validate([
@@ -229,7 +229,7 @@ class JobCardManagementController extends Controller
     }
 
     public function edit($id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $jobCard = JobCard::find($id);
@@ -256,7 +256,7 @@ class JobCardManagementController extends Controller
     }
 
     public function manage($job_id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('message', 'You are not autherized.'); 
         }
         $job_register = JobRegister::where('id',$job_id)->first();
@@ -271,7 +271,7 @@ class JobCardManagementController extends Controller
     }
 
     public function manageDelete($job_card_id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
             return abort(403, 'Unauthorized action.');
         }
         $job_card = JobCard::find($job_card_id);
@@ -344,7 +344,7 @@ class JobCardManagementController extends Controller
     }
 
     public function changeStatus(Request $request,$id,$status){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.');
         }
         if(in_array($status,[0,1,2])){
