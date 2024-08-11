@@ -316,7 +316,7 @@
                                 </thead>
                                 <tbody>
                             @endif 
-                        @elseif($pageBreakIndex % 55 == 0 && $pageBreakIndex > 90 )
+                        @elseif($pageBreakIndex % 90 == 0 && $pageBreakIndex > 90 )
                                 </tbody>
                             </table>
                             <br>
