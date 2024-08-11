@@ -15,11 +15,15 @@
 
         .container {
             width: 100%;
-            margin: 20px auto;
+            margin: 0px auto;
             box-sizing: border-box;
         }
 
-        .header,
+        .header{
+            text-align: center;
+            padding-bottom: 10px;
+        }
+
         .footer {
             text-align: center;
             padding: 10px 0;
@@ -118,12 +122,9 @@
             @else
                 <img src="{{ public_path('img/kesen-linguist-Servi-llp.png') }}" alt="Kesen Linguist Servi LLP" width="100%">
             @endif
-            <br>
-            <br>
-            <h2>JOB CARD</h2>
-            <br>
+            <h2 style="margin:5px 0px">JOB CARD</h2>
         </div>
-        <table class="client-info">
+        <table class="client-info" style="margin-bottom: 5px;">
             <tr>
                 <th>Client</th>
                 <td style="font-size:25px"><b>{{ $job->estimate?$job->estimate->client->name:($job->no_estimate?$job->no_estimate->client->name: '') }}</b></td>
@@ -161,7 +162,6 @@
                 <td><b>{{ $job->handle_by->name ?? '' }}</b></td>
             </tr>
         </table>
-        <br>
         <table class="job-details">
             <thead>
                 <tr>
@@ -268,7 +268,7 @@
                             <td> </td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
-                        @if($pageBreakIndex % 30 == 0 && $pageBreakIndex == 30 ) <!-- Adjust this number based on your page size and row height -->
+                        @if($pageBreakIndex % 35 == 0 && $pageBreakIndex == 35 ) <!-- Adjust this number based on your page size and row height -->
                                 </tbody>
                             </table>
                             <br>
@@ -292,7 +292,7 @@
                                     </thead>
                                     <tbody>
                             @endif 
-                        @elseif($pageBreakIndex % 80 == 0 && $pageBreakIndex == 80 )
+                        @elseif($pageBreakIndex % 90 == 0 && $pageBreakIndex == 90 )
                                 </tbody>
                             </table>
                             <br>
@@ -316,7 +316,7 @@
                                 </thead>
                                 <tbody>
                             @endif 
-                        @elseif($pageBreakIndex % 50 == 0 && $pageBreakIndex > 80 )
+                        @elseif($pageBreakIndex % 55 == 0 && $pageBreakIndex > 90 )
                                 </tbody>
                             </table>
                             <br>
@@ -428,7 +428,7 @@
                             <td style="font-size: 8pt"></td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
-                        @if($pageBreakIndex % 32 == 0 && $pageBreakIndex == 32 ) <!-- Adjust this number based on your page size and row height -->
+                        @if($pageBreakIndex % 36 == 0 && $pageBreakIndex == 36 ) <!-- Adjust this number based on your page size and row height -->
                                 </tbody>
                             </table>
                             <br>
@@ -450,7 +450,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                        @elseif($pageBreakIndex % 32 == 0 && $pageBreakIndex == 64 )
+                        @elseif($pageBreakIndex % 36 == 0 && $pageBreakIndex == 72 )
                                 </tbody>
                             </table>
                             <br>
@@ -472,7 +472,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                        @elseif($pageBreakIndex % 32 == 0 && $pageBreakIndex > 64 )
+                        @elseif($pageBreakIndex % 36 == 0 && $pageBreakIndex > 72 )
                                 </tbody>
                             </table>
                             <br>
