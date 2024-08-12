@@ -15,7 +15,7 @@ class EmployeeManagementController extends Controller
      */
     public function index()
     {
-        $employee=User::where('email','!=','developer@kesen.com')->with('roles')->orderBy('created_at', 'desc')->get();
+        $employee=User::with('roles')->orderBy('created_at', 'asc')->get();
         return view('employeemanagement::index')->with('employee',$employee);
     }
 
