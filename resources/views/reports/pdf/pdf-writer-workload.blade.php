@@ -89,7 +89,7 @@
                             <tr>
                                 <td style="text-align: left;">{{$job->job_no}}</td>
                                 <td style="text-align: left;">{{$jobRegister?App\Models\User::where('id',$jobRegister->handled_by_id)->first('name')->name:''}}</td>
-                                <td style="text-align: left;word-wrap: break-word;">{{$estimateDetail?$estimateDetail->document_name:''}}</td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 90px;">{{$estimateDetail?$estimateDetail->document_name:''}}</p></td>
                                 <td style="text-align: left;">{{$estimateDetail?Modules\LanguageManagement\App\Models\Language::where('id',$estimateDetail->lang)->first('name')->name:''}}</td>
                                 @if($job->t_writer_code == $writerWorkload->writerId)
                                     <td style="text-align: left;">{{$job->t_unit}}</td>
