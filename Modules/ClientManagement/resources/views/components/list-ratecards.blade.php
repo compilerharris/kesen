@@ -50,10 +50,6 @@
             'label' => 'Action',
         ],
     ];
-
-    $config = [
-        'order' => [[0, 'asc']],
-    ];
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
 @endphp

@@ -83,8 +83,8 @@ class WriterManagementController extends Controller
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $writer=Writer::find($id);
-        $language_map=WriterLanguageMap::where('writer_id',$id)->get();
-        $payments= WriterPayment::where('writer_id',$id)->get();
+        $language_map=WriterLanguageMap::where('writer_id',$id)->orderBy('created_at', 'desc')->get();
+        $payments= WriterPayment::where('writer_id',$id)->orderBy('created_at', 'desc')->get();
         return view('writermanagement::edit',compact('writer','language_map','payments'))->with('id',$id);
     }
 
@@ -121,7 +121,7 @@ class WriterManagementController extends Controller
     }
 
     public function viewLanguageMaps($writer_id){
-        $language_map=WriterLanguageMap::where('writer_id',$writer_id)->get();
+        $language_map=WriterLanguageMap::where('writer_id',$writer_id)->orderBy('created_at', 'desc')->get();
         return view('writermanagement::language-maps')->with('language_map',$language_map)->with('id',$writer_id);
     }
 
@@ -217,7 +217,7 @@ class WriterManagementController extends Controller
 
 
     public function viewPayments($writer_id){
-       $writer_payments= WriterPayment::where('writer_id',$writer_id)->get();
+       $writer_payments= WriterPayment::where('writer_id',$writer_id)->orderBy('created_at', 'desc')->get();
        return view('writermanagement::view-payments')->with('id',$writer_id)->with('payments',$writer_payments);
     }
 

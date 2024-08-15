@@ -15,7 +15,7 @@ class EmployeeManagementController extends Controller
      */
     public function index()
     {
-        $employee=User::with('roles')->orderBy('created_at', 'asc')->get();
+        $employee=User::with('roles')->orderBy('created_at', 'desc')->get();
         return view('employeemanagement::index')->with('employee',$employee);
     }
 

@@ -118,7 +118,7 @@
             <td>{{ $row->sr_no }}</td>
             <td>{{ $row->handle_by->name }}</td>
             <td>{{ $row->estimate?$row->estimate->client->name:$row->no_estimate->client->name }}</td>
-            <td>{{ $row->estimate?$row->estimate->client_person->name:$row->no_estimate->client_person->name }}</td>
+            <td>{{ $row->estimate?$row->estimate->client_person->name:($row->no_estimate->client_person->name??'') }}</td>
             <td>{{ $row->estimate?$row->estimate->estimate_no:'No Estimate' }}</td>
             <td>{{ $row->estimate_document_id }}</td>
             <td>{{ $row->protocol_no }}</td>

@@ -8,7 +8,6 @@ use Modules\EstimateManagement\App\Models\NoEstimates;
 use Modules\JobRegisterManagement\App\Sheet\KesenExport;
 use App\Http\Controllers\Controller;
 use App\Mail\JobCompleted;
-use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +18,7 @@ use Modules\ClientManagement\App\Models\Client;
 use Modules\EstimateManagement\App\Models\Estimates;
 use Modules\JobRegisterManagement\App\Models\JobRegister;
 use Modules\LanguageManagement\App\Models\Language;
+use \Carbon\Carbon;
 
 class JobRegisterManagementController extends Controller
 {
@@ -27,7 +27,10 @@ class JobRegisterManagementController extends Controller
      */
     public function index()
     {
-        $job_registers=JobRegister::orderBy('created_at', 'desc')->get();
+        $noOfDays = env('NO_OF_DAYS', 30);
+        $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
+        $endDate = Carbon::now()->format('Y-m-d');
+        $job_registers=JobRegister::whereBetween('created_at',[$startDate,$endDate])->orderBy('created_at', 'desc')->get();
         return view('jobregistermanagement::index')->with('job_registers',$job_registers);
     }
 

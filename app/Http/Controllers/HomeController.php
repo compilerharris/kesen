@@ -49,7 +49,7 @@ class HomeController extends Controller
     {
         $min = Carbon::parse(request()->get('from_date'))->startOfDay();
         $max = Carbon::parse(request()->get('to_date'))->endOfDay();
-        $bill_data=JobRegister::where('status','!=', 2)->where('created_at', '>=',Carbon::parse(request()->get("from_date"))->startOfDay())->where('created_at', '<=',Carbon::parse(request()->get("to_date"))->endOfDay())->get();
+        $bill_data=JobRegister::where('status','!=', 2)->where('created_at', '>=',Carbon::parse(request()->get("from_date"))->startOfDay())->where('created_at', '<=',Carbon::parse(request()->get("to_date"))->endOfDay())->orderBy('created_at', 'desc')->get();
         $pdf = FacadePdf::loadView('reports.pdf.pdf-bill',compact('bill_data','max','min'));
         return $pdf->stream();
         
@@ -112,7 +112,7 @@ class HomeController extends Controller
     }
 
     public function writerWorkload(Request $request){
-        $writerWorkload = JobCard::where('t_writer_code',$request->writer)->orWhere('bt_writer_code',$request->writer)->get();
+        $writerWorkload = JobCard::where('t_writer_code',$request->writer)->orWhere('bt_writer_code',$request->writer)->orderBy('created_at', 'desc')->get();
         $writerWorkload = $writerWorkload->sortBy('job_no');
         $writerWorkload->writerId = $request->writer;
         // return view('reports.pdf.pdf-writer-workload', compact('writerWorkload'));

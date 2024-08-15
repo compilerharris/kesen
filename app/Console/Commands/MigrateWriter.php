@@ -25,13 +25,14 @@ class MigrateWriter extends Command
         $startTime = microtime(true);
 
         // Fetch data from writer table
-        $oldWriters = DB::connection('source_db')->table('writer')->get();
+        $oldWriters = DB::connection('source_db')->table('writer')->orderBy('id')->get();
 
         /** creating writer */
         foreach ($oldWriters as $data) {
 
             // Insert data into writer table
             $writer = new Writer();
+            $writer->sr_no=$data->id;
             $writer->writer_name = isset($data->name)&&!empty($data->name)?$data->name:'';
             $writer->email = isset($data->email)&&!empty($data->email)?$data->email:'';
             $writer->phone_no = isset($data->contactno)&&!empty($data->contactno)?$data->contactno:null;

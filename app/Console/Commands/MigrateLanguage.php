@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Modules\ClientManagement\App\Models\ContactPerson;
 use Modules\LanguageManagement\App\Models\Language;
 
 class MigrateLanguage extends Command
@@ -23,13 +22,14 @@ class MigrateLanguage extends Command
         $startTime = microtime(true);
 
         // Fetch data from languages table
-        $oldLanguages = DB::connection('source_db')->table('language')->get();
+        $oldLanguages = DB::connection('source_db')->table('language')->orderBy('id')->get();
 
         /** creating languages */
         foreach ($oldLanguages as $data) {
 
             // Insert data into languages table
             $language = new Language();
+            $language->sr_no = $data->id;
             $language->name = $data->name;
             $language->code = '';
             $language->created_by='9c73b245-bb2a-48e3-81db-5eee86932412';

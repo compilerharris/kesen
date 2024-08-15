@@ -30,9 +30,6 @@
         ['label' => 'Action'],
     ];
 
-    $config = [
-        'order' => [[1, 'desc']],
-    ];
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
 
@@ -42,10 +39,6 @@
         ['label' => 'Language'],
         ['label' => 'Part Copy Created'],
         ['label' => 'Action'],
-    ];
-
-    $config_manage = [
-        'order' => [[1, 'desc']],
     ];
     $config_manage['paging'] = true;
 @endphp
@@ -141,7 +134,7 @@
                                             <td>{{ $row->estimate_document_id }}</td>
                                             <td>{{ $row->protocol_no }}</td>
                                             <td>{{ $row->handle_by->code }}</td>
-                                            <td>{{ $row->estimate?$row->estimate->client_person->name:$row->no_estimate->client_person->name }}</td>
+                                            <td>{{ $row->estimate?$row->estimate->client_person->name:($row->no_estimate->client_person->name??'') }}</td>
                                             <td>{{ $row->date?\Carbon\Carbon::parse($row->date)->format('j M Y'):'' }}</td>
                                             @if (Auth::user()->hasRole('Accounts'))
                                                 <td class="{{$row->bill_no==null || $row->bill_no=='' ? 'bg-warning':''}}">{{ $row->bill_no!=null || $row->bill_no!='' ? "billed-".$row->bill_no:"unbilled" }}</td>

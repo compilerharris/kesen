@@ -22,30 +22,30 @@ class EstimateManagementController extends Controller
 {
     public function index()
     {
+        $noOfDays = env('NO_OF_DAYS', 30);
+        $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
+        $endDate = Carbon::now()->format('Y-m-d');
         if(!request()->get("reset")){
             if(request()->get("min")&&request()->get("max")==null) {
-                
-                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->get();    
-            }
-            elseif(request()->get("min")!=''&&request()->get("max")!='') {
-                
-                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->get();    
-            }
-            elseif(request()->get("min")==null&&request()->get("max")){
-                
-                $estimates = Estimates::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->get();    
+                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->orderBy('created_at', 'desc')->get();    
+            }elseif(request()->get("min")!=''&&request()->get("max")!='') {
+                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
+            }elseif(request()->get("min")==null&&request()->get("max")){ 
+                $estimates = Estimates::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
             }else{
-                // $min=Carbon::now()->startOfMonth();
-                // $max=Carbon::now()->endOfMonth();
-                // $estimates = Estimates::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();
-                $estimates = Estimates::orderBy('created_at', 'desc')->get();
+                $estimates = Estimates::whereBetween('created_at',[$startDate,$endDate])->orderBy('created_at', 'desc')->get();
             }
         }else{
             return redirect('/estimate-management');
         }
 
-        $min = request()->get("min")??null;
-        $max = request()->get("max")??null;
+        if(request()->get("min")==null&&request()->get("max")==null){
+            $min = $startDate;
+            $max = $endDate;
+        }else{
+            $min = request()->get("min")??null;
+            $max = request()->get("max")??null;
+        }
         $estimates_approved_count=$estimates->where('status',1)->count();
         $estimates_rejected_count=$estimates->where('status',2)->count();
         return view('estimatemanagement::index')->with('estimates', $estimates)->with('estimates_approved_count', $estimates_approved_count)->with('estimates_rejected_count', $estimates_rejected_count)->with('min',$min)->with('max',$max);
@@ -63,24 +63,24 @@ class EstimateManagementController extends Controller
         if(!request()->get("reset")){
             if(request()->get("min")&&request()->get("max")==null) {
             
-                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->get();    
+                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->orderBy('created_at', 'desc')->get();    
             }
             elseif(request()->get("min")!=''&&request()->get("max")!='') {
                 
-                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->get();    
+                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
             }
             elseif(request()->get("min")==null&&request()->get("max")){
                 
-                $estimates = Estimates::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->get();    
+                $estimates = Estimates::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay()->orderBy('created_at', 'desc'))->get();    
             }else{
                 $min=Carbon::now()->startOfMonth();
                 $max=Carbon::now()->endOfMonth();
-                $estimates = Estimates::where('created_at', '>=', $min)->where('created_at', '<=', $max)->get();    
+                $estimates = Estimates::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();    
             }
         }else{
             $min=Carbon::now()->startOfMonth();
             $max=Carbon::now()->endOfMonth();
-            $estimates = Estimates::where('created_at', '>=', $min)->where('created_at', '<=', $max)->get();    
+            $estimates = Estimates::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();    
         }
         $estimates_approved_count=$estimates->where('status',1)->count();
         $estimates_rejected_count=$estimates->where('status',2)->count();
@@ -97,7 +97,7 @@ class EstimateManagementController extends Controller
         } else {
 
             $html = '<option value="">Select Contact Person</option>';
-            $contact_persons = ContactPerson::where('client_id', $id)->where('status', 1)->get();
+            $contact_persons = ContactPerson::where('client_id', $id)->where('status', 1)->orderBy('created_at', 'desc')->get();
 
             foreach ($contact_persons as $contact) {
                 $html .= '<option value="' . $contact->id . '">' . $contact->name . '</option>';
@@ -234,7 +234,7 @@ class EstimateManagementController extends Controller
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $estimate = Estimates::find($id);
-        $contact_persons = ContactPerson::where('client_id', $estimate->client_id)->get();
+        $contact_persons = ContactPerson::where('client_id', $estimate->client_id)->orderBy('created_at', 'desc')->get();
         $distinctDetails = $estimate->details()
         ->select('document_name', 'unit')
         ->distinct()

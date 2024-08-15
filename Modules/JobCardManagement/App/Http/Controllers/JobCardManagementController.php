@@ -20,27 +20,32 @@ use Maatwebsite\Excel\Facades\Excel;
 class JobCardManagementController extends Controller
 {
 
-    public function index(){ 
-      
+    public function index()
+    { 
+        $noOfDays = env('NO_OF_DAYS', 30);
+        $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
+        $endDate = Carbon::now()->format('Y-m-d');
         if(!request()->get("reset")){
             if(request()->get("min")&&request()->get("max")==null) {
-                $job_register=JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->get();
+                $job_register=JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->orderBy('created_at', 'desc')->get();
             }elseif(request()->get("min")!=''&&request()->get("max")!='') {
-                $job_register=JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=',Carbon::parse(request()->get("max"))->endOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->get();    
+                $job_register=JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=',Carbon::parse(request()->get("max"))->endOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->orderBy('created_at', 'desc')->get();    
             }elseif(request()->get("min")==null&&request()->get("max")){
-                $job_register=JobRegister::where('created_at', '<=',Carbon::parse(request()->get("max"))->endOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->get();
+                $job_register=JobRegister::where('created_at', '<=',Carbon::parse(request()->get("max"))->endOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->orderBy('created_at', 'desc')->get();
             }else{
-                // $min=Carbon::now()->startOfMonth();
-                // $max=Carbon::now()->endOfMonth();
-                // $job_register=JobRegister::where('created_at', '>=', $min)->where('created_at', '<=', $max)->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->orderBy('created_at', 'desc')->get();
-                $job_register=JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->orderBy('created_at', 'desc')->get();
+                $job_register=JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->whereBetween('created_at',[$startDate,$endDate])->orderBy('created_at', 'desc')->get();
             }
         }else{
             return redirect('/job-card-management');
         }
         
-        $min = request()->get("min")??null;
-        $max = request()->get("max")??null;
+        if(request()->get("min")==null&&request()->get("max")==null){
+            $min = $startDate;
+            $max = $endDate;
+        }else{
+            $min = request()->get("min")??null;
+            $max = request()->get("max")??null;
+        }
         $job_register->complete_count=$job_register->where('status',1)->count();
         $job_register->cancel_count=$job_register->where('status',2)->count();
         return view('jobcardmanagement::manage',compact(['job_register','min','max']));
@@ -55,7 +60,7 @@ class JobCardManagementController extends Controller
         $job_register = JobRegister::where('id',$job_id)->first();
        
         $estimate_detail=EstimatesDetails::where('id',$estimate_detail_id)->first();
-        $job_card=JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate_detail->id)->get();
+        $job_card=JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate_detail->id)->orderBy('created_at', 'desc')->get();
         if(count($job_card)>0){
             return view('jobcardmanagement::edit',compact('job_card','job_register','estimate_detail'));
         }
@@ -247,7 +252,7 @@ class JobCardManagementController extends Controller
         } else {
             
             $html = '<option value="">Select Estimate Number</option>';
-            $estimates=Estimates::where('client_id',$client_id)->get();
+            $estimates=Estimates::where('client_id',$client_id)->orderBy('created_at', 'desc')->get();
             
             foreach ($estimates as $estimate) {
                 $html .= '<option value='.$estimate->id.'>'.$estimate->estimate_no.'</option>';
@@ -263,7 +268,7 @@ class JobCardManagementController extends Controller
         }
         $job_register = JobRegister::where('id',$job_id)->first();
         if($job_register!=null){
-            $estimate_details=EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$job_register->estimate_document_id)->get();
+            $estimate_details=EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$job_register->estimate_document_id)->orderBy('created_at', 'desc')->get();
             
             return view('jobcardmanagement::manage',compact('job_register','estimate_details'));
         }else{
@@ -287,7 +292,7 @@ class JobCardManagementController extends Controller
 
     public function listEstimateDetailsLanguage($job_id,$estimate_detail_id){
         $job_register = JobRegister::where('id',$job_id)->first();
-        $estimate_detail=EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$estimate_detail_id)->get();
+        $estimate_detail=EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$estimate_detail_id)->orderBy('created_at', 'desc')->get();
         $list_estimate_language=true;
         foreach($estimate_detail as $estimate){
             $estimate->partCopyCreateCount = count(JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate->id)->get());
@@ -352,9 +357,9 @@ class JobCardManagementController extends Controller
         if(in_array($status,[0,1,2])){
             $job_register = JobRegister::where('id', $id)->first();
             if($status == 1){
-                $estimate_detail = EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$job_register->estimate_document_id)->get();
+                $estimate_detail = EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$job_register->estimate_document_id)->orderBy('created_at', 'desc')->get();
                 foreach($estimate_detail as $estimate){
-                    $allPartCopy = JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate->id)->get();
+                    $allPartCopy = JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate->id)->orderBy('created_at', 'desc')->get();
                     if(count($allPartCopy) == 0){
                         $langName = Language::where('id',$estimate->lang)->first('name')->name;
                         return back()->with('alert', 'Please enter all language part copy of '.$langName.' in Job No: '.$job_register->sr_no);
@@ -399,20 +404,20 @@ class JobCardManagementController extends Controller
     {
         if(!request()->get("reset")){
             if(request()->get("min")&&request()->get("max")==null) {
-                $jobCard = JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->get();    
+                $jobCard = JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->orderBy('created_at', 'desc')->get();    
             }elseif(request()->get("min")!=''&&request()->get("max")!='') {
-                $jobCard = JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->get();    
+                $jobCard = JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
             }elseif(request()->get("min")==null&&request()->get("max")){
-                $jobCard = JobRegister::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->get();    
+                $jobCard = JobRegister::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
             }else{
                 $min=Carbon::now()->startOfMonth();
                 $max=Carbon::now()->endOfMonth();
-                $jobCard = JobRegister::where('created_at', '>=', $min)->where('created_at', '<=', $max)->get();    
+                $jobCard = JobRegister::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();    
             }
         }else{
             $min=Carbon::now()->startOfMonth();
             $max=Carbon::now()->endOfMonth();
-            $jobCard = JobRegister::where('created_at', '>=', $min)->where('created_at', '<=', $max)->get();    
+            $jobCard = JobRegister::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();    
         }
         $jobCard->complete_count=$jobCard->where('status',1)->count();
         $jobCard->cancel_count=$jobCard->where('status',2)->count();

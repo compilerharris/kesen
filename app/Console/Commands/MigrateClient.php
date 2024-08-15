@@ -31,6 +31,7 @@ class MigrateClient extends Command
 
             // Insert data into client table
             $client = new Client();
+            $client->srno=$data->id;
             $client->name=$data->name;
             $client->email=isset($data->email)&&!empty($data->email)?$data->email:null;
             $client->phone_no=isset($data->phone_no)&&!empty($data->phone_no)?$data->phone_no:null;
@@ -51,6 +52,7 @@ class MigrateClient extends Command
 
                 // Insert data into client contact person table
                 $contact_person = new ContactPerson();
+                $contact_person->srno=$contact->id;
                 $contact_person->client_id=$client->id;
                 $contact_person->name=$contact->name;
                 $contact_person->email=isset($contact->email)&&!empty($contact->email)?$contact->email:null;

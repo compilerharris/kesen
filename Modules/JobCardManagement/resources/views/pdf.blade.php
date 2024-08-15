@@ -113,11 +113,11 @@
 <body>
     <div class="container">
         <div class="header">
-            @if (($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code) == 'KCP')
+            @if (($job->estimate?$job->estimate->client->client_metric->code:($job->no_estimate->client->client_metric->code??'')) == 'KCP')
                 <img src="{{ public_path('img/kesen-communication.png') }}" alt="Kesen Communication" width="100%">
-            @elseif (($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code) == 'KLB')
+            @elseif (($job->estimate?$job->estimate->client->client_metric->code:($job->no_estimate->client->client_metric->code??'')) == 'KLB')
                 <img src="{{ public_path('img/kesen-language-buea.png') }}" alt="Kesen Language Bureau" width="100%">
-            @elseif (($job->estimate?$job->estimate->client->client_metric->code:$job->no_estimate->client->client_metric->code) == 'LGS')
+            @elseif (($job->estimate?$job->estimate->client->client_metric->code:($job->no_estimate->client->client_metric->code??'')) == 'LGS')
                 <img src="{{ public_path('img/kesen-linguist-system.png') }}" alt="Kesen Linguist System" width="100%">
             @else
                 <img src="{{ public_path('img/kesen-linguist-Servi-llp.png') }}" alt="Kesen Linguist Servi LLP" width="100%">
@@ -147,13 +147,13 @@
                 <th>Verion Date.</th>
                 <td>{{ $job->version_date ? \Carbon\Carbon::parse($job->version_date)->format('j M Y') : '' }}</td>
                 <th>Contact Name</th>
-                <td>{{ $job->estimate?$job->estimate->client_person->name:($job->no_estimate?$job->no_estimate->client_person->name: '') }}</td>
+                <td>{{ $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name?? '') }}</td>
             </tr>
             <tr>
                 <th>Estimate No.</th>
                 <td>{{ $job->estimate?$job->estimate->estimate_no:($job->no_estimate?'No Estimate':'') }}</td>
                 <th>Contact Number</th>
-                <td>{{ $job->estimate?$job->estimate->client_person->phone_no:($job->no_estimate?$job->no_estimate->client_person->phone_no: '') }}</td>
+                <td>{{ $job->estimate?$job->estimate->client_person->phone_no:($job->no_estimate->client_person->phone_no??'') }}</td>
             </tr>
             <tr>
                 <th>Add. Estimate No.</th>
@@ -202,7 +202,7 @@
                             <td rowspan="5">PC {{ $temp_index }}</td>
                             <td style="background-color:grey;">T</td>
                             <td>{{ $card->t_unit }}</td>
-                            <td>{{ Modules\WriterManagement\App\Models\Writer::where('id', $card->t_writer_code)->first()->code }}</td>
+                            <td>{{ Modules\WriterManagement\App\Models\Writer::where('id', $card->t_writer_code)->first()->code??'' }}</td>
                             <td></td>
                             
                             <td>{{ $card->t_pd ? \Carbon\Carbon::parse($card->t_pd)->format('j M Y') : '' }}</td>

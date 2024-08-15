@@ -14,7 +14,6 @@
     ];
 
     $language_config = [
-        'order' => [[1, 'desc']],
         'paging' => true,
         'lengthMenu' => [10, 50, 100, 500],
     ];
@@ -34,7 +33,6 @@
     ];
 
     $payment_config = [
-        'order' => [[1, 'desc']],
         'paging' => true,
         'lengthMenu' => [10, 50, 100, 500],
     ];
@@ -124,41 +122,42 @@
                </div>
            </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title" style="margin-top:10px">Payment Details</h3>
-                    <a href="{{ route('writermanagement.addPaymentView', $writer->id) }}"><button class="btn btn-md btn-success"
-                        style="float:right">Add Payment</button></a>
+            @if(count($payments)>0)
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="margin-top:10px">Payment Details</h3>
+                        <a href="{{ route('writermanagement.addPaymentView', $writer->id) }}"><button class="btn btn-md btn-success"
+                            style="float:right">Add Payment</button></a>
+                    </div>
+                    <div class="card-body">
+                        <x-adminlte-datatable id="table9" class="mt-3" :heads="$payment_heads" head-theme="dark" striped :config="$payment_config" with-buttons>
+                            @foreach ($payments as $index => $payment)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $payment->payment_method }}</td>
+                                    <td>{{ App\Models\Metrix::where('id',$payment->metrix)->first()->name }}</td>
+                                    <td>{{ $payment->apply_gst ? 'Yes' : 'No' }}</td>
+                                    <td>{{ $payment->apply_tds ? 'Yes' : 'No' }}</td>
+                                    <td>{{ $payment->period_from }}</td>
+                                    <td>{{ $payment->period_to }}</td>
+                                    <td>{{ $payment->online_ref_no ?? $payment->cheque_no }}</td>
+                                    <td>{{ $payment->performance_charge }}</td>
+                                    <td>{{ $payment->deductible }}</td>
+                                    <td>
+                                        @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
+                                            <a href="{{ route('writermanagement.editPaymentView', [$writer->id, $payment->id]) }}" class="btn btn-info btn-sm mb-2">Edit
+                                            </a>
+                                        @endif
+                                        {{-- <a href="{{ route('writermanagement.showPayment', [$writer->id, $payment->id]) }}">
+                                            <button class="btn btn-xs btn-default text-dark mx-1 shadow" title="View">View</button>
+                                        </a> --}}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </x-adminlte-datatable>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <x-adminlte-datatable id="table9" class="mt-3" :heads="$payment_heads" head-theme="dark" striped
-                :config="$payment_config" with-buttons>
-                @foreach ($payments as $index => $payment)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $payment->payment_method }}</td>
-                        <td>{{ App\Models\Metrix::where('id',$payment->metrix)->first()->name }}</td>
-                        <td>{{ $payment->apply_gst ? 'Yes' : 'No' }}</td>
-                        <td>{{ $payment->apply_tds ? 'Yes' : 'No' }}</td>
-                        <td>{{ $payment->period_from }}</td>
-                        <td>{{ $payment->period_to }}</td>
-                        <td>{{ $payment->online_ref_no ?? $payment->cheque_no }}</td>
-                        <td>{{ $payment->performance_charge }}</td>
-                        <td>{{ $payment->deductible }}</td>
-                        <td>
-                            @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
-                                <a href="{{ route('writermanagement.editPaymentView', [$writer->id, $payment->id]) }}" class="btn btn-info btn-sm mb-2">Edit
-                                </a>
-                            @endif
-                            {{-- <a href="{{ route('writermanagement.showPayment', [$writer->id, $payment->id]) }}">
-                                <button class="btn btn-xs btn-default text-dark mx-1 shadow" title="View">View</button>
-                            </a> --}}
-                        </td>
-                    </tr>
-                @endforeach
-            </x-adminlte-datatable>
-                </div>
-            </div>
+            @endif
         </x-adminlte-card>
     </div>
 </div>

@@ -30,6 +30,7 @@ class MigrateEmployee extends Command
 
             // Insert data into employee table
             $employee = new User();
+            $employee->srno = $data->id;
             $employee->name = $data->name;
             $employee->email = $data->email;
             $employee->password = bcrypt('K0076');
