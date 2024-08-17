@@ -25,13 +25,60 @@ class JobRegisterManagementController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $noOfDays = env('NO_OF_DAYS', 30);
-        $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
-        $endDate = Carbon::now()->format('Y-m-d');
-        $job_registers=JobRegister::whereBetween('created_at',[$startDate,$endDate])->orderBy('created_at', 'desc')->get();
-        return view('jobregistermanagement::index')->with('job_registers',$job_registers);
+    public function index(Request $request)
+    { 
+        if($request->get('search') != ''){
+            return $this->jobSearch($request);
+        }
+        if(!$request->get('min')&& !$request->get('max')){
+            $job_registers = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+            $min = null;
+            $max = null;
+        }else{
+            $noOfDays = env('NO_OF_DAYS', 30);
+            $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
+            $endDate = Carbon::now()->format('Y-m-d');
+
+            // Fetch min and max dates from the request
+            $min = $request->get('min', $startDate);
+            $max = $request->get('max', $endDate);
+
+            // Build the query with dynamic filters
+            $job_registers = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+                ->when($min && $max, function ($query) use ($min, $max) {
+                    $query->whereBetween('created_at', [$min,$max]);
+                })
+                ->when($min, function ($query) use ($min) {
+                    $query->where('created_at', '>=',$min);
+                })
+                ->when($max, function ($query) use ($max) {
+                    $query->where('created_at', '<=',$max);
+                })
+                ->orderBy('created_at', 'desc')
+                // ->get();
+                ->paginate(10); // 10 records per page
+        }
+
+        // Count complete and canceled jobs
+        $job_registers->complete_count = $job_registers->where('status', 1)->count();
+        $job_registers->cancel_count = $job_registers->where('status', 2)->count();
+
+        // Check if the request is AJAX and return the partial view if true
+        if ($request->ajax()) {
+            return view('jobregistermanagement::_job_registers', compact('job_registers', 'min', 'max'))->render();
+        }
+
+        return view('jobregistermanagement::index', compact('job_registers', 'min', 'max'));
+
+
+        // $noOfDays = env('NO_OF_DAYS', 30);
+        // $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
+        // $endDate = Carbon::now()->format('Y-m-d');
+        // $job_registers=JobRegister::whereBetween('created_at',[$startDate,$endDate])->orderBy('created_at', 'desc')->get();
+        // return view('jobregistermanagement::index')->with('job_registers',$job_registers);
     }
 
     /**
@@ -242,7 +289,7 @@ class JobRegisterManagementController extends Controller
         $jobRegister->invoice_date = $request->invoice_date;
         $jobRegister->sent_date = $request->sent_date;
         $jobRegister->operator = $request->operator;
-        $jobRegister->status = 1;
+        $jobRegister->status = 0;
            # 'site_specific' => $request->site_specific,
         $jobRegister->save();
         return redirect()->route('jobregistermanagement.index')->with('message', 'Job register updated successfully.');
@@ -304,5 +351,26 @@ class JobRegisterManagementController extends Controller
         $job_register->imageUrl = public_path('img/logo.png');
         Mail::to($job_register->estimate?$job_register->estimate->client_person->email:$job_register->no_estimate->client_person->email)->send(new JobCompleted($job_register));
         return redirect('/job-register-management')->with('message', 'email letter has been sent successfully!');
+    }
+
+    public function jobSearch(Request $request){ 
+        if($request->get('search') == ''){
+            return redirect()->back()->with('alert','Please enter job no.');
+        }
+
+        $search = $request->get('search');
+        $job_registers = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->where('sr_no',$search)->paginate(10);
+
+        if($job_registers->count() == 0){
+            return redirect()->back()->with('alert',"No job found with job no {$search}");
+        }
+
+        $job_registers->complete_count = $job_registers->where('status', 1)->count();
+        $job_registers->cancel_count = $job_registers->where('status', 2)->count();
+
+        $min = null;
+        $max = null;
+
+        return view('jobregistermanagement::index', compact('job_registers', 'min', 'max','search'));
     }
 }

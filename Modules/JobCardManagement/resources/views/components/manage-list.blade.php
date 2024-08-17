@@ -30,7 +30,7 @@
         ['label' => 'Action'],
     ];
 
-    $config['paging'] = true;
+    $config['paging'] = false;
     $config['lengthMenu'] = [10, 50, 100, 500];
 
     $heads_manage = [
@@ -92,13 +92,20 @@
                         <table border="0" cellspacing="5" cellpadding="5">
                             <tbody>
                                 <tr>
+                                    <form action="job-card-management">
+                                        <td>Job Search</td>
+                                        <td><input type="number" id="search" name="search" placeholder="Enter job no" value="{{old('search',$search??'')}}"></td>
+                                        <td><input class="btn btn-info" type="submit" value="Search"></td>
+                                    </form>
+                                </tr>
+                                <tr>
                                     <td>From Date:</td>
                                     <form action="job-card-management">
                                         <td><input type="date" id="min" name="min" value="{{$min??''}}"></td>
                                         <td>To Date:</td>
                                         <td><input type="date" id="max" name="max" value="{{$max??''}}"></td>
                                         <td><input class="btn btn-info" type="submit" value="Filter"></td>
-                                        <td><input class="btn btn-info" type="submit" value="Reset" name="reset"></td>
+                                        <td><a href="/job-card-management" class="btn btn-info">Reset</td>
                                     </form>
                                 </tr>
                             </tbody>
@@ -123,7 +130,10 @@
                                     Export
                                 </button></a>
                         @endif
-                        <div class="card">
+                        <div class="card" id="job-card-data">
+                            @include('jobcardmanagement::_job_cards')
+                        </div>
+                        {{-- <div class="card">
                             <div class="card-body">
                                 <x-adminlte-datatable id="table8" :heads="Auth::user()->hasRole('Accounts') ? $aHeads : $oHeads" head-theme="dark" striped :config="$config" with-buttons>
                                     @foreach ($job_register as $index => $row)
@@ -179,8 +189,12 @@
                                         </tr>
                                     @endforeach
                                 </x-adminlte-datatable>
+                                <!-- Pagination Links -->
+                                <div class="d-flex justify-content-center">
+                                    {{ $job_register->links() }}
+                                </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

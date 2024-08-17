@@ -118,7 +118,7 @@ class HomeController extends Controller
         ->get();
 
         if(count($job_card) > 0){
-            return redirect()->back()->with('alert', 'No writer payments found');
+            return redirect()->back()->with('alert', 'No job card found in payment.');
         }
         // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
         $pdf = FacadePdf::loadView('reports.pdf.pdf-payment',compact('job_card','writer_payment'));

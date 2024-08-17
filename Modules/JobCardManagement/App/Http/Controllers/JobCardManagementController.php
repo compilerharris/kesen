@@ -20,35 +20,56 @@ use Maatwebsite\Excel\Facades\Excel;
 class JobCardManagementController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     { 
-        $noOfDays = env('NO_OF_DAYS', 30);
-        $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
-        $endDate = Carbon::now()->format('Y-m-d');
-        if(!request()->get("reset")){
-            if(request()->get("min")&&request()->get("max")==null) {
-                $job_register=JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->orderBy('created_at', 'desc')->get();
-            }elseif(request()->get("min")!=''&&request()->get("max")!='') {
-                $job_register=JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=',Carbon::parse(request()->get("max"))->endOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->orderBy('created_at', 'desc')->get();    
-            }elseif(request()->get("min")==null&&request()->get("max")){
-                $job_register=JobRegister::where('created_at', '<=',Carbon::parse(request()->get("max"))->endOfDay())->with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->orderBy('created_at', 'desc')->get();
-            }else{
-                $job_register=JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->whereBetween('created_at',[$startDate,$endDate])->orderBy('created_at', 'desc')->get();
+        if($request->get('search') != ''){
+            $search = $request->get('search');
+            $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->where('sr_no',$search)->paginate(10);
+            if($job_register->count() == 0){
+                return redirect()->back()->with('alert',"No job found with job no {$search}");
             }
+            $min = null;
+            $max = null;
         }else{
-            return redirect('/job-card-management');
-        }
+            $search = null;
+            if(!$request->get('min')&& !$request->get('max')){
+                $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
+    
+                $min = null;
+                $max = null;
+            }else{
+                $noOfDays = env('NO_OF_DAYS', 30);
+                $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
+                $endDate = Carbon::now()->format('Y-m-d');
         
-        if(request()->get("min")==null&&request()->get("max")==null){
-            $min = $startDate;
-            $max = $endDate;
-        }else{
-            $min = request()->get("min")??null;
-            $max = request()->get("max")??null;
+                $min = $request->get('min', $startDate);
+                $max = $request->get('max', $endDate);
+        
+                $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+                    ->when($min && $max, function ($query) use ($min, $max) {
+                        $query->whereBetween('created_at', [$min,$max]);
+                    })
+                    ->when($min, function ($query) use ($min) {
+                        $query->where('created_at', '>=',$min);
+                    })
+                    ->when($max, function ($query) use ($max) {
+                        $query->where('created_at', '<=',$max);
+                    })
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10); // 10 records per page
+            }
         }
-        $job_register->complete_count=$job_register->where('status',1)->count();
-        $job_register->cancel_count=$job_register->where('status',2)->count();
-        return view('jobcardmanagement::manage',compact(['job_register','min','max']));
+
+        $job_register->complete_count = $job_register->where('status', 1)->count();
+        $job_register->cancel_count = $job_register->where('status', 2)->count();
+
+        if ($request->ajax()) {
+            return view('jobcardmanagement::_job_cards', compact('job_register', 'min', 'max'))->render();
+        }
+
+        return view('jobcardmanagement::manage', compact('job_register', 'min', 'max','search'));
         
     }
 
@@ -438,5 +459,26 @@ class JobCardManagementController extends Controller
         $job_register->remark = $request->remark??null;
         $job_register->save();
         return redirect()->back()->with('message', 'Remark updated successfully.');
+    }
+
+    public function jobSearch(Request $request){ 
+        if($request->get('search') == ''){
+            return redirect()->back()->with('alert','Please enter job no.');
+        }
+
+        $search = $request->get('search');
+        $job_registers = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->where('sr_no',$search)->paginate(10);
+
+        if($job_registers->count() == 0){
+            return redirect()->back()->with('alert',"No job found with job no {$search}");
+        }
+
+        $job_registers->complete_count = $job_registers->where('status', 1)->count();
+        $job_registers->cancel_count = $job_registers->where('status', 2)->count();
+
+        $min = null;
+        $max = null;
+
+        return view('jobcardmanagement::index', compact('job_registers', 'min', 'max','search'));
     }
 }

@@ -22,6 +22,9 @@
             'label' => 'Client Name',
         ],
         [
+            'label' => 'Created By',
+        ],
+        [
             'label' => 'Status',
         ],
         [
@@ -80,7 +83,31 @@
                 </div>
             @endif
             <div class="card-body" style="background-color: #eaecef;padding-top:0">
-                <div class="card">
+                <table border="0" cellspacing="5" cellpadding="5">
+                    <tbody>
+                        <tr>
+                            <form action="job-register-management">
+                                <td>Job Search</td>
+                                <td><input type="number" id="search" name="search" placeholder="Enter job no" value="{{old('search',$search??'')}}"></td>
+                                <td><input class="btn btn-info" type="submit" value="Search"></td>
+                            </form>
+                        </tr>
+                        <tr>
+                            <form action="job-register-management">
+                                <td>From Date:</td>
+                                <td><input type="date" id="min" name="min" value="{{$min??''}}"></td>
+                                <td>To Date:</td>
+                                <td><input type="date" id="max" name="max" value="{{$max??''}}"></td>
+                                <td><input class="btn btn-info" type="submit" value="Filter"></td>
+                                <td><a href="/job-register-management" class="btn btn-info">Reset</td>
+                            </form>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="card" id="job-register-data">
+                    @include('jobregistermanagement::_job_registers')
+                </div>
+                {{-- <div class="card">
                     <div class="card-body">
                         <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
                             <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config"
@@ -94,6 +121,7 @@
                                         <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
                                         <td>{{ $row->handle_by->name }}</td>
                                         <td>{{ $row->client->name }}</td>
+                                        <td>{{ $row->created_by_id?app\Models\User::where('id',$row->created_by_id)->first()->name:'' }}</td>
                                         <td class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
                                                 {{ $row->status == 0 ? 'In Progress' : ($row->status == 1 ? 'Completed' :  'Canceled - '.$row->cancel_reason) }}
                                         </td>
@@ -123,7 +151,7 @@
                             </x-adminlte-datatable>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

@@ -95,14 +95,14 @@
                                                     label="T CR"/>
                                                 <x-adminlte-select name="t_cnc[0]" label="T C/NC" fgroup-class="col-md-2">
                                                         <option value="">Select C/NC</option>
-                                                        <option value="C">C</option>
+                                                        <option value="C" selected>C</option>
                                                         <option value="NC">NC</option>
                                                 </x-adminlte-select>
                                                 <x-adminlte-select name="t_dv[0]" fgroup-class="col-md-2" 
                                                     value="{{ old('t_dv[0]') }}" label="T DV">
                                                     <option value="">Select T DV</option>
                                                     @foreach ($managers as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                        <option value="{{ $user->id }}" {{$user->id == $job_register->handled_by_id?'selected':''}} >{{ $user->name }}</option>
                                                     @endforeach
                                                 </x-adminlte-select>
                                                 
@@ -136,7 +136,7 @@
                                                     value="{{ old('t_fqc[0]') }}" label="T F/QC">
                                                     <option value="">T F/QC</option>
                                                     @foreach ($qce_users as $user)
-                                                        @if($user->code == 'PAN') <option value="{{ $user->id }}">{{ $user->name }}</option> @endif
+                                                        @if($user->code == 'PAN') <option value="{{ $user->id }}" selected>{{ $user->name }}</option> @endif
                                                     @endforeach
                                                     <option value="NA">NA</option>
                                                 </x-adminlte-select>
@@ -170,14 +170,14 @@
                                                 
                                                 <x-adminlte-select name="bt_cnc[0]" label="BT C/NC" fgroup-class="col-md-2">
                                                     <option value="">Select C/NC</option>
-                                                    <option value="C">C</option>
+                                                    <option value="C" selected>C</option>
                                                     <option value="NC">NC</option>
                                                 </x-adminlte-select>
                                                 <x-adminlte-select name="bt_dv[0]" fgroup-class="col-md-2" 
                                                     value="{{ old('bt_dv[0]') }}" label="BT DV">
                                                     <option value="">Select BT DV</option>
                                                     @foreach ($managers as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                        <option value="{{ $user->id }}" {{$user->id == $job_register->handled_by_id?'selected':''}} >{{ $user->name }}</option>
                                                     @endforeach
                                                 </x-adminlte-select>
                                                 <x-adminlte-input name="btv_unit[0]" placeholder="BTV Unit" fgroup-class="col-md-2"
@@ -197,7 +197,7 @@
                                                     value="{{ old('bt_fqc[0]') }}" label="BT F/QC">
                                                     <option value="">BT F/QC</option>
                                                     @foreach ($qce_users as $user)
-                                                        @if($user->code == 'PAN') <option value="{{ $user->id }}">{{ $user->name }}</option> @endif
+                                                        @if($user->code == 'PAN') <option value="{{ $user->id }}" selected>{{ $user->name }}</option> @endif
                                                     @endforeach
                                                     <option value="NA">NA</option>
                                                 </x-adminlte-select>
