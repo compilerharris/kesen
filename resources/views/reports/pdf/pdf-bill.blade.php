@@ -74,7 +74,7 @@
                     <th>Client Person</th>
                     <th>Accountant</th>
                     <th>Handled by</th>
-                    <th>Billed Status</th>
+                    <th>Billing Status</th>
                     <th>Bill Amount</th>
                     <th>Paid Amount</th>
                 </tr>
@@ -84,27 +84,30 @@
                     $total_amount = 0; 
                     $total_paid = 0; 
                 @endphp
-                @foreach ($bill_data as $index => $bill)
-                    @php
-                        $total_amount += $bill->bill_amount??0;
-                        $total_paid += $bill->paid_amount??0;
-                    @endphp
+                @if(count($bill_data)>0)
+                    @foreach ($bill_data as $index => $bill)
+                        @php
+                            $total_amount += $bill->bill_amount??0;
+                            $total_paid += $bill->paid_amount??0;
+                        @endphp
+                        <tr>
+                            <td>{{ $loop->index + 1 }}</td>
+                            <td>{{ \Carbon\Carbon::parse($bill->date)->format('j M Y') }}</td>
+                            <td>{{ $bill->sr_no }}</td>
+                            <td>{{ $bill->client->name }}</td>
+                            <td>{{ $bill->client_person->name }}</td>
+                            <td>{{ isset($bill->accountant)?$bill->accountant->name:"" }}</td>
+                            <td>{{ $bill->handle_by->name }}</td>
+                            <td>{{ $bill->payment_status == 'Paid' ? 'Paid' : ($bill->payment_status == 'Partial' ? 'Partial' : 'Unpaid') }}</td>
+                            <td>{{ $bill->bill_amount??0 }}</td>
+                            <td>{{ $bill->paid_amount??0 }}</td>
+                        </tr>
+                    @endforeach
+                @else
                     <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ \Carbon\Carbon::parse($bill->date)->format('j M Y') }}</td>
-                        <td>{{ $bill->sr_no }}</td>
-                        <td>{{ $bill->client->name }}</td>
-                        <td>{{ $bill->client_person->name }}</td>
-                        <td>{{ isset($bill->accountant)?$bill->accountant->name:"" }}</td>
-                        <td>{{ $bill->handle_by->name }}</td>
-                        <td>{{ $bill->payment_status == 'Paid' ? 'Paid' : ($bill->payment_status == 'Partial' ? 'Partial' : 'Unpaid') }}</td>
-                        <td>{{ $bill->bill_amount??0 }}</td>
-                        <td>{{ $bill->paid_amount??0 }}</td>
+                        <td colspan="10" style="text-align:center;">No Data Found.</td>
                     </tr>
-                @endforeach
-                @php
-                    $balance_amount = $total_amount - $total_paid;
-                @endphp
+                @endif
             </tbody>
             <tfoot>
                 <tr>
@@ -114,7 +117,7 @@
                 </tr>
                 <tr>
                     <td colspan="9">Balance Amount</td>
-                    <td>{{ $balance_amount }}</td>
+                    <td>{{ $total_amount - $total_paid }}</td>
                 </tr>
             </tfoot>
         </table>

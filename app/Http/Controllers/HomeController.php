@@ -48,14 +48,33 @@ class HomeController extends Controller
         return view('reports.writer-report');
     }
 
-    public function generateBillReport()
-    {
+    public function generateBillReport(){
         $min = Carbon::parse(request()->get('from_date'))->startOfDay();
         $max = Carbon::parse(request()->get('to_date'))->endOfDay();
-        $bill_data=JobRegister::where('status','!=', 2)->where('created_at', '>=',Carbon::parse(request()->get("from_date"))->startOfDay())->where('created_at', '<=',Carbon::parse(request()->get("to_date"))->endOfDay())->orderBy('created_at', 'desc')->get();
-        $pdf = FacadePdf::loadView('reports.pdf.pdf-bill',compact('bill_data','max','min'));
+
+        $bill_data = JobRegister::where('status', '!=', 2)
+            ->whereBetween('created_at', [$min, $max])
+            ->when(is_array(request()->get('clients')) && count(request()->get('clients')) > 0, function($query) {
+                $query->whereIn('client_id', request()->get('clients'));
+            })
+            ->when(request()->get('billingStatus'), function($query) {
+                switch (request()->get('billingStatus')) {
+                    case 1:
+                        $query->where('payment_status', 'Paid');
+                        break;
+                    case 2:
+                        $query->where('payment_status', 'Partial');
+                        break;
+                    case 3:
+                        $query->where('payment_status', 'Unpaid');
+                        break;
+                }
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $pdf = FacadePdf::loadView('reports.pdf.pdf-bill', compact('bill_data', 'max', 'min'));
         return $pdf->stream();
-        
     }
     public function generatePaymentReport(Request $request){
         $year = request()->get('year');
