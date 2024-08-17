@@ -153,12 +153,12 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                     </x-adminlte-select2> --}}
                     <x-adminlte-input name="date" placeholder="Delivery Date" fgroup-class="col-md-2" type='date'
                         value="{{ old('date', $jobRegister->date) }}" required label="Delivery Date" />
-                    <x-adminlte-select2 name="status" fgroup-class="col-md-2" required label="Status">
+                    {{-- <x-adminlte-select2 name="status" fgroup-class="col-md-2" required label="Status">
                         <option value="">Select Status</option>
                         <option value="0" {{ $jobRegister->status == 0 ? 'selected' : '' }}>In Progress</option>
                         <option value="1" {{ $jobRegister->status == 1 ? 'selected' : '' }}>Completed</option>
                         <option value="2" {{ $jobRegister->status == 2 ? 'selected' : '' }}>Cancelled</option>
-                    </x-adminlte-select2>
+                    </x-adminlte-select2> --}}
                     <x-adminlte-select2 name="other_details[]" fgroup-class="col-md-2"  :config="$config"
                         label="Other Estimates" id="other_details" multiple>
                         <option value="">Select Estimate</option>

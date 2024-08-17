@@ -28,3 +28,4 @@ Route::put('job-card-management/bill/{job_id}', [JobCardManagementController::cl
 Route::get('job-card-management/status/{id}/{status}', [JobCardManagementController::class, 'changeStatus'])->name('jobcardmanagement.status');
 Route::get('job-card-management/export/pdf', [JobCardManagementController::class, 'exportJobCard'])->name('jobcardmanagement.exportJobCard');
 Route::get('job-card-management/remark/{id}', [JobCardManagementController::class, 'changeRemark'])->name('jobcardmanagement.remark');
+Route::get('job-card-management/wUText/{id}', [JobCardManagementController::class, 'wUText']);

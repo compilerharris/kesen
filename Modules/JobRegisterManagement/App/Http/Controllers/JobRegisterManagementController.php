@@ -208,7 +208,7 @@ class JobRegisterManagementController extends Controller
         $job_register->protocol_no = $request->protocol_no;
         $job_register->version_date = $request->version_date;
         $job_register->version_no = $request->version_no;
-        $job_register->status = $request->status;
+        $job_register->status = 0;
         $job_register->cancel_reason = $request->cancel_reason;
         $job_register->bill_no = $request->bill_no;
         $job_register->bill_date = $request->bill_date;
@@ -286,7 +286,6 @@ class JobRegisterManagementController extends Controller
         $jobRegister->protocol_no = $request->protocol_no;
         $jobRegister->version_date = $request->version_date;
         $jobRegister->version_no = $request->version_no;
-        $jobRegister->status = $request->status;
         $jobRegister->cancel_reason = $request->cancel_reason;
         $jobRegister->bill_no = $request->bill_no;
         $jobRegister->bill_date = $request->bill_date;

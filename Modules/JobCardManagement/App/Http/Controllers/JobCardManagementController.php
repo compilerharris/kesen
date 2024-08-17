@@ -461,6 +461,16 @@ class JobCardManagementController extends Controller
         return redirect()->back()->with('message', 'Remark updated successfully.');
     }
 
+    public function wUText(Request $request,$id){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
+            return redirect()->back()->with('alert', 'You are not autherized.');
+        }
+        $job_register = JobRegister::where('id', $id)->first();
+        $job_register->wu_text = $request->wu??null;
+        $job_register->save();
+        return redirect()->back()->with('message', 'Words/Units updated successfully.');
+    }
+
     public function jobSearch(Request $request){ 
         if($request->get('search') == ''){
             return redirect()->back()->with('alert','Please enter job no.');

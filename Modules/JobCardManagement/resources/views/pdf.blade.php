@@ -511,7 +511,7 @@
             </tr>
             <tr>
                 <td>Words / Units</td>
-                <td style="border-left-style: hidden;font-weight: bold;">As per proforma</td>
+                <td style="border-left-style: hidden;font-weight: bold;">{{$job->wu_text??"As per proforma"}}</td>
                 <td>Bill Date</td>
                 <td style="border-left-style: hidden;font-weight: bold;">
                     {{ $job->bill_date ? \Carbon\Carbon::parse($job->bill_date)->format('j M Y') : '' }}</td>
