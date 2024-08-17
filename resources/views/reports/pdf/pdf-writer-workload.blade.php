@@ -102,8 +102,8 @@
                                     <td style="text-align: left;">{{$job->bt_unit?$job->bt_unit:''}}</td>
                                     <td style="text-align: left;">{{$job->bt_pd?Carbon\Carbon::parse($job->bt_pd)->format('j M Y'):''}}</td>
                                 @else
-                                    <td style="text-align: left;"></td>
-                                    <td style="text-align: left;"></td>
+                                    <td style="text-align: left;">---</td>
+                                    <td style="text-align: left;">---</td>
                                 @endif
                             </tr>
                         @endif

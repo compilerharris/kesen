@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Modules\EstimateManagement\App\Models\EstimatesDetails;
 use Modules\JobCardManagement\App\Models\JobCard;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Facades\Auth;
@@ -171,6 +172,12 @@ class HomeController extends Controller
     public function writerWorkload(Request $request){
         $writerWorkload = JobCard::where('t_writer_code',$request->writer)->orWhere('bt_writer_code',$request->writer)->orderBy('created_at', 'desc')->get();
         $writerWorkload = $writerWorkload->sortBy('job_no');
+        if(is_array($request->lang) && count($request->lang)>0){
+            $writerWorkload = $writerWorkload->filter(function($job) use ($request){
+                $lang = EstimatesDetails::where('id',$job->estimate_detail_id)->whereIn('lang',$request['lang'])->first();
+                return $lang?true:false;
+            });
+        }
         $writerWorkload->writerId = $request->writer;
         // return view('reports.pdf.pdf-writer-workload', compact('writerWorkload'));
         $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload'));
