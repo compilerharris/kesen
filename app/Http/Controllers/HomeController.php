@@ -9,6 +9,8 @@ use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Modules\JobRegisterManagement\App\Models\JobRegister;
+use Modules\WriterManagement\App\Models\Writer;
+use Modules\WriterManagement\App\Models\WriterLanguageMap;
 use Modules\WriterManagement\App\Models\WriterPayment;
 use Illuminate\Support\Facades\View;
 class HomeController extends Controller
@@ -107,12 +109,39 @@ class HomeController extends Controller
         $min = Carbon::parse(request()->get('from_date'))->startOfDay();
         $max = Carbon::parse(request()->get('to_date'))->endOfDay();
 
-    $writer_report = WriterPayment::whereBetween('created_at', [$min, $max])
-        ->selectRaw('writer_id, SUM(total_amount) as payment_total_amounts')
-        ->groupBy('writer_id')
-        ->get();
-    $pdf = FacadePdf::loadView('reports.pdf.pdf-writer',compact('writer_report','min','max'));
-    return $pdf->stream();
+        $writers = Writer::where('status',1)->orderBy('created_at','desc')->get();
+        if(count($writers) == 0){
+            return redirect()->back()->with('alert', 'No writer found.');
+        }
+        foreach($writers as $writer){
+            $job_card = JobCard::where(function ($query) use ($writer) {
+                $query->where('t_writer_code', $writer->id)
+                      ->orWhere('bt_writer_code', $writer->id);
+            })
+            ->where('created_at', '>=', $min)
+            ->where('created_at', '<=', $max)
+            ->get();
+            $total = 0;
+            foreach ($job_card as $job) {
+                if($job->t_unit != ''){
+                    $total+=WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit;
+                }
+                if($job->bt_unit != ''){
+                    $total+=WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit;
+                }
+                if($job->v_unit != ''){
+                    $total+=WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit;
+                }
+            }
+            $writer->payment_total_amounts = $total;
+        }
+
+        $writers = $writers->filter(function ($value) {
+            return $value->payment_total_amounts != 0;
+        });
+            
+        $pdf = FacadePdf::loadView('reports.pdf.pdf-writer',compact('writers','min','max'));
+        return $pdf->stream();
         
     }
 

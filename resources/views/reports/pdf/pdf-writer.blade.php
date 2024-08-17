@@ -64,11 +64,11 @@
             </thead>
             <tbody>
                 @php $total=0; @endphp
-                @foreach ($writer_report as $index=>$writer)
+                @foreach ($writers as $writer)
                     <tr>
-                        <td>{{$index+1}}</td>
-                        <td>{{$writer->writer->writer_name}}</td>
-                        <td>{{$writer->writer->code}}</td>
+                        <td>{{$loop->index+1}}</td>
+                        <td>{{$writer->writer_name}}</td>
+                        <td>{{$writer->code}}</td>
                         <td>{{$writer->payment_total_amounts??0}}</td>
                         @php $total+=$writer->payment_total_amounts??0; @endphp
                     </tr>
