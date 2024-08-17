@@ -185,8 +185,8 @@ class EstimateManagementController extends Controller
                                 'verification_2' => $request->type == "customize" ? null : (isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? (($request['unit'][$index]*$rateCard->btv_rate) < $rateCard->btv_minimum_rate?$rateCard->btv_minimum_rate:($request['unit'][$index]*$rateCard->btv_rate)) : null),
                                 'layout_charges' => $request->type == "customize" ? null : ($request['layout_charges'][$index]??null),
                                 'layout_pages' => $request->type == "customize" ? null : ($request['layout_pages'][$index]??null),
-                                'layout_charges_2' => $request->type == "customize" ? null : ($request['layout_charges'][$index]??null),
-                                'bt_layout_pages' => $request->type == "customize" ? null : ($request['layout_pages'][$index]??null),
+                                'layout_charges_2' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request['layout_charges'][$index]??null):null),
+                                'bt_layout_pages' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request['layout_pages'][$index]??null):null),
                                 'lang' => $languages[$i],
                                 'two_way_qc_bt' => $request['two_way_qc_bt'][$index]??null,
                             ]);
@@ -338,8 +338,8 @@ class EstimateManagementController extends Controller
                             'verification_2' => $request->type == "customize" ? null : (isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? (($request['unit'][$index]*$rateCard->btv_rate) < $rateCard->btv_minimum_rate?$rateCard->btv_minimum_rate:($request['unit'][$index]*$rateCard->btv_rate)) : null),
                             'layout_charges' => $request->type == "customize" ? null : ($request['layout_charges'][$index]??null),
                             'layout_pages' => $request->type == "customize" ? null : ($request['layout_pages'][$index]??null),
-                            'layout_charges_2' => $request->type == "customize" ? null : ($request['layout_charges'][$index]??null),
-                            'bt_layout_pages' => $request->type == "customize" ? null : ($request['layout_pages'][$index]??null),
+                            'layout_charges_2' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request['layout_charges'][$index]??null):null),
+                            'bt_layout_pages' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request['layout_pages'][$index]??null):null),
                             'lang' => $languages[$i],
                             'two_way_qc_bt' => $request['two_way_qc_bt'][$index]??null,
                         ]);

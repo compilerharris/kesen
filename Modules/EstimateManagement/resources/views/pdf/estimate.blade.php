@@ -151,6 +151,9 @@
             $filteredBtv = array_filter($estimate->details->pluck('btv')->toArray(), function($value) {
                 return $value != null;
             });
+            $filteredBtLayout = array_filter($estimate->details->pluck('layout_charges_2')->toArray(), function($value) {
+                return $value != null;
+            });
         @endphp
         <table>
             <thead>
@@ -183,7 +186,7 @@
                         @php $counter=$counter+1; @endphp
                         <th>BT 2 Way QC</th>
                     @endif
-                    @if (count($filteredLayout)>0)
+                    @if (count($filteredBtLayout)>0)
                         @php $counter=$counter+1; @endphp
                         <th class="nowrap">Layout Charges</th>
                     @endif
@@ -228,7 +231,7 @@
                         @if ($estimate->details[0]->two_way_qc_bt)
                             <td>{{ $detail->two_way_qc_bt }}</td>
                         @endif
-                        @if (count($filteredLayout)>0)
+                        @if (count($filteredBtLayout)>0)
                             <td style="width: 50px;">{{ "Rs. ".$detail->layout_charges_2."x".$detail->bt_layout_pages."pgs = Rs. ".($detail->bt_layout_pages*$detail->layout_charges_2)."/-" }}</td>
                         @endif
                         @php 
