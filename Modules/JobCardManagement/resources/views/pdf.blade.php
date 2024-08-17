@@ -252,7 +252,7 @@
                             <td>{{ $card->bt_cnc }}</td>
                             <td>{{ $card->bt_dv!=null? App\Models\User::where('id', $card->bt_dv)->first()->name??'':'' }}</td>
                             <td>{{ $card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->name??$card->bt_fqc:''  }}</td>
-                            <td>{{ $card->bt_sentdate ? \Carbon\Carbon::parse($card->bt_sentdate)->format('j M Y') : '' }}</td>
+                            <td>{{ $card->bt_writer_code ? ($card->bt_sentdate ? \Carbon\Carbon::parse($card->bt_sentdate)->format('j M Y') : ''):'' }}</td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
                         <tr>
