@@ -103,7 +103,7 @@
                                         To Date:
                                         <input type="date" id="max" name="max" value="{{$max??''}}">
                                         <input class="btn btn-info" type="submit" value="Filter">
-                                        <input class="btn btn-info" type="submit" value="Reset" name="reset">
+                                        <a href="/estimate-management?reset=reset" class="btn btn-info">Reset</a>
                                     </form>
                                 </td>
                                 @if(!Auth::user()->hasRole('Accounts'))

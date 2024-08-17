@@ -23,32 +23,69 @@ class EstimateManagementController extends Controller
     public function index()
     {
         $noOfDays = env('NO_OF_DAYS', 30);
-        $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
-        $endDate = Carbon::now()->format('Y-m-d');
-        if(!request()->get("reset")){
-            if(request()->get("min")&&request()->get("max")==null) {
-                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->orderBy('created_at', 'desc')->get();    
-            }elseif(request()->get("min")!=''&&request()->get("max")!='') {
-                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
-            }elseif(request()->get("min")==null&&request()->get("max")){ 
-                $estimates = Estimates::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
+        $startDate = Carbon::now()->subDays($noOfDays)->startOfDay();
+        $endDate = Carbon::now()->endOfDay();
+    
+        $min = request()->get('min') ? Carbon::parse(request()->get('min'))->startOfDay() : null;
+        $max = request()->get('max') ? Carbon::parse(request()->get('max'))->endOfDay() : null;
+    
+        // Initialize query
+        $query = Estimates::query();
+    
+        // Apply date filters if present
+        if ($min && $max) {
+            $query->whereBetween('created_at', [$min, $max]);
+        } elseif ($min) {
+            $query->where('created_at', '>=', $min);
+        } elseif ($max) {
+            $query->where('created_at', '<=', $max);
+        } else {
+            if(!request()->get("reset")){
+                $query->whereBetween('created_at', [$startDate, $endDate]);
             }else{
-                $estimates = Estimates::whereBetween('created_at',[$startDate,$endDate])->orderBy('created_at', 'desc')->get();
+                return redirect('/estimate-management');
             }
-        }else{
-            return redirect('/estimate-management');
         }
+    
+        // Get filtered estimates
+        $estimates = $query->orderBy('created_at', 'desc')->get();
+    
+        // Set default min and max for the view
+        $min = $min ? $min->format('Y-m-d') : $startDate->format('Y-m-d');
+        $max = $max ? $max->format('Y-m-d') : $endDate->format('Y-m-d');
+    
+        // Count approved and rejected estimates
+        $estimates_approved_count = $estimates->where('status', 1)->count();
+        $estimates_rejected_count = $estimates->where('status', 2)->count();
+    
+        return view('estimatemanagement::index', compact( 'estimates', 'estimates_approved_count', 'estimates_rejected_count',  'min', 'max'));
+        // $noOfDays = env('NO_OF_DAYS', 30);
+        // $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
+        // $endDate = Carbon::now()->format('Y-m-d');
+        // // if(!request()->get("reset")){
+        //     if(request()->get("min")&&request()->get("max")==null) {
+        //         $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->orderBy('created_at', 'desc')->get();    
+        //     }elseif(request()->get("min")!=''&&request()->get("max")!='') {
+        //         $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
+        //     }elseif(request()->get("min")==null&&request()->get("max")){ 
+        //         $estimates = Estimates::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
+        //     }else{
+        //         $estimates = Estimates::whereBetween('created_at',[$startDate,$endDate])->orderBy('created_at', 'desc')->get();
+        //     }
+        // // }else{
+        // //     return redirect('/estimate-management');
+        // // }
 
-        if(request()->get("min")==null&&request()->get("max")==null){
-            $min = $startDate;
-            $max = $endDate;
-        }else{
-            $min = request()->get("min")??null;
-            $max = request()->get("max")??null;
-        }
-        $estimates_approved_count=$estimates->where('status',1)->count();
-        $estimates_rejected_count=$estimates->where('status',2)->count();
-        return view('estimatemanagement::index')->with('estimates', $estimates)->with('estimates_approved_count', $estimates_approved_count)->with('estimates_rejected_count', $estimates_rejected_count)->with('min',$min)->with('max',$max);
+        // if(request()->get("min")==null&&request()->get("max")==null){
+        //     $min = $startDate;
+        //     $max = $endDate;
+        // }else{
+        //     $min = request()->get("min")??null;
+        //     $max = request()->get("max")??null;
+        // }
+        // $estimates_approved_count=$estimates->where('status',1)->count();
+        // $estimates_rejected_count=$estimates->where('status',2)->count();
+        // return view('estimatemanagement::index')->with('estimates', $estimates)->with('estimates_approved_count', $estimates_approved_count)->with('estimates_rejected_count', $estimates_rejected_count)->with('min',$min)->with('max',$max);
     }
 
     public function viewPdf($id)
