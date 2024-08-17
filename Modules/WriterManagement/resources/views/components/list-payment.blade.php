@@ -83,17 +83,18 @@
                                             <td>{{ App\Models\Metrix::where('id',$payment->metrix)->first()->name }}</td>
                                             <td>{{ $payment->apply_gst ? 'Yes' : 'No' }}</td>
                                             <td>{{ $payment->apply_tds ? 'Yes' : 'No' }}</td>
-                                            <td>{{ $payment->period_from }}</td>
-                                            <td>{{ $payment->period_to }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($payment->period_from)->format('j M Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($payment->period_to)->format('j M Y') }}</td>
                                             <td>{{ $payment->online_ref_no ?? $payment->cheque_no }}</td>
                                             <td>{{ $payment->performance_charge }}</td>
                                             <td>{{ $payment->deductible }}</td>
                                             <td>{{ $payment->total_amount }}</td>
-                                            <td>
+                                            <td style="width: 200px;">
                                                 @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
                                                     <a href="{{ route('writermanagement.editPaymentView', [$id, $payment->id]) }}" class="btn btn-info btn-sm mb-2">Edit
                                                     </a>
                                                 @endif
+                                                <a href="{{ route('report.payments.preview', [$id,$payment->id]) }}" target="_blank" class="btn btn-info btn-sm mb-2">Preview</a>
                                                 {{-- <a href="{{ route('writermanagement.showPayment', [$id,$payment->id]) }}">
                                             <button class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
                                                View

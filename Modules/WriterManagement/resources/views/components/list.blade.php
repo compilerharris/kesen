@@ -86,11 +86,11 @@
                 <div class="card-header">
                     <h3 style="margin:0">All Writers</h3>
                 </div>
-                @if(!Auth::user()->hasRole('Accounts'))
+                {{-- @if(!Auth::user()->hasRole('Accounts')) --}}
                     <div style="background-color: #eaecef;">
                         <a href="{{ route('writermanagement.create') }}" style="background-color: #eaecef;"><button class="btn btn-md btn-success" style="float:right;margin:10px">Add Writer</button></a>
                     </div>
-                @endif
+                {{-- @endif --}}
                 <div class="card-body" style="background-color: #eaecef;padding-top:0">
                     <div class="card">
                         <div class="card-body">
@@ -99,7 +99,6 @@
                                     :config="$config" with-buttons>
                                     @foreach ($writers as $index => $row)
                                         <tr>
-        
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $row->writer_name }}</td>
                                             <td>{{ $row->email }}</td>
@@ -113,13 +112,14 @@
                                             <td>{{ $row->created_by }}</td>
                                             <td width="250px">
                                                 <a
-                                                @if(!Auth::user()->hasRole('Accounts'))
+                                                {{-- @if(!Auth::user()->hasRole('Accounts')) --}}
                                                     @if ($row->status == 1) href="{{ route('writermanagement.edit', $row->id) }}" @else href="javascript:function() { return false; }" @endif class="btn btn-info btn-sm mb-2">Edit</a>
-                                                @endif
+                                                {{-- @endif --}}
                                                 {{-- <a href="{{route('writermanagement.show', $row->id)}}"><button class="btn btn-xs btn-default text-primary mx-1 shadow" title="View Language">
                                             View 
                                         </button> --}}
                                                 <a href="{{ route('writermanagement.viewLanguageMaps', $row->id) }}" class="btn btn-info btn-sm mb-2">View Language</a>
+                                                <a href="{{ route('writermanagement.addPaymentView', $row->id) }}" class="btn btn-success btn-sm mb-2">Add Payment</a>
                                                 <a href="{{ route('writermanagement.viewPayments', $row->id) }}" class="btn btn-info btn-sm mb-2">View Payment</a>
                                                 @if(!Auth::user()->hasRole('Accounts'))
                                                     @if ($row->status == 1)

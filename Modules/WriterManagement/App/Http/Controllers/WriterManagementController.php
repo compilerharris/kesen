@@ -33,7 +33,7 @@ class WriterManagementController extends Controller
      */
     public function create()
     {
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         return view('writermanagement::create');
@@ -79,7 +79,7 @@ class WriterManagementController extends Controller
      */
     public function edit($id)
     {
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $writer=Writer::find($id);
@@ -126,7 +126,7 @@ class WriterManagementController extends Controller
     }
 
     public  function deleteLanguageMap($writer_id,$id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $language_map=WriterLanguageMap::find($id);
@@ -135,7 +135,7 @@ class WriterManagementController extends Controller
     }
 
     public function editLanguageMap($writer_id,$id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $languages=Language::orderBy('created_at', 'desc')->get();
@@ -169,7 +169,7 @@ class WriterManagementController extends Controller
     }
 
     public function addLanguageMapView($writer_id){
-        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $languages=Language::orderBy('created_at', 'desc')->get();
@@ -249,6 +249,7 @@ class WriterManagementController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $request['created_by'] = auth()->user()->id;
         $payment = new WriterPayment($request->all());
         $payment->save();
 

@@ -242,11 +242,9 @@ class JobRegisterManagementController extends Controller
         $jobRegister->invoice_date = $request->invoice_date;
         $jobRegister->sent_date = $request->sent_date;
         $jobRegister->operator = $request->operator;
+        $jobRegister->status = 1;
            # 'site_specific' => $request->site_specific,
-        $jobRegister->save();        
-
-        
-
+        $jobRegister->save();
         return redirect()->route('jobregistermanagement.index')->with('message', 'Job register updated successfully.');
     }
 

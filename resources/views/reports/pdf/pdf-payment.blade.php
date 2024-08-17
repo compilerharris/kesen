@@ -7,9 +7,10 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0px;
         }
         .container {
-            width: 80%;
+            width: 95%;
             margin: 0 auto;
             border: 1px solid #000;
             padding: 20px;
@@ -68,7 +69,7 @@
         <h2>PAYMENT ADVICE</h2>
         <table class="info-table">
             <tr>
-                <td >{{Modules\WriterManagement\App\Models\Writer::where('id',$writer_payment->writer_id)->first()->writer_name}}</td>
+                <td><b>{{Modules\WriterManagement\App\Models\Writer::where('id',$writer_payment->writer_id)->first()->writer_name}}</b></td>
                 <td style="width: 212px;">Payment Date : <b>{{Carbon\Carbon::parse($writer_payment->created_at)->format('j M Y')}}</b></td>
             </tr>
             <tr>
@@ -140,7 +141,7 @@
             
             
             <tr class="total-row">
-                <td colspan="6">Total</td>
+                <td colspan="6">Sub Total</td>
                 <td>{{$total}}</td>
             </tr>
             @if($writer_payment->apply_gst == 1)
@@ -178,11 +179,11 @@
                 @endif
             
                 <tr class="total-row">
-                    <td colspan="6">Total</td>
+                    <td colspan="6">Grand Total</td>
                     <td>{{round($total)}}</td>
                 </tr>
                 <tr class="total-row">
-                    <td colspan="6">Grand Total</td>
+                    <td colspan="6">Net Total</td>
                     <td>{{round($total)}}</td>
                 </tr>
             @else
@@ -216,10 +217,31 @@
                     <td>{{round($total)}}</td>
                 </tr>
             @endif
-
-            
         </table>
-        <p class="amount-words">Rupees : {{number_to_words($total-($total*0.1))}}</p>
+        <p class="amount-words">Rupees : {{number_to_words($total)}}.</p>
+        <div>
+            <div style="display: block;font-size: 12px;margin-bottom: 10px">
+                <p style="display: inline">For </p>
+                <p style="font-weight: bold;display: inline">{{ $writer_payment->payment_metric->name }}</p>
+            </div>
+            @php
+                $emp = \App\Models\User::where('id',$writer_payment->created_by)->first();
+            @endphp
+            @if($emp)
+                @if (file_exists(public_path('img/'.$emp->code.'.png')))
+                    <img src="{{ public_path('img/'.$emp->code.'.png') }}" alt="{{Auth::user()->name}}" width="120px" style="margin-left:20px;margin-bottom:-10px;">
+                @endif
+            @else
+                <div style="height: 50px;"></div>
+            @endif
+            <div style="margin-bottom: 5px;">
+                _________________________
+            </div>
+            <div >
+                <span style="display: inline;padding-left: 35px;font-size: 12px"><strong>Authorized Signatory</strong></span>
+                {{-- <span style="float: right;font-weight: bold;font-size: 12px;display: inline">Help us to Serve you Better</span> --}}
+            </div>
+        </div>
     </div>
 </body>
 </html>

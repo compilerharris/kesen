@@ -68,10 +68,30 @@ class HomeController extends Controller
             $query->where('t_writer_code', $request->writer)
                   ->orWhere('bt_writer_code', $request->writer);
         })
+        // ->whereBetween('created_at', [$min,$max])
         ->where('created_at', '>=', $writer_payment->period_from)
         ->where('created_at', '<=', $writer_payment->period_to)
         ->get();
+        // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
         $pdf = FacadePdf::loadView('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
+        return $pdf->stream();
+        
+    }
+    public function generatePaymentReportPreview($writerId, $paymentId){
+        $writer_payment=WriterPayment::where('id',$paymentId)->first();
+        if($writer_payment==null){
+            return redirect()->back()->with('alert', 'No writer payments found');
+        }
+        $job_card = JobCard::where(function ($query) use ($writerId) {
+            $query->where('t_writer_code', $writerId)
+                  ->orWhere('bt_writer_code', $writerId);
+        })
+        // ->whereBetween('created_at', [$min,$max])
+        ->where('created_at', '>=', $writer_payment->period_from)
+        ->where('created_at', '<=', $writer_payment->period_to)
+        ->get();
+        // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
+        $pdf = FacadePdf::loadView('reports.pdf.pdf-payment',compact('job_card','writer_payment'));
         return $pdf->stream();
         
     }

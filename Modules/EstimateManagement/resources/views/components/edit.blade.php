@@ -556,7 +556,6 @@
 <script type="text/javascript">
     var rates = [];
     $(document).ready(function() {  
-        {{-- loadRatecard(@json($estimate_details)); --}}
         addLangScripts();  
         checkTypeValue();
         let tempIndex = {{ count($estimate_details) }};

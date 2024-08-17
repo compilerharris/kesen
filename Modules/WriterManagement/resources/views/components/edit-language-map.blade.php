@@ -1,5 +1,6 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\preloaderHelper')
+@section('plugins.Select2', true)
 
 @if ($layoutHelper->isLayoutTopnavEnabled())
     @php($def_container_class = 'container')
@@ -40,13 +41,13 @@
                 @csrf
                 @method('PUT')
                 <div class="row pt-2">
-                    <x-adminlte-select name="language" fgroup-class="col-md-3" required label="Language">
+                    <x-adminlte-select2 name="language" fgroup-class="col-md-3" required label="Language">
                         <option value="">Language</option>
                         @foreach ($languages as $language)
                             <option value="{{ $language->id }}" @if ($language_map->language_id == $language->name) selected @endif>
                                 {{ $language->name }}</option>
                         @endforeach
-                    </x-adminlte-select>
+                    </x-adminlte-select2>
                     <x-adminlte-input name="per_unit_charges" placeholder="Translation Charges" fgroup-class="col-md-3"
                         value="{{ $language_map->per_unit_charges }}" label="Translation Charges" required/>
                     <x-adminlte-input name="checking_charges" placeholder="Verification" fgroup-class="col-md-3"

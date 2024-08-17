@@ -24,6 +24,7 @@ Route::get('/writer-report', [App\Http\Controllers\HomeController::class, 'showW
 Route::post('/writer-report', [App\Http\Controllers\HomeController::class, 'generateWriterReport'])->name('report.writers')->middleware('auth');
 Route::get('/payment-report', [App\Http\Controllers\HomeController::class, 'showPaymentlReportForm'])->name('paymentReport')->middleware('auth');
 Route::post('/payment-report', [App\Http\Controllers\HomeController::class, 'generatePaymentReport'])->name('report.payments')->middleware('auth');
+Route::get('/payment-report-preview/{writerId}/{paymentId}', [App\Http\Controllers\HomeController::class, 'generatePaymentReportPreview'])->name('report.payments.preview')->middleware('auth');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
 
 Route::get('/writer-workload-report', [App\Http\Controllers\HomeController::class, 'writerWorkloadRedirect'])->name('writerWorkloadRedirect')->middleware('auth');

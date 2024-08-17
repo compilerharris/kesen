@@ -1,5 +1,7 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\PreloaderHelper')
+@section('plugins.Sweetalert2', true)
+@section('plugins.Datatables', true)
 @php
     $language_heads = [
         ['label' => 'Sr. No.'],

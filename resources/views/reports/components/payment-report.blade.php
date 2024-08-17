@@ -1,5 +1,6 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\preloaderHelper')
+@section('plugins.Select2', true)
 @php 
     $writers = Modules\WriterManagement\App\Models\Writer::where('status', 1)->get(); 
 @endphp
@@ -40,28 +41,14 @@
             <form action="{{ route('report.payments') }}" method="POST" target="_blank">
                 @csrf
                 <div class="row pt-2">
-                    <x-adminlte-select name="writer" fgroup-class="col-md-4" required value="{{ old('writer') }}"
+                    <x-adminlte-select2 name="writer" fgroup-class="col-md-4" required value="{{ old('writer') }}"
                         label="Writer">
                         <option value="">Select Writer</option>
                         @foreach ($writers as $writer)
                             <option value="{{ $writer->id }}">{{ $writer->writer_name }}</option>
                         @endforeach
-                    </x-adminlte-select>
-                    <x-adminlte-select name="year" fgroup-class="col-md-4" label="Year" required>
-                        <option value="" >Select Year</option>
-                        @for ($i=0;$i<100;$i++)
-                            @if($i<10)
-                                <option value="200{{$i}}" >200{{$i}}</option>
-                            @else
-                                @if ("20".$i==\Carbon\Carbon::now()->format("Y"))
-                                    <option value="20{{$i}}" selected>20{{$i}}</option>
-                                @else
-                                    <option value="20{{$i}}" >20{{$i}}</option>
-                                @endif
-                            @endif
-                        @endfor
-                    </x-adminlte-select>
-                    <x-adminlte-select name="month" fgroup-class="col-md-4" label="Month" required>
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 name="month" fgroup-class="col-md-4" label="Month" required>
                         <option value="">Select Month</option>
                         <option value="January">January</option>
                         <option value="February">February</option>
@@ -75,7 +62,21 @@
                         <option value="October">October</option>
                         <option value="November">November</option>
                         <option value="December">December</option>
-                    </x-adminlte-select>
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 name="year" fgroup-class="col-md-4" label="Year" required>
+                        <option value="" >Select Year</option>
+                        @for ($i=0;$i<100;$i++)
+                            @if($i<10)
+                                <option value="200{{$i}}" >200{{$i}}</option>
+                            @else
+                                @if ("20".$i==\Carbon\Carbon::now()->format("Y"))
+                                    <option value="20{{$i}}" selected>20{{$i}}</option>
+                                @else
+                                    <option value="20{{$i}}" >20{{$i}}</option>
+                                @endif
+                            @endif
+                        @endfor
+                    </x-adminlte-select2>
                     
                    
 
