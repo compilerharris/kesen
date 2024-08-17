@@ -50,6 +50,14 @@
             background-color: #4ccfec;
             border-color: #4ccfec;
         }
+        .custom-body-right button:focus{
+            background-color: #4ccfec !important;
+            border-color: #4ccfec !important;
+        }
+        .custom-body-right button:active{
+            background-color: #4ccfec !important;
+            border-color: #4ccfec !important;
+        }
         .custom-body-right .card-success{
             /* background-color: #17a2b8; */
             border-color: #17a2b8;
