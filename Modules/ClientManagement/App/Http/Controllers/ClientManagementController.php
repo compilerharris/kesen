@@ -158,7 +158,7 @@ class ClientManagementController extends Controller
         $request->validate([
             'name'=>'required',
             'email'=>'nullable|email|unique:contact_persons,email',
-            'phone_no'=>'required|numeric|unique:contact_persons,phone_no',
+            'phone_no'=>'nullable|numeric|unique:contact_persons,phone_no',
             'landline'=>'nullable|numeric|unique:contact_persons,landline',
             'designation'=>'nullable',
         ]);
@@ -185,7 +185,7 @@ class ClientManagementController extends Controller
         $request->validate([
             'name'=>'required',
             'email'=>'nullable|email|unique:contact_persons,email,' . $contact_id . ',id',
-            'phone_no'=>'required|numeric|unique:contact_persons,phone_no,' . $contact_id . ',id',
+            'phone_no'=>'nullable|numeric|unique:contact_persons,phone_no,' . $contact_id . ',id',
             'landline'=>'nullable|numeric|unique:contact_persons,landline,' . $contact_id . ',id',
             'designation'=>'nullable',
         ]);
