@@ -133,7 +133,7 @@ class JobCardManagementController extends Controller
             $jobCard->t_cnc = $request['t_cnc'][$index]?? null;
             $jobCard->t_dv = $request['t_dv'][$index]?? null;
             $jobCard->t_fqc = $request['t_fqc'][$index]??null;
-            $jobCard->t_sentdate = $request['t_sentdate'][$index]??null;
+            $jobCard->t_sentdate = $request['t_sentdate'][0]??null;
             $jobCard->bt_writer_code = $request['bt_writer'][$index] ?? null;
             $jobCard->bt_unit = $request['bt_unit'][$index] ?? null;
             $jobCard->bt_pd = $request['bt_pd'][$index] ?? null;
@@ -141,7 +141,7 @@ class JobCardManagementController extends Controller
             $jobCard->bt_cnc = $request['bt_cnc'][$index] ?? null;
             $jobCard->bt_dv = $request['bt_dv'][$index] ?? null;
             $jobCard->bt_fqc = $request['bt_fqc'][$index] ?? null;
-            $jobCard->bt_sentdate = $request['bt_sentdate'][$index] ?? null;
+            $jobCard->bt_sentdate = $request['t_sentdate'][0] ?? null;
             $jobCard->job_no = $request['job_no'][0];
             $jobCard->estimate_detail_id = $request['estimate_detail_id'][0];
             $jobCard->sync_no = $carbon;
@@ -209,7 +209,7 @@ class JobCardManagementController extends Controller
             't_cnc' => $request['t_cnc'][$index]?? null,
             't_dv' => $request['t_dv'][$index]?? null,
             't_fqc' => $request['t_fqc'][$index]?? null,
-            't_sentdate' => $request['t_sentdate'][$index]?? null,
+            't_sentdate' => $request['t_sentdate'][0]?? null,
             't_unit' => $request['t_unit'][$index]?? null,
             'bt_unit' => $request['bt_unit'][$index] ?? null,
             'bt_writer_code' => $request['bt_writer'][$index] ?? null,
@@ -218,7 +218,7 @@ class JobCardManagementController extends Controller
             'bt_cnc' => $request['bt_cnc'][$index] ?? null,
             'bt_dv' => $request['bt_dv'][$index] ?? null,
             'bt_fqc' => $request['bt_fqc'][$index] ?? null,
-            'bt_sentdate' => $request['bt_sentdate'][$index] ?? null,
+            'bt_sentdate' => $request['t_sentdate'][0] ?? null,
             'job_no' => $request['job_no'][0],
             'btv_unit' => $request['btv_unit'][$index]??null,
             'btv_employee_code' => $request['btv_employee_code'][$index]??null,

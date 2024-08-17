@@ -62,6 +62,11 @@
            
             <form action="{{ route('jobcardmanagement.store') }}" method="POST">
                 @csrf
+
+                <x-adminlte-input name="t_sentdate[0]" placeholder="Sent Date"
+                fgroup-class="col-md-2" type='date'
+                value="{{ old('t_sentdate[0]') }}"
+                label="Sent Date"/>
                 <div id="repeater">
                     <div class="repeater-item mt-3">
                         <div class="card">
@@ -135,10 +140,10 @@
                                                     @endforeach
                                                     <option value="NA">NA</option>
                                                 </x-adminlte-select>
-                                                <x-adminlte-input name="t_sentdate[0]" placeholder="Sent Date"
+                                                {{-- <x-adminlte-input name="t_sentdate[0]" placeholder="Sent Date"
                                                     fgroup-class="col-md-2" type='date'
                                                     value="{{ old('t_sentdate[0]') }}"
-                                                    label="T Sent Date"/>
+                                                    label="T Sent Date"/> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -196,10 +201,10 @@
                                                     @endforeach
                                                     <option value="NA">NA</option>
                                                 </x-adminlte-select>
-                                                <x-adminlte-input name="bt_sentdate[0]" placeholder="Sent Date"
+                                                {{-- <x-adminlte-input name="bt_sentdate[0]" placeholder="Sent Date"
                                                     fgroup-class="col-md-2" type='date'
                                                     value="{{ old('bt_sentdate[0]') }}"
-                                                    label="BT Sent Date"  />
+                                                    label="BT Sent Date"  /> --}}
                                             </div>
                                         </div>
                                     </div>

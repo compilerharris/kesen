@@ -66,6 +66,10 @@
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+                <x-adminlte-input name="t_sentdate[0]"
+                    placeholder="Sent Date" fgroup-class="col-md-2" type='date'
+                    value="{{ old('t_sentdate.0', $job_card[0]->t_sentdate) }}"
+                    label="Sent Date"/>
                 <div id="repeater">
                     @foreach ($job_card as $index => $job)
                         <div class="repeater-item mt-3">
@@ -156,10 +160,10 @@
                                                     @endforeach
                                                     <option value="NA">NA</option>
                                                 </x-adminlte-select>
-                                                <x-adminlte-input name="t_sentdate[{{ $index }}]"
+                                                {{-- <x-adminlte-input name="t_sentdate[{{ $index }}]"
                                                     placeholder="T Sent Date" fgroup-class="col-md-2" type='date'
                                                     value="{{ old('t_sentdate.' . $index, $job->t_sentdate) }}"
-                                                    label="T Sent Date"/>
+                                                    label="T Sent Date"/> --}}
                                                
                                             </div>
                                         </div>
@@ -231,10 +235,10 @@
                                                     @endforeach
                                                     <option value="NA">NA</option>
                                                 </x-adminlte-select>
-                                                <x-adminlte-input name="bt_sentdate[{{ $index }}]"
+                                                {{-- <x-adminlte-input name="bt_sentdate[{{ $index }}]"
                                                     placeholder="Sent Date" fgroup-class="col-md-2" type='date'
                                                     value="{{ old('bt_sentdate.' . $index, $job->bt_sentdate) }}"
-                                                    label="BT Sent Date" />
+                                                    label="BT Sent Date" /> --}}
                                             </div>
                                         </div>
                                        
