@@ -242,15 +242,15 @@
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
                         <tr>
-                            <td style={{$card->bt_unit?"background-color:grey;":""}}>BT</td>
+                            <td style={{$card->estimateDetail->bt?"background-color:grey;":""}}>BT</td>
                             <td>{{ $card->bt_unit }}</td>
                             <td>{{ Modules\WriterManagement\App\Models\Writer::where('id', $card->bt_writer_code)->first()->code ?? '' }}</td>
                             <td></td>
                             
                             <td>{{ $card->bt_pd ? \Carbon\Carbon::parse($card->bt_pd)->format('j M Y') : '' }}</td>
                             <td>{{ $card->bt_cr ? \Carbon\Carbon::parse($card->bt_cr)->format('j M Y') : '' }}</td>
-                            <td>{{ $card->bt_cnc }}</td>
-                            <td>{{ $card->bt_dv!=null? App\Models\User::where('id', $card->bt_dv)->first()->name??'':'' }}</td>
+                            <td>{{ $card->estimateDetail->bt?$card->bt_cnc:'' }}</td>
+                            <td>{{ $card->estimateDetail->bt?($card->bt_dv!=null? App\Models\User::where('id', $card->bt_dv)->first()->name??'':''):'' }}</td>
                             <td>{{ $card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->name??$card->bt_fqc:''  }}</td>
                             <td>{{ $card->bt_writer_code ? ($card->bt_sentdate ? \Carbon\Carbon::parse($card->bt_sentdate)->format('j M Y') : ''):'' }}</td>
                             @php $pageBreakIndex+=1;@endphp
@@ -390,7 +390,7 @@
                         </tr>
                         
                         <tr>
-                            <td style="font-size: 8pt;">BT</td>
+                            <td style="font-size: 8pt;{{$card->bt?'background-color:grey;':''}}">BT</td>
                             
                             <td style="font-size: 8pt"></td>
                             <td style="font-size: 8pt">

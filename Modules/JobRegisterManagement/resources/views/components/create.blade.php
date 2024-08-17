@@ -101,6 +101,46 @@
                         </x-adminlte-select2>
                         <span class="invalid-feedback is-invalid" id="requiredMsg">Please select at least one language.</span>
                     </div>
+                    <!-- t -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>Translation</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" name="t" id="t" checked disabled>
+                            <label class="custom-control-label" for="t"></label>
+                        </div>
+                    </div>
+                    <!-- v1 -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>V1</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" name="v1" id="v1">
+                            <label class="custom-control-label" for="v1"></label>
+                        </div>
+                    </div>
+                    <!-- v2 -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>V2</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" name="v2" id="v2">
+                            <label class="custom-control-label" for="v2"></label>
+                        </div>
+                    </div>
+                    <!-- bt -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>BT</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" name="bt" id="bt">
+                            <label class="custom-control-label" for="bt"></label>
+                        </div>
+                    </div>
+                    <!-- btv -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>BTV</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" name="btv" id="btv">
+                            <label class="custom-control-label" for="btv"></label>
+                        </div>
+                    </div>
                     {{-- no estimate end --}}
                     <x-adminlte-select2 name="estimate_document_id" id="estimate_document_id" fgroup-class="col-md-2 estimate" label="Estimate Document">
                         <option value="">Select Estimate Document</option>
@@ -121,7 +161,7 @@
                     <span id="type" class="col-md-2" style="display: none;"></span>
                     <x-adminlte-input name="protocol_no" placeholder="Protocol Number" fgroup-class="col-md-2"
                         value="{{ old('protocol_no') }}" label="Protocol Number" />
-                    <x-adminlte-input name="version_no" placeholder="Version No" fgroup-class="col-md-2"
+                    <x-adminlte-input name="version_no" placeholder="Version No" fgroup-class="col-md-1"
                     value="{{ old('version_no') }}" label="Version No" />
                     <x-adminlte-input name="version_date" placeholder="Version Date" fgroup-class="col-md-2" type="date"
                         value="{{ old('version_date') }}" label="Version Date" />
@@ -181,6 +221,7 @@
                 $('.no_estimate #client_contact_person_id').attr('required',true);
                 $('.no_estimate input').attr('required',true);
                 $('.no_estimate li input').removeAttr('required');
+                $('.no_estimate input[type="checkbox"]').removeAttr('required');
                 $('.estimate select').removeAttr('required');
             }else{
                 $('.estimate').show();
@@ -188,6 +229,7 @@
                 $('.estimate select').attr('required',true);
                 $('.no_estimate select').removeAttr('required');
                 $('.no_estimate input').removeAttr('required');
+                $('.no_estimate input[type="checkbox"]').removeAttr('required');
                 $.ajax({
                     url: "/estimate-management/estimate-details/" + $('#estimate_number').val(),
                     method: 'GET',
