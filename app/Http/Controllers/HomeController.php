@@ -72,6 +72,10 @@ class HomeController extends Controller
         ->where('created_at', '>=', $writer_payment->period_from)
         ->where('created_at', '<=', $writer_payment->period_to)
         ->get();
+
+        if(count($job_card) > 0){
+            return redirect()->back()->with('alert', 'No writer payments found');
+        }
         // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
         $pdf = FacadePdf::loadView('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
         return $pdf->stream();
