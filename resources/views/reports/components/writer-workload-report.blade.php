@@ -58,18 +58,18 @@
             <form action="{{ route('report.writerWorkload') }}" method="POST" target="_blank">
                 @csrf
                 <div class="row pt-2">
-                    <x-adminlte-select2 :config="$config" name="writer" id="writer" fgroup-class="col-md-6" required value="{{ old('writer') }}"
-                        label="Writer">
-                        <option value="">Select Writer</option>
-                        @foreach ($writers as $writer)
-                            <option value="{{ $writer->id }}">{{ $writer->writer_name }}</option>
-                        @endforeach
-                    </x-adminlte-select2>
                     <x-adminlte-select2 :config="$configL" name="lang[]" id="lang" fgroup-class="col-md-6" value="{{ old('lang') }}"
                         label="Language" multiple>
                         <option value="">Select Language</option>
                         @foreach ($languages as $language)
                             <option value="{{ $language->id }}">{{ $language->name }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 :config="$config" name="writer" id="writer" fgroup-class="col-md-6" required value="{{ old('writer') }}"
+                        label="Writer">
+                        <option value="">Select Writer</option>
+                        @foreach ($writers as $writer)
+                            <option value="{{ $writer->id }}">{{ $writer->writer_name }}</option>
                         @endforeach
                     </x-adminlte-select2>
                 </div>
