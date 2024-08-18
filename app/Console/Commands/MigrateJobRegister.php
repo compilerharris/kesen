@@ -31,7 +31,7 @@ class MigrateJobRegister extends Command
         $count = 0;
 
         // Fetch data from job register table
-        $oldJobRegister = DB::connection('source_db')->table('jobregister')->orderBy('id')->whereBetween('id',[39001,40000])->get();
+        $oldJobRegister = DB::connection('source_db')->table('jobregister')->orderBy('id')->whereBetween('id',[39262,40000])->get();
 
         foreach ($oldJobRegister as $data) {
 
