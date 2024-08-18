@@ -161,6 +161,7 @@ class JobRegisterManagementController extends Controller
                     }
                 }
                 $job_register=new JobRegister();
+                $job_register->sr_no = 40000;
                 $job_register->client_id = $request->client_id;
                 $job_register->client_contact_person_id = $request->client_contact_person_id;
                 $job_register->estimate_id = $estimate->id;
@@ -177,7 +178,7 @@ class JobRegisterManagementController extends Controller
                 $job_register->protocol_no = $request->protocol_no;
                 $job_register->version_date = $request->version_date;
                 $job_register->version_no = $request->version_no;
-                $job_register->status = $request->status;
+                $job_register->status = 0;
                 $job_register->cancel_reason = $request->cancel_reason;
                 $job_register->bill_no = $request->bill_no;
                 $job_register->bill_date = $request->bill_date;
