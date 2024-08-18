@@ -161,7 +161,6 @@ class JobRegisterManagementController extends Controller
                     }
                 }
                 $job_register=new JobRegister();
-                $job_register->sr_no = 40000;
                 $job_register->client_id = $request->client_id;
                 $job_register->client_contact_person_id = $request->client_contact_person_id;
                 $job_register->estimate_id = $estimate->id;
@@ -193,7 +192,6 @@ class JobRegisterManagementController extends Controller
             }
         }
         $job_register=new JobRegister();
-        $job_register->sr_no = 40000;
         $job_register->client_id = Estimates::where('id',$request->estimate_id)->first()->client_id;
         $job_register->client_contact_person_id =  Estimates::where('id',$request->estimate_id)->first()->client_contact_person_id;
         $job_register->estimate_id = $request->estimate_id;
