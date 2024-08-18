@@ -109,7 +109,7 @@ class JobRegisterManagementController extends Controller
             'protocol_no' => 'nullable|string',
             'version_date' => 'nullable|string',
             'version_no' => 'nullable|string',
-            'status' => 'required|integer',
+            'status' => 'nullable|integer',
             'cancel_reason' => 'nullable|string',
             'bill_no' => 'nullable|string|max:255',
             'bill_date' => 'nullable|date',
