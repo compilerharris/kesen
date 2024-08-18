@@ -29,7 +29,7 @@ class MigrateJobCard extends Command
         $count = 0;
 
         // Fetch all job register
-        $oldJobRegister = JobRegister::orderBy('sr_no')->whereBetween('sr_no',[38001,40000])->get()
+        $oldJobRegister = JobRegister::orderBy('sr_no')->whereBetween('sr_no',[39262,40000])->get()
         ;
 
         foreach ($oldJobRegister as $jobRegister){

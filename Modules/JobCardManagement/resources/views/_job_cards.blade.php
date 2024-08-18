@@ -83,7 +83,7 @@
                     <a href="{{ route('jobcardmanagement.bill', ['job_id' => $row->id]) }}" class="btn btn-info btn-sm mb-2">Billing</a>
                     @endif
                     <button data-id="{{ $row->id }}" id="cancelJob" data-toggle="modal" data-target="#cancelModal" class="btn btn-warning btn-sm mb-2">Remark</button>
-                    <button data-id="{{ $row->id }}" id="wUTextBtn" data-toggle="modal" data-target="#wUText" class="btn btn-warning btn-sm mb-2">W/U Text</button>
+                    <button data-id="{{ $row->id }}" id="wUTextBtn" data-toggle="modal" data-target="#wUText" class="btn btn-warning btn-sm mb-2">Words/Units</button>
                     
                 </td>
             </tr>
