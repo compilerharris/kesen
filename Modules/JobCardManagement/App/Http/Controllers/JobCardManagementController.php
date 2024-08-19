@@ -447,12 +447,11 @@ class JobCardManagementController extends Controller
         foreach($jobCard as $index => $job){
             $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
             $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('name')->toArray());
-            $handledBy = User::where('id',$job->handle_by->code)->first()??'';
             $excelFormat->push([
                 'sr' => $index+1,
                 'date' => $job->date?Carbon::parse($job->date)->format('j M Y'):'',
                 'sr_no' => $job->sr_no,
-                'handledBy' => $handledBy,
+                'handledBy' => $job->handle_by->name??'',
                 'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
                 'clientContact' => $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name??''),
                 'estimateNo' => $job->estimate?$job->estimate->estimate_no:'No Estimate',

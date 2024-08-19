@@ -25,10 +25,10 @@ class MigrateJobCardReplaceCodeWithId extends Command
         // Operation Count
         $count = 0;
 
-        // Fetch data from client table
+        // Fetch data from job card table
         $jobCards = JobCard::orderBy('job_no')->whereBetween('job_no',[37000,40000])->get();
 
-        /** creating client */
+        /** updating job card */
         foreach ($jobCards as $data) {
             $this->info("Checking codes in Job card no {$data->job_no}.");
             if((isset($data->t_writer_code) && !empty($data->t_writer_code)) || (isset($data->v_employee_code) && !empty($data->v_employee_code)) || (isset($data->bt_writer_code) && !empty($data->bt_writer_code)) || (isset($data->btv_employee_code) && !empty($data->btv_employee_code))){
