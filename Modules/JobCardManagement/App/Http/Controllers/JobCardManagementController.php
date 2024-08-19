@@ -3,6 +3,7 @@
 namespace Modules\JobCardManagement\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Http\Request;
@@ -442,13 +443,50 @@ class JobCardManagementController extends Controller
         }
         $jobCard->complete_count=$jobCard->where('status',1)->count();
         $jobCard->cancel_count=$jobCard->where('status',2)->count();
-        foreach($jobCard as $job){
-            $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
-            $job->languages = implode(", ",Language::whereIn('id',$langIds)->pluck('name')->toArray());
+        $excelFormat = collect();
+            
+        if (auth()->user()->hasRole('Accounts')){
+            foreach($jobCard as $index => $job){
+                $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
+                $job->languages = implode(", ",Language::whereIn('id',$langIds)->pluck('name')->toArray());
+                $handledBy = User::where('id',$job->handle_by->code)->first()??'';
+                $excelFormat->push([
+                    'sr' => $index+1,
+                    'sr_no' => $job->sr_no,
+                    'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
+                    'docName' => $job->estimate_document_id,
+                    'protocolNo' => $job->protocol_no,
+                    'handledBy' => $handledBy,
+                    'clientContact' => $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name??''),
+                    'date' => $job->date?Carbon::parse($job->date)->format('j M Y'):'',
+                    'billNo' => $job->bill_no!=null || $job->bill_no!='' ? "billed-".$job->bill_no:"unbilled",
+                    'billDate' => $job->bill_date?Carbon::parse($job->bill_date)->format('j M Y'):'',
+                    'sentDate' => $job->sent_date?Carbon::parse($job->sent_date)->format('j M Y'):'',
+                    'status' => $job->status == 0 ? 'In Progress' : ($job->status == 1 ? 'Completed' : 'Canceled')
+                ]);
+            }
+        }else{
+            foreach($jobCard as $index => $job){
+                $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
+                $job->languages = implode(", ",Language::whereIn('id',$langIds)->pluck('name')->toArray());
+                $handledBy = User::where('id',$job->handle_by->code)->first()??'';
+                $excelFormat->push([
+                    'sr' => $index+1,
+                    'sr_no' => $job->sr_no,
+                    'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
+                    'docName' => $job->estimate_document_id,
+                    'protocolNo' => $job->protocol_no,
+                    'handledBy' => $handledBy,
+                    'clientContact' => $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name??''),
+                    'date' => $job->date?Carbon::parse($job->date)->format('j M Y'):'',
+                    'status' => $job->status == 0 ? 'In Progress' : ($job->status == 1 ? 'Completed' : 'Canceled')
+                ]);
+            }
         }
-        // return Excel::download(new JobCardExcelExport($jobCard), 'job-card.xlsx');
-        $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', ['jobCard'=> $jobCard])->setPaper('a4', 'landscape');
-        return $pdf->stream();
+        $todayDate = Carbon::now()->format('j-M-Y');
+        return Excel::download(new JobCardExcelExport($excelFormat), "job-card-export-sheet-{$todayDate}.xlsx");
+        // $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', ['jobCard'=> $jobCard])->setPaper('a4', 'landscape');
+        // return $pdf->stream();
     }
 
     public function changeRemark(Request $request,$id){

@@ -24,11 +24,10 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
      */
     public function headings(): array
     {
-        return [
-            'Date', 'Job No.', 'Project Manager', 'Client', 'Client Contact',
-            'Estimate No.', 'Document Name', 'Protocol No.', 'Version No.',
-            'Version Date', 'Languages', 'Delivery Date', 'Status'
-        ];
+        if(auth()->user()->hasRole('Accounts')){
+            return ['#','Job No','Client Name','Document Name','Protocol No','Handled By','Contact Person','Delivery Date','Billing Status','Bill Date','Bill Sent Date','Status'];
+        }
+        return ['#','Job No','Client Name','Document Name','Protocol No','Handled By','Contact Person','Delivery Date','Status'];
     }
 
     /**
@@ -78,20 +77,44 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
 
     public function map($jobCard): array
     {
+        if (auth()->user()->hasRole('Accounts')){
+            return [
+                $jobCard->sr,
+                $jobCard->sr_no,
+                $jobCard->clientName,
+                $jobCard->docName,
+                $jobCard->protocolNo,
+                $jobCard->handledBy,
+                $jobCard->clientContact,
+                $jobCard->date,
+                $jobCard->billNo,
+                $jobCard->billDate,
+                $jobCard->sentDate,
+                $jobCard->status
+            ];
+        }
         return [
-            $jobCard->created_at ? $jobCard->created_at->format('j M Y') : '',
-            $jobCard->sr_no,
-            $jobCard->handle_by->name,
-            $jobCard->estimate->client->name,
-            $jobCard->estimate->client_person->name,
-            $jobCard->estimate->estimate_no,
-            $jobCard->estimate_document_id,
-            $jobCard->protocol_no,
-            $jobCard->version_no,
-            $jobCard->version_date,
-            $jobCard->languages,
-            $jobCard->date ? $jobCard->date->format('j M Y') : '',
-            $jobCard->status == 0 ? 'In Progress' : ($jobCard->status == 1 ? 'Completed' : 'Canceled')
+            $jobCard->sr,
+            $jobCard->clientName,
+            $jobCard->docName,
+            $jobCard->protocolNo,
+            $jobCard->handledBy,
+            $jobCard->clientContact,
+            $jobCard->date,
+            $jobCard->status
         ];
+        // $jobCard->created_at ? $jobCard->created_at->format('j M Y') : '',
+        // $jobCard->sr_no,
+        // $jobCard->handle_by->name,
+        // $jobCard->estimate->client->name,
+        // $jobCard->estimate->client_person->name,
+        // $jobCard->estimate->estimate_no,
+        // $jobCard->estimate_document_id,
+        // $jobCard->protocol_no,
+        // $jobCard->version_no,
+        // $jobCard->version_date,
+        // $jobCard->languages,
+        // $jobCard->date ? $jobCard->date->format('j M Y') : '',
+        // $jobCard->status == 0 ? 'In Progress' : ($jobCard->status == 1 ? 'Completed' : 'Canceled')
     }
 }
