@@ -2,6 +2,17 @@
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\preloaderHelper')
 @section('plugins.Datatables', true)
 @section('plugins.Sweetalert2', true);
+<style>
+    tr td{
+        font-weight: 600 !important;
+    }
+    td a{
+        font-weight: 600 !important;
+    }
+    td button{
+        font-weight: 600 !important;
+    }
+</style>
 @php
     $heads = [
         [

@@ -101,9 +101,9 @@
                                 <tr>
                                     <td>From Date:</td>
                                     <form action="job-card-management">
-                                        <td><input type="date" id="min" name="min" value="{{$min??''}}"></td>
+                                        <td><input type="date" required id="min" name="min" value="{{$min??''}}"></td>
                                         <td>To Date:</td>
-                                        <td><input type="date" id="max" name="max" value="{{$max??''}}"></td>
+                                        <td><input type="date" required id="max" name="max" value="{{$max??''}}"></td>
                                         <td><input class="btn btn-info" type="submit" value="Filter"></td>
                                         <td><a href="/job-card-management" class="btn btn-info">Reset</td>
                                     </form>
@@ -116,7 +116,7 @@
                             {{ $job_register->complete_count }}</span>
                         <span class="right badge badge-danger p-2 fs-6">Total Canceled:
                             {{ $job_register->cancel_count }}</span>
-                        @if (request()->input('min') || request()->input('max'))
+                        @if (request()->input('min') && request()->input('max'))
                             <a
                                 href="{{ route('jobcardmanagement.exportJobCard') }}?min={{ request()->input('min') }}&max={{ request()->input('max') }}" target="_blank"><button
                                     class="btn btn-sm btn-info" title="Edit"
@@ -124,7 +124,7 @@
                                     Export
                                 </button></a>
                         @else
-                            <a href="{{ route('jobcardmanagement.exportJobCard') }}?max={{ \Carbon\Carbon::now()->format('Y-m-d') }}" target="_blank"><button
+                            <a target="_blank"><button
                                     class="btn btn-sm btn-info " title="Edit"
                                     style="width:132px;margin-left:5px;height:33px" >
                                     Export

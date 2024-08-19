@@ -95,9 +95,9 @@
                         <tr>
                             <form action="job-register-management">
                                 <td>From Date:</td>
-                                <td><input type="date" id="min" name="min" value="{{$min??''}}"></td>
+                                <td><input type="date" required id="min" name="min" value="{{$min??''}}"></td>
                                 <td>To Date:</td>
-                                <td><input type="date" id="max" name="max" value="{{$max??''}}"></td>
+                                <td><input type="date" required id="max" name="max" value="{{$max??''}}"></td>
                                 <td><input class="btn btn-info" type="submit" value="Filter"></td>
                                 <td><a href="/job-register-management" class="btn btn-info">Reset</td>
                             </form>

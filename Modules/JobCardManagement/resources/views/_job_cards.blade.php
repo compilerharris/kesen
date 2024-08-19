@@ -1,6 +1,17 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\PreloaderHelper')
 @section('plugins.Datatables', true)
+<style>
+    tr td{
+        font-weight: 600 !important;
+    }
+    td a{
+        font-weight: 600 !important;
+    }
+    td button{
+        font-weight: 600 !important;
+    }
+</style>
 @php
     $aHeads = [
         ['label' => '#'],
