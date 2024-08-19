@@ -144,13 +144,22 @@ class HomeController extends Controller
             $total = 0;
             foreach ($job_card as $job) {
                 if($job->t_unit != ''){
-                    $total+=WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit;
-                }
-                if($job->bt_unit != ''){
-                    $total+=WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit;
+                    $writerLan = WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first();
+                    if($writerLan){
+                        $total+= $writerLan->per_unit_charges*$job->t_unit;
+                    }
                 }
                 if($job->v_unit != ''){
-                    $total+=WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit;
+                    $writerLan = WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first();
+                    if($writerLan){
+                        $total += $writerLan->checking_charges*$job->v_unit;
+                    }
+                }
+                if($job->bt_unit != ''){
+                    $writerLan = WriterLanguageMap::where('writer_id',$writer->id)->where('language_id',$job->estimateDetail->language->id)->first();
+                    if($writerLan){
+                        $total += $writerLan->bt_charges*$job->bt_unit;
+                    }
                 }
             }
             $writer->payment_total_amounts = $total;
