@@ -24,10 +24,22 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
      */
     public function headings(): array
     {
-        if(auth()->user()->hasRole('Accounts')){
-            return ['#','Job No','Client Name','Document Name','Protocol No','Handled By','Contact Person','Delivery Date','Billing Status','Bill Date','Bill Sent Date','Status'];
-        }
-        return ['#','Job No','Client Name','Document Name','Protocol No','Handled By','Contact Person','Delivery Date','Status'];
+        return [
+            '#',
+            'Date',
+            'Job No',
+            'Project Manager',
+            'Client Name',
+            'Contact Person',
+            'Estimate No.',
+            'Languages',
+            'Old Job No.',
+            'Protocol No.',
+            'Job Type',
+            'Job Description',
+            'Remark',
+            'Status'
+        ];
     }
 
     /**
@@ -40,30 +52,20 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
 
     public function map($jobCard): array
     {
-        if (auth()->user()->hasRole('Accounts')){
-            return [
-                $jobCard->sr,
-                $jobCard->sr_no,
-                $jobCard->clientName,
-                $jobCard->docName,
-                $jobCard->protocolNo,
-                $jobCard->handledBy,
-                $jobCard->clientContact,
-                $jobCard->date,
-                $jobCard->billNo,
-                $jobCard->billDate,
-                $jobCard->sentDate,
-                $jobCard->status
-            ];
-        }
         return [
             $jobCard->sr,
-            $jobCard->clientName,
-            $jobCard->docName,
-            $jobCard->protocolNo,
-            $jobCard->handledBy,
-            $jobCard->clientContact,
             $jobCard->date,
+            $jobCard->sr_no,
+            $jobCard->handledBy,
+            $jobCard->clientName,
+            $jobCard->clientContact,
+            $jobCard->estimateNo,
+            $jobCard->languages,
+            $jobCard->oldJobNo,
+            $jobCard->protocolNo,
+            $jobCard->jobType,
+            $jobCard->docName,
+            $jobCard->remark,
             $jobCard->status
         ];
         // $jobCard->created_at ? $jobCard->created_at->format('j M Y') : '',
@@ -89,7 +91,7 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
                 $rowCount = count($this->jobCards) + 1; // +1 to account for the headings row
 
                 for ($row = 2; $row <= $rowCount + 1; $row++) {
-                    $statusCell = $sheet->getCellByColumnAndRow(9, $row); // Assuming "Status" is in the 12th column
+                    $statusCell = $sheet->getCellByColumnAndRow(14, $row); // Assuming "Status" is in the 12th column
                     $statusValue = $statusCell->getValue();
 
                     // Debugging: Output the status value (optional)
