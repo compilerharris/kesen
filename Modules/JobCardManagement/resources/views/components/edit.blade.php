@@ -66,10 +66,10 @@
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <x-adminlte-input name="t_sentdate[0]"
+                {{-- <x-adminlte-input name="t_sentdate[0]"
                     placeholder="Sent Date" fgroup-class="col-md-2" type='date'
                     value="{{ old('t_sentdate.0', $job_card[0]->t_sentdate) }}"
-                    label="Sent Date"/>
+                    label="Sent Date"/> --}}
                 <div id="repeater">
                     @foreach ($job_card as $index => $job)
                         <div class="repeater-item mt-3">

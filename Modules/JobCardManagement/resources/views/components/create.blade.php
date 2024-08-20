@@ -63,10 +63,10 @@
             <form action="{{ route('jobcardmanagement.store') }}" method="POST">
                 @csrf
 
-                <x-adminlte-input name="t_sentdate[0]" placeholder="Sent Date"
+                {{-- <x-adminlte-input name="t_sentdate[0]" placeholder="Sent Date"
                 fgroup-class="col-md-2" type='date'
                 value="{{ old('t_sentdate[0]') }}"
-                label="Sent Date"/>
+                label="Sent Date"/> --}}
                 <div id="repeater">
                     <div class="repeater-item mt-3">
                         <div class="card">
