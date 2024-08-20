@@ -189,7 +189,7 @@ class JobCardManagementController extends Controller
     public function update(Request $request, $job_register_id_and_doc_mame)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
-            return redirect()->back()->with('message', 'You are not autherized.'); 
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $request->validate([
             't_writer.*' => 'required|string|max:255',
@@ -512,5 +512,24 @@ class JobCardManagementController extends Controller
         $max = null;
 
         return view('jobcardmanagement::index', compact('job_registers', 'min', 'max','search'));
+    }
+
+    public function sentDate(Request $request, $jobRegisterId, $jobNo, $estimateDetailId, $estimateDocumentId){ 
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
+        }
+        
+        $jobCards = JobCard::where('job_no',$jobNo)->where('estimate_detail_id',$estimateDetailId)->get();
+
+        if(count($jobCards) == 0){
+            return redirect()->back()->with('alert', 'No job card found.'); 
+        }
+        foreach ($jobCards as $index => $jobCard) {
+            $jobCard->t_sentdate = $request->date??null;
+            $jobCard->bt_sentdate = $request->date??null;
+            $jobCard->save();
+        }
+        // route('jobcardmanagement.manage.list', ['job_id' => $row->id, 'estimate_detail_id' => $row->estimate_document_id])
+        return redirect()->route('jobcardmanagement.manage.list', ['job_id' => $jobRegisterId, 'estimate_detail_id' => $estimateDocumentId])->with('message', 'Sent date updated successfully.');
     }
 }

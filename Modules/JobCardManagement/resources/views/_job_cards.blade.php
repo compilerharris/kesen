@@ -106,62 +106,61 @@
     </div>
 </div>
 
-
-    <!-- Modal -->
-    <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cancelModalLabel">Job Remark</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form id="cancelForm" method="GET">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="remark">Remark</label>
-                            <textarea class="form-control" id="remark" name="remark" rows="2" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="closeModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
+<!-- Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Job Remark</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <form id="cancelForm" method="GET">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="remark">Remark</label>
+                        <textarea class="form-control" id="remark" name="remark" rows="2" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="closeModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <!-- wUText Modal -->
-    <div class="modal fade" id="wUText" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cancelModalLabel">Word / Units</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form id="cancelwUTextForm" method="GET">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="wu">Words/Units</label>
-                            <textarea class="form-control" id="wu" name="wu" rows="2" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="closewUTextModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
+<!-- wUText Modal -->
+<div class="modal fade" id="wUText" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Word / Units</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <form id="cancelwUTextForm" method="GET">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="wu">Words/Units</label>
+                        <textarea class="form-control" id="wu" name="wu" rows="2" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="closewUTextModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    @section('js')
+@section('js')
     <script>
         $(document).ready(function() {
             $('#cancelJob').click(function() {

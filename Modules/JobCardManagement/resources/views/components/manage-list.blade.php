@@ -258,7 +258,9 @@
                                             <td class="{{ $detail->partCopyCreate=='Yes'?'fw-bold':'' }}">{{ $detail->partCopyCreate == 'Yes'?'Yes - '.$detail->partCopyCreateCount.' Copy':"" }}</td>
                                             <td width="250px">
                                                 <a href="{{route('jobcardmanagement.manage.add', ['job_id' => $job_register->id, 'estimate_detail_id' => $detail->id])}}" class="btn btn-info btn-sm mb-2">{{ $detail->partCopyCreate=='Yes'?'Edit':'Add' }}</a>
+                                                <button data-id="{{ $detail->id }}" id="sentDateBtn" data-toggle="modal" data-target="#sentDate" class="btn btn-success btn-sm mb-2">Sent Date</button>
                                             </td>
+                                            {{-- data-id="{{ $job_register->sr_no }}" --}}
                                         </tr>
                                     @endforeach
                                 </x-adminlte-datatable>
@@ -269,4 +271,42 @@
             </div>
         </div>
     </div>
+    <!-- sentDate Modal -->
+    <div class="modal fade" id="sentDate" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Sent Date</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="sentDateForm" method="GET">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="date">Select Sent Date</label>
+                            <input class="form-control" type="date" id="date" name="date" required></input>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="closesentDateModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#sentDateBtn').click(function() {
+                var estimateDetailId = $(this).data('id');
+                var actionUrl = '/job-card-management/sentDate/' + @json($job_register->id) + '/' + @json($job_register->sr_no) + '/' + estimateDetailId + '/' + @json($job_register->estimate_document_id);
+                $('#sentDateForm').attr('action', actionUrl);
+            });
+            $('#closesentDateModal').click(function() {
+                $('#sentDateForm').removeAttr('action');
+            });
+        });
+    </script>
 @endif
