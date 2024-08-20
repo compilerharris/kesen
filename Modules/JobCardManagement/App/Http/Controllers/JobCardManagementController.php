@@ -402,6 +402,9 @@ class JobCardManagementController extends Controller
                         }else if( !is_null($partCopy->btv_employee_code) && ( is_null($partCopy->btv_pd) || is_null($partCopy->btv_cr) ) ){
                             $langName = Language::where('id',$estimate->lang)->first('name')->name;
                             return back()->with('alert', 'Please enter Back Translation PD and CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }else if( is_null($partCopy->t_sentdate) || is_null($partCopy->bt_sentdate) ){
+                            $langName = Language::where('id',$estimate->lang)->first('name')->name;
+                            return back()->with('alert', 'Please enter Sent Date of '.$langName.' in Job No: '.$job_register->sr_no);
                         }
                     }
                 }
