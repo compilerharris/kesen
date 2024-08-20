@@ -67,6 +67,7 @@
         .job-details td {
             font-size: 8pt;
             text-align: center;
+            padding: 4px 2px;
         }
 
         .additional-info td {
@@ -100,10 +101,6 @@
             .additional-info td {
                 padding: 5px;
             }
-        }
-
-        .job-details th, td{
-            padding: 5px 0;
         }
         .page-break {
             page-break-before: always;
@@ -272,7 +269,7 @@
                             <td> </td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
-                        @if($pageBreakIndex % 35 == 0 && $pageBreakIndex == 35 ) <!-- Adjust this number based on your page size and row height -->
+                        @if($pageBreakIndex % 30 == 0 && $pageBreakIndex == 30 ) <!-- Adjust this number based on your page size and row height -->
                                 </tbody>
                             </table>
                             <br>
@@ -296,7 +293,7 @@
                                     </thead>
                                     <tbody>
                             @endif 
-                        @elseif($pageBreakIndex % 90 == 0 && $pageBreakIndex == 90 )
+                        @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex == 75 )
                                 </tbody>
                             </table>
                             <br>
@@ -320,7 +317,7 @@
                                 </thead>
                                 <tbody>
                             @endif 
-                        @elseif($pageBreakIndex % 90 == 0 && $pageBreakIndex > 90 )
+                        @elseif($pageBreakIndex % 75 == 0)
                                 </tbody>
                             </table>
                             <br>
