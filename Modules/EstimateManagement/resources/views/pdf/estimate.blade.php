@@ -86,6 +86,16 @@
         .mainTable > td{
             font-size: 11px;
         }
+        .heading-section{
+            margin-bottom: 5px;
+            border: 0;
+        }
+        .heading-section tr td{
+            text-align: left;
+            font-size: 12px;
+            border: 0;
+            padding: 3px 0;
+        }
     </style>
 </head>
 @php $sub_total=0; @endphp
@@ -116,12 +126,45 @@
         <div>
             <hr style="opacity: 0.5;">
         </div>
-        <p style="font-size: 12px"> <strong>{{ $estimate->client_person->name }}</strong><span style="font-size: 12px;float:right;width:300px;line-height: 1;"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</span></p>
-        <p style="font-size: 12px"> <strong>{{ $estimate->client->name }}</strong></p>
-        <p style="font-size: 12px">{{ $estimate->client->address }}<span style="font-size: 12px;float:right;width:300px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</span></p>
-        <!-- <p style="font-size: 12px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</p>
-        <p style="font-size: 12px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</p> -->
-        <p style="font-size:12px;line-height:0.5"><strong>Languages Required:</strong>
+        <table class="heading-section" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td style="width: 60%;vertical-align: top;"><strong>{{ $estimate->client_person->name }}</strong></td>
+                <td style="width: 40%"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</td>
+            </tr>
+            <tr>
+                <td><strong>{{ $estimate->client->name }}</td>
+                <td><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</td>
+            </tr>
+            <tr>
+                <td style="line-height: 1">{{ $estimate->client->address }}</td>
+            </tr>
+            <tr>
+                <td style="line-height: 1.5" colspan="2"><strong>Languages Required:</strong>
+                    @php $languages_list=collect(); @endphp
+                    @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
+                        @php 
+                            $languages_list->push(Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()??'');
+                        @endphp
+                    @endforeach
+                    @php 
+                        $languages_list = sort_languages($languages_list)->pluck('name')->toArray();
+                    @endphp
+                    
+                    {{ implode(', ',array_filter(array_unique($languages_list), function($value) {return !is_null($value) && $value !== '';})) }}</td>
+            </tr>
+        </table>
+        {{-- <p style="font-size: 12px"><strong>{{ $estimate->client_person->name }}</strong>
+            <span style="font-size: 12px;float:right;width:300px;line-height: 1;"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</span>
+        </p> --}}
+        {{-- <p style="font-size: 12px"><strong>{{ $estimate->client->name }}</strong>
+        </p>
+        <p>
+            <span style="font-size: 12px;float: left;">{{ $estimate->client->address }}</span>
+            <span style="font-size: 12px;float:right;width:300px;height: auto;"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</span>
+        </p> --}}
+        {{-- <p style="font-size: 12px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</p>
+        <p style="font-size: 12px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</p> --}}
+        {{-- <p style="font-size:12px;line-height:0.5"><strong>Languages Required:</strong>
             @php $languages_list=collect(); @endphp
             @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
                 @php 
@@ -133,7 +176,7 @@
             @endphp
             
             {{ implode(', ',array_filter(array_unique($languages_list), function($value) {return !is_null($value) && $value !== '';})) }}
-        </p>
+        </p> --}}
         @php 
             $counter=6;
             $filteredV1 = array_filter($estimate->details->pluck('v1')->toArray(), function($value) {
