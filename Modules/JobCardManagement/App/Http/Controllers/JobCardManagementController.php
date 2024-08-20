@@ -317,7 +317,9 @@ class JobCardManagementController extends Controller
         $estimate_detail=EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$estimate_detail_id)->orderBy('created_at', 'desc')->get();
         $list_estimate_language=true;
         foreach($estimate_detail as $estimate){
-            $estimate->partCopyCreateCount = count(JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate->id)->get());
+            $jobCard = JobCard::where('job_no',$job_register->sr_no)->where('estimate_detail_id',$estimate->id)->get();
+            $estimate->partCopyCreateCount = count($jobCard);
+            $estimate->sentDate = $jobCard[0]->t_sentdate??'';
             $estimate->partCopyCreate = $estimate->partCopyCreateCount>0?'Yes':'No';
             $estimate->language = Language::where('id', $estimate->lang)->first();
         }

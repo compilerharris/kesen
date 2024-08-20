@@ -38,6 +38,7 @@
         ['label' => 'Document Name'],
         ['label' => 'Language'],
         ['label' => 'Part Copy Created'],
+        ['label' => 'Sent Date'],
         ['label' => 'Action'],
     ];
     $config_manage['paging'] = true;
@@ -256,6 +257,7 @@
                                             <td>{{ $detail->document_name }}</td>
                                             <td>{{ $detail->language->name }}</td>
                                             <td class="{{ $detail->partCopyCreate=='Yes'?'fw-bold':'' }}">{{ $detail->partCopyCreate == 'Yes'?'Yes - '.$detail->partCopyCreateCount.' Copy':"" }}</td>
+                                            <td>{{ $detail->sentDate?\Carbon\Carbon::parse($detail->sentDate)->format('j M Y'):'---' }}</td>
                                             <td width="250px">
                                                 <a href="{{route('jobcardmanagement.manage.add', ['job_id' => $job_register->id, 'estimate_detail_id' => $detail->id])}}" class="btn btn-info btn-sm mb-2">{{ $detail->partCopyCreate=='Yes'?'Edit':'Add' }}</a>
                                                 <button data-id="{{ $detail->id }}" id="sentDateBtn" data-toggle="modal" data-target="#sentDate" class="btn btn-success btn-sm mb-2">Sent Date</button>
