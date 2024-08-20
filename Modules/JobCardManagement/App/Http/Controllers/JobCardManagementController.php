@@ -7,6 +7,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Http\Request;
+use Modules\ClientManagement\App\Models\Client;
+use Modules\ClientManagement\App\Models\ContactPerson;
 use Modules\EstimateManagement\App\Models\Estimates;
 use Modules\EstimateManagement\App\Models\EstimatesDetails;
 use Modules\JobCardManagement\App\Models\JobCard;
@@ -25,9 +27,20 @@ class JobCardManagementController extends Controller
     { 
         if($request->get('search') != ''){
             $search = $request->get('search');
-            $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->where('sr_no',$search)->paginate(10);
+            $client = Client::where('name','like',"%{$search}%")->get();
+            $clientContact = ContactPerson::where('name','like',"%{$search}%")->get();
+            $user = User::where('name','like',"%{$search}%")->orWhere('code','like',"%{$search}%")->get();
+            $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+            ->where('sr_no',$search)
+            ->orWhere('protocol_no','like',"%{$search}%")
+            ->orWhereIn('client_id',count($client)>0?$client->pluck('id')->toArray():[])
+            ->orWhereIn('client_contact_person_id',count($clientContact)>0?$clientContact->pluck('id')->toArray():[])
+            ->orWhereIn('handled_by_id',count($user)>0?$user->pluck('id')->toArray():[])
+            ->orWhere('description','like',"%{$search}%")
+            ->orWhere('status','like',"%{$search}%")
+            ->paginate(10);
             if($job_register->count() == 0){
-                return redirect()->back()->with('alert',"No job found with job no {$search}");
+                return redirect()->back()->with('alert',"No job found with {$search}");
             }
             $min = null;
             $max = null;
@@ -67,7 +80,7 @@ class JobCardManagementController extends Controller
         $job_register->cancel_count = $job_register->where('status', 2)->count();
 
         if ($request->ajax()) {
-            return view('jobcardmanagement::_job_cards', compact('job_register', 'min', 'max'))->render();
+            return view('jobcardmanagement::_job_cards', compact('job_register', 'min', 'max','search'))->render();
         }
 
         return view('jobcardmanagement::manage', compact('job_register', 'min', 'max','search'));

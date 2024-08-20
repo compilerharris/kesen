@@ -87,9 +87,9 @@
                     <tbody>
                         <tr>
                             <form action="job-register-management">
-                                <td>Job Search</td>
-                                <td><input type="number" id="search" name="search" placeholder="Enter job no" value="{{old('search',$search??'')}}"></td>
-                                <td><input class="btn btn-info" type="submit" value="Search"></td>
+                                <td>Search</td>
+                                <td><input type="text" required id="search" name="search" placeholder="Type and search" value="{{old('search',$search??'')}}"></td>
+                                <td><button class="btn btn-info" type="submit"><i class="fas fa-search"> Search</i></td>
                             </form>
                         </tr>
                         <tr>

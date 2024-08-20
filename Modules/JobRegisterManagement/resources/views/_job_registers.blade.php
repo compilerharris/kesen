@@ -43,6 +43,7 @@
         ],
     ];
     $config['paging'] = true;
+    $config['searching'] = false;
     $config['lengthMenu'] = [10, 50, 100, 500];
 @endphp
 

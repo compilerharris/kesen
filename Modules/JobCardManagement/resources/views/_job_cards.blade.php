@@ -41,6 +41,7 @@
         ['label' => 'Action'],
     ];
     $config['paging'] = false;
+    $config['searching'] = false;
     $config['lengthMenu'] = [10, 50, 100, 500];
     $config_manage['paging'] = false;
 @endphp
