@@ -101,6 +101,10 @@
                 padding: 5px;
             }
         }
+
+        .job-details th, td{
+            padding: 5px 0;
+        }
         .page-break {
             page-break-before: always;
         }
