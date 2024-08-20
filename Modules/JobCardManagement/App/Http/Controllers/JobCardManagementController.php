@@ -387,21 +387,21 @@ class JobCardManagementController extends Controller
                         return back()->with('alert', 'Please enter all language part copy of '.$langName.' in Job No: '.$job_register->sr_no);
                     }
                     foreach($allPartCopy as $partCopy){
-                        if(!$partCopy->t_cr){
+                        if( is_null($partCopy->t_unit) || is_null($partCopy->t_writer_code) || is_null($partCopy->t_pd) || is_null($partCopy->t_cr) ){
                             $langName = Language::where('id',$estimate->lang)->first('name')->name;
-                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
-                        }elseif($partCopy->v_pd && !$partCopy->v_cr){
+                            return back()->with('alert', 'Please enter Translation details of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }else if( !is_null($partCopy->v_employee_code) && ( is_null($partCopy->v_pd) || is_null($partCopy->v_cr) ) ){
                             $langName = Language::where('id',$estimate->lang)->first('name')->name;
-                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
-                        }elseif($partCopy->v2_pd && !$partCopy->v2_cr){
+                            return back()->with('alert', 'Please enter Verification PD and CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }else if( !is_null($partCopy->v2_employee_code) && ( is_null($partCopy->v2_pd) || is_null($partCopy->v2_cr) ) ){
                             $langName = Language::where('id',$estimate->lang)->first('name')->name;
-                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
-                        }elseif($partCopy->bt_pd && !$partCopy->bt_cr){
+                            return back()->with('alert', 'Please enter 2 way verification PD and CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }else if( !is_null($partCopy->bt_writer_code) && ( is_null($partCopy->bt_pd) || is_null($partCopy->bt_cr) ) ){
                             $langName = Language::where('id',$estimate->lang)->first('name')->name;
-                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
-                        }elseif($partCopy->btv_pd && !$partCopy->btv_cr){
+                            return back()->with('alert', 'Please enter Back Translation PD and CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                        }else if( !is_null($partCopy->btv_employee_code) && ( is_null($partCopy->btv_pd) || is_null($partCopy->btv_cr) ) ){
                             $langName = Language::where('id',$estimate->lang)->first('name')->name;
-                            return back()->with('alert', 'Please enter all CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
+                            return back()->with('alert', 'Please enter Back Translation PD and CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
                         }
                     }
                 }
