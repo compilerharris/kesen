@@ -95,7 +95,7 @@
                             @endif
                         @endif
                         @if($row->status == 0)
-                            <button data-id="{{ $row->id }}" id="cancelJob" data-toggle="modal" data-target="#cancelModal" class="btn btn-danger btn-sm mb-2">Cancel</button>
+                            <button data-id="{{ $row->id }}" onclick="openModal(this)" data-toggle="modal" data-target="#cancelModal" class="btn btn-danger btn-sm mb-2">Cancel</button>
                         @elseif($row->status == 1 || $row->status == 2)
                             <a href="{{route('jobcardmanagement.status', [$row->id,0])}}" class="btn btn-info btn-sm mb-2">In Progress</a>
                         @endif
@@ -140,12 +140,12 @@
 
 @section('js')
     <script>
+        function openModal(btn) {
+            var jobId = $(btn).data('id');
+            var actionUrl = 'job-card-management/status/' + jobId + '/2';
+            $('#cancelForm').attr('action', actionUrl);
+        }
         $(document).ready(function() {
-            $('#cancelJob').click(function() {
-                var jobId = $(this).data('id');
-                var actionUrl = 'job-card-management/status/' + jobId + '/2';
-                $('#cancelForm').attr('action', actionUrl);
-            });
             $('#closeModal').click(function() {
                 $('#cancelForm').removeAttr('action');
             });
