@@ -188,7 +188,7 @@
                                                     <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">
                                                             Approve
                                                     </a>
-                                                    <button data-id="{{ $row->id }}" id="cancelEstimate" data-toggle="modal" data-target="#cancelModal" class="btn btn-danger btn-sm mb-2">Reject</button>
+                                                    <button data-id="{{ $row->id }}" onclick="openModal(this)" data-toggle="modal" data-target="#cancelModal" class="btn btn-danger btn-sm mb-2">Reject</button>
                                                 @elseif($row->status == 1)
                                                     <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}" class="btn btn-info btn-sm mb-2">Pending
                                                         </a>
@@ -246,12 +246,12 @@
 
 @section('js')
 <script>
+    function openModal(btn) {
+        var estimateId = $(btn).data('id');
+        var actionUrl = 'estimate-management/status/' + estimateId + '/2';
+        $('#cancelForm').attr('action', actionUrl);
+    }
     $(document).ready(function() {
-        $('#cancelEstimate').click(function() {
-            var estimateId = $(this).data('id');
-            var actionUrl = 'estimate-management/status/' + estimateId + '/2';
-            $('#cancelForm').attr('action', actionUrl);
-        });
         $('#closeModal').click(function() {
             $('#cancelForm').removeAttr('action');
         });
