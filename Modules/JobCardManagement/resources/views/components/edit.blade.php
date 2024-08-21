@@ -9,12 +9,14 @@
 @php $clients=Modules\ClientManagement\App\Models\Client::where('status',1)->get(); @endphp
 @php
     $qce_users = App\Models\User::where('email', '!=', 'developer@kesen.com')
+        ->where('status',1)
         ->whereHas('roles', function ($query) {
             $query->where('name', 'Quality Control Executive');
         })
         ->where('language_id', 'LIKE', '%'.$estimate_detail->language->id.'%')
         ->get();
     $managers = App\Models\User::where('email', '!=', 'developer@kesen.com')
+        ->where('status',1)
         ->whereHas('roles', function ($query) {
             $query->where('name', 'Project Manager');
         })
