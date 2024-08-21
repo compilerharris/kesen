@@ -407,9 +407,9 @@ class EstimateManagementController extends Controller
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
-        $details = EstimatesDetails::where('document_name', $request->document_name)->where('unit', $request->unit)->where('estimate_id', $request->estimate_id)->where('rate', $request->rate)->get();
+        $details = EstimatesDetails::where('document_name', $request->document_name)->where('estimate_id', $request->estimate_id)->get();
         if (count($details) == 0) {
-            return response()->json(['success' => 'Detail not found'], 403);
+            return response()->json(['success' => 'Detail not found'], 404);
         }
         foreach ($details as $detail) {
             $detail->delete();
