@@ -278,6 +278,50 @@ class JobRegisterManagementController extends Controller
         }
         $jobRegister = JobRegister::where('id', $id)->first();
 
+        if(isset($request['lang']) && count($request['lang'])>0){
+            $languages = $request['lang'];
+            $estimate = NoEstimates::where('id',$jobRegister->estimate_id)->first();
+            $estimate->client_id = $request->client_id;
+            $estimate->client_contact_person_id = $request->client_contact_person_id;
+            $estimate->updated_by = Auth()->user()->id;
+            $estimate->save();
+
+            $previous_lang=EstimatesDetails::where('document_name', $request->document_name)->where('estimate_id', $estimate->id)->get('lang')->pluck('lang')->toArray();
+            $deleted_lang=array_diff($previous_lang,$languages);
+            
+            if(count($deleted_lang)>0){
+                EstimatesDetails::where('document_name', $request->document_name)->where('estimate_id', $estimate->id)->whereIn('lang', $deleted_lang)->delete();
+            }
+            foreach($languages as $language) {
+                if(isset($language)&&$language!=null&&$language!='')
+                   {
+                    EstimatesDetails::updateOrCreate([
+                        'estimate_id' => $estimate->id,
+                        'document_name' => $request->document_name,
+                        'lang' => $language,
+                    ], [
+                        'estimate_id' => $estimate->id,
+                        'document_name' => $request->document_name,
+                        'estimate_type' => 'no_estimate',
+                        'type' => "NA",
+                        'unit' => "0",
+                        'rate' => 0,
+                        'v1' => isset($request['v1']) && $request['v1'] === 'on' ? true : false,
+                        'v2' => isset($request['v2']) && $request['v2'] === 'on' ? true : false,
+                        'bt' => isset($request['bt']) && $request['bt'] === 'on' ? true : false,
+                        'btv' => isset($request['btv']) && $request['btv'] === 'on' ? true : false,
+                        'verification' => null,
+                        'verification_2' => null,
+                        'back_translation' => null,
+                        'layout_charges' => null,
+                        'layout_charges_2' => null,
+                        'lang' => $language,
+                        'two_way_qc_t' => null,
+                        'two_way_qc_bt' => null,
+                    ]);
+                }
+            }
+        }
         $jobRegister->handled_by_id = $request->handled_by_id;
         $jobRegister->other_details = $request->other_details!=null?implode(',',$request->other_details):null;
         $jobRegister->type = $request->type;

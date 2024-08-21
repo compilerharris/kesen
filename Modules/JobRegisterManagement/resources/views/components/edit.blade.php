@@ -93,15 +93,73 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
 
 
                     {{-- no estimate start --}}
-                    <div class="form-group col-md-2 no_estimate">
+                    <x-adminlte-input name="document_name" placeholder="Document Name"
+                    fgroup-class="col-md-2 no_estimate" type="text" value="{{ old('document_name',$jobRegister->estimate_document_id) }}" label="Document Name" readonly />
+                    <x-adminlte-select2  :config="$config" name="client_id" id="client_id" fgroup-class="col-md-2" required label="Client">
+                        <option value="">Select Client</option>
+                        @foreach ($clients as $client)
+                            <option value="{{ $client->id }}"
+                                {{ $jobRegister->client_id == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 name="client_contact_person_id" id="client_contact_person_id"
+                        fgroup-class="col-md-2" required label="Contact Person">
+                        <option value="">Select Contact Person</option>
+                        @foreach ($contact_persons as $contactPerson)
+                            <option value="{{ $contactPerson->id }}"
+                                {{ $jobRegister->client_contact_person_id == $contactPerson->id ? 'selected' : '' }}>
+                                {{ $contactPerson->name }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
+                    <div class="form-group col-md-3 no_estimate">
                         <label for="lang">Language</label>
-                        <x-adminlte-select2 name="lang[]" disabled value="{{implode(',',$jobRegister->languagesNames)}}" id="lang" multiple :config="['closeOnSelect' => false]">
+                        <x-adminlte-select2 name="lang[]" value="{{implode(',',$jobRegister->languagesNames)}}" id="lang" multiple :config="['closeOnSelect' => false]">
                             @foreach ($languages as $language)
                                 <option value="{{ $language->id }}" {{ in_array($language->id, $jobRegister->languages) ? 'selected' : '' }}>
                                     {{ $language->name }}</option>
                             @endforeach
                         </x-adminlte-select2>
                         <span class="invalid-feedback is-invalid" id="requiredMsg">Please select at least one language.</span>
+                    </div>
+                    <!-- t -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>Translation</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" name="t" id="t" checked disabled>
+                            <label class="custom-control-label" for="t"></label>
+                        </div>
+                    </div>
+                    <!-- v1 -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>V1</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" {{$jobRegister->estimate_details[0]->v1?'checked':''}} name="v1" id="v1">
+                            <label class="custom-control-label" for="v1"></label>
+                        </div>
+                    </div>
+                    <!-- v2 -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>V2</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" {{$jobRegister->estimate_details[0]->v2?'checked':''}} name="v2" id="v2">
+                            <label class="custom-control-label" for="v2"></label>
+                        </div>
+                    </div>
+                    <!-- bt -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>BT</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" {{$jobRegister->estimate_details[0]->bt?'checked':''}} name="bt" id="bt">
+                            <label class="custom-control-label" for="bt"></label>
+                        </div>
+                    </div>
+                    <!-- btv -->
+                    <div class="form-group col-md-1 no_estimate">
+                        <label>BTV</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" {{$jobRegister->estimate_details[0]->btv?'checked':''}} name="btv" id="btv">
+                            <label class="custom-control-label" for="btv"></label>
+                        </div>
                     </div>
                     {{-- no estimate end --}}
                     <x-adminlte-select2 name="handled_by_id" fgroup-class="col-md-2" required label="Manager">
@@ -112,9 +170,6 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                             </option>
                         @endforeach
                     </x-adminlte-select2>
-
-
-
                     <x-adminlte-select2 name="category" fgroup-class="col-md-2" id="category" required
                         value="{{ old('category') }}" label="Category">
                         <option value="">Category</option>
@@ -170,9 +225,6 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                                 {{ $estimate->estimate_no }}</option>
                         @endforeach
                     </x-adminlte-select2>
-
-
-
                     <span id="cancel" class="col-md-3">
                         @if ($jobRegister->status == 2)
                             <label for="language">
@@ -189,7 +241,7 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
 
                 </div>
 
-                <x-adminlte-button label="Update" type="submit" class="mt-3" />
+                <x-adminlte-button label="Update" type="submit" id="jobRegisterSubmit" class="mt-3" />
             </form>
         </x-adminlte-card>
     </div>
@@ -218,12 +270,41 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                 }
             });
         });
+
+        $("#jobRegisterSubmit").on("click", function(event) {
+            checkLang(event);
+        });
+
+        $("#lang").on("change", function(event) {
+            checkLang(event);
+        });
+
+        function checkLang(event){
+            var selectedLanguages = $('#lang').val();
+            if (!selectedLanguages || selectedLanguages.length === 0) {
+                event.preventDefault();
+                $('#requiredMsg').show();
+            } else {
+                $('#requiredMsg').hide();
+            }
+        }
         $('#category').on('change', function() {
             if ($('#category').val() == 1 || $('#category').val() == '1') {
                 $('#type').css("display", "block");
             } else {
                 $('#type').css("display", "none");
             }
+        });
+
+        $('#client_id').change(function() {
+            let client_id = this.value;
+            $.ajax({
+                url: "/estimate-management/client/" + client_id,
+                method: 'GET',
+                success: function(data) {
+                    $('#client_contact_person_id').html(data.html);
+                }
+            });
         });
     })
 
