@@ -525,7 +525,7 @@ $config = [
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'';
         let index = 0;
         $('.repeater-item').each(function() {
-            if(eType === 'customize'){
+            if(eType === 'customize' || eType === 'minimum'){
                 $(this).find('input[name="unit['+index+']"]').removeAttr('required');
             }else{
                 $(this).find('input[name="unit['+index+']"]').attr('required',true);

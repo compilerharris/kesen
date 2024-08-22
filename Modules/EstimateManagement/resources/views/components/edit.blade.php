@@ -448,7 +448,7 @@
                                             <x-adminlte-input name="document_name[{{ $index }}]" placeholder="Document Name"  fgroup-class="col-md-4" type="text" value="{{ old('document_name.' . $index,  $detail->document_name) }}" required label="Document Name" readonly />
                                             <!-- unit -->
                                             {{-- onkeyup="calculateAmount(this)" --}}
-                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-1" type="text" value="{{ old('unit.' . $index, $detail->unit) }}" required label="Unit" min="1" readonly />
+                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-1" type="text" value="{{ old('unit.' . $index, $detail->unit) }}" required label="Unit" min="1" />
                                             {{-- <!-- t rate -->
                                             <x-adminlte-input name="rate[{{ $index }}]" placeholder="T Rate" fgroup-class="col-md-1" type="text" value="{{ old('rate.' . $index, $detail->rate) }}" required label="T Rate" onkeyup="calculateAmount(this)" />
                                             <!-- t amount -->
@@ -896,7 +896,7 @@
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'';
         let index = 0;
         $('.repeater-item').each(function() {
-            if(eType === 'customize'){
+            if(eType === 'customize' || eType === 'minimum'){
                 $(this).find('input[name="unit['+index+']"]').removeAttr('required');
             }else{
                 $(this).find('input[name="unit['+index+']"]').attr('required',true);

@@ -179,10 +179,8 @@
                                             View
                                         </button></a> --}}
                                         
-                                            <a href="{{ route('estimatemanagement.viewPdf', $row->id) }}"
-                                                target="_blank" class="btn btn-info btn-sm mb-2">
-                                                    Preview
-                                                </a>
+                                            <a href="{{ route('estimatemanagement.viewPdf', $row->id) }}" target="_blank"  class="btn btn-info btn-sm mb-2">Preview</a>
+                                            <a href="{{ route('estimatemanagement.downloadPdf', $row->id) }}" class="btn btn-info btn-sm mb-2">Download</a>
                                             @if(!Auth::user()->hasRole('Accounts'))
                                                 @if ($row->status == 0)
                                                     <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">
