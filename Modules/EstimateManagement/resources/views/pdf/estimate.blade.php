@@ -252,7 +252,7 @@
                     @endphp
             
                     <tr class="mainTable">
-                        <td style="width: 40px">{{ $detail->document_name }}</td>
+                        <td style="width: 60px">{{ $detail->document_name }}</td>
                         <td>{{ $detail->unit != 1 ? $detail->unit : 'Min'}}</td>
                         <td class="nowrap">{{ $detail->rate }}</td>
                         <td>{{ $detail->unit * $detail->rate }}</td>
@@ -283,7 +283,7 @@
                         @if ($estimate->details[0]->two_way_qc_bt)
                             <td>{{ $detail->two_way_qc_bt }}</td>
                         @endif
-                        @if (count($filteredBt)>0 && $detail->layout_charges_2)
+                        @if (count($filteredBt)>0&&count($filteredLayout)>0)
                             <td style="width: 60px">
                                 @if($detail->layout_charges_2)
                                     <span>{{"Rs. ".$detail->layout_charges_2}}<br>
