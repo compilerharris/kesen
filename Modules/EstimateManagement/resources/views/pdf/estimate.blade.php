@@ -283,7 +283,7 @@
                         @if ($estimate->details[0]->two_way_qc_bt)
                             <td>{{ $detail->two_way_qc_bt }}</td>
                         @endif
-                        @if (count($filteredBt)>0)
+                        @if (count($filteredBt)>0 && $detail->layout_charges_2)
                             <td style="width: 60px">
                                 @if($detail->layout_charges_2)
                                     <span>{{"Rs. ".$detail->layout_charges_2}}<br>
