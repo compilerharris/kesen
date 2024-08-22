@@ -263,7 +263,7 @@
                             <td>{{ $detail->two_way_qc_t??'---' }}</td>
                         @endif
                         @if (count($filteredLayout)>0)
-                            <td style="width: 60px">
+                            <td>
                                 @if($detail->layout_charges)
                                     <span>{{"Rs. ".$detail->layout_charges}}<br>
                                     <span>{{"x".$detail->layout_pages."pgs ="}}</span><br>
@@ -284,7 +284,7 @@
                             <td>{{ $detail->two_way_qc_bt }}</td>
                         @endif
                         @if (count($filteredBt)>0&&count($filteredLayout)>0)
-                            <td style="width: 60px">
+                            <td>
                                 @if($detail->layout_charges_2)
                                     <span>{{"Rs. ".$detail->layout_charges_2}}<br>
                                     <span>{{"x".$detail->bt_layout_pages."pgs ="}}</span><br>
