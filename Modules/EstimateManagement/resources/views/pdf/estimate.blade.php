@@ -252,7 +252,7 @@
                     @endphp
             
                     <tr class="mainTable">
-                        <td style="width: 60px">{{ $detail->document_name }}</td>
+                        <td style="width: 20%">{{ $detail->document_name }}</td>
                         <td>{{ $detail->unit != 1 ? $detail->unit : 'Min'}}</td>
                         <td class="nowrap">{{ $detail->rate }}</td>
                         <td>{{ $detail->unit * $detail->rate }}</td>
