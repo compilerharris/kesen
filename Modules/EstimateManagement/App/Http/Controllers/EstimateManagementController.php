@@ -166,7 +166,7 @@ class EstimateManagementController extends Controller
             'date'=> 'required',
             'discount' => 'nullable',
             'rorn' => 'required|string',
-            'status' => 'required|in:1,0,2',
+            'status' => 'nullable|in:1,0,2',
             'document_name.*' => 'required|string|max:255',
             'type.*' => 'required|string|max:255',
             'unit.*' => 'nullable|numeric',
@@ -187,7 +187,7 @@ class EstimateManagementController extends Controller
         $estimate->type = $request->type;
         $estimate->date = $request->date;
         $estimate->currency = $request->currency;
-        $estimate->status = $request->status;
+        $estimate->status = 0;
         $estimate->discount = $request->discount ?? 0;
         $estimate->rorn = $request->rorn;
         $estimate->created_by = Auth()->user()->id;
@@ -314,7 +314,7 @@ class EstimateManagementController extends Controller
             'date'=>'required',
             'discount' => 'nullable',
             'currency' => 'required',
-            'status' => 'required|in:1,0,2',
+            'status' => 'nullable|in:1,0,2',
             'document_name.*' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'unit.*' => 'nullable|numeric',

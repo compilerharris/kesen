@@ -87,13 +87,13 @@ $config = [
                         <option value="minimum">Minimum</option>
                         <option value="customize">Customize</option>
                     </x-adminlte-select2>
-                    <x-adminlte-select2 name="status" fgroup-class="col-md-2" required value="{{ old('status') }}"
+                    {{-- <x-adminlte-select2 name="status" fgroup-class="col-md-2" required value="{{ old('status') }}"
                         label="Status">
                         <option value="">Select Status</option>
                         <option value="0" selected>Pending</option>
                         <option value="1">Approve</option>
                         <option value="2">Reject</option>
-                    </x-adminlte-select2>
+                    </x-adminlte-select2> --}}
                 </div>
                 <div id="repeater">
                     <div class="repeater-item mt-3">

@@ -202,7 +202,7 @@
             <thead>
                 <tr>
                     <th>Documents</th>
-                    <th>{{ $estimate->type == 'customize'?'Words':ucfirst($estimate->type) }}</th>
+                    <th>{{ $estimate->type == 'customize' || $estimate->type == 'minimum' ?'Words':ucfirst($estimate->type) }}</th>
                     <th>Rate</th>
                     <th>Translation</th>
                     @if (count($filteredV1)>0)
@@ -233,7 +233,7 @@
                         @php $counter=$counter+1; @endphp
                         <th class="nowrap">Layout Charges</th>
                     @endif
-                    <th style="width: 20%">No. of Languages</th>
+                    <th style="width: 20%">Languages</th>
                     <th style="width: 20%">Amount (Rs.)</th>
                 </tr>
             </thead>
@@ -292,27 +292,27 @@
             @endforeach
             
                 <tr class="financials" style="background-color: #f0f0f0">
-                    <td colspan="{{ $counter - 1 }}" style="font-size: 12px;font-weight: bold">Sub Total</td>
-                    <td colspan="1" style="font-size: 9px;font-weight: bold">{{ number_format($sub_total,2) }}</td>
+                    <td colspan="{{ $counter - 1 }}" style="font-size: 14px;font-weight: bold">Sub Total</td>
+                    <td colspan="1" style="font-size: 14px;font-weight: bold">{{ number_format($sub_total,2) }}</td>
                 </tr>
                 @if ($estimate->discount)
                     <tr class="financials">
-                        <td colspan="{{ $counter - 1 }}" style="font-size: 10px;">Discount</td>
-                        <td colspan="1" style="font-size: 8px;">{{ number_format($estimate->discount,2) ?? 0 }}</td>
+                        <td colspan="{{ $counter - 1 }}" style="font-size: 14px;">Discount</td>
+                        <td colspan="1" style="font-size: 14px;">{{ number_format($estimate->discount,2) ?? 0 }}</td>
                     </tr>
                     <tr class="financials" style="background-color: #f0f0f0">
-                        <td colspan="{{ $counter - 1 }}" style="font-size: 12px;"><strong>Gross Total</strong></td>
-                        <td colspan="1" style="font-size: 9px;"><strong>{{  number_format(($sub_total - $estimate->discount),2) }}</strong></td>
+                        <td colspan="{{ $counter - 1 }}" style="font-size: 14px;"><strong>Gross Total</strong></td>
+                        <td colspan="1" style="font-size: 14px;"><strong>{{  number_format(($sub_total - $estimate->discount),2) }}</strong></td>
                     </tr>
                 @endif
                 @php $net_total=($sub_total-($estimate->discount)) @endphp
                 <tr class="financials">
-                    <td colspan="{{ $counter - 1 }}">GST (18%)</td>
-                    <td colspan="1" style="font-size: 8px;">{{ number_format(($net_total / 100) * 18 ,2) }}</td>
+                    <td colspan="{{ $counter - 1 }}" style="font-size: 14px;">GST (18%)</td>
+                    <td colspan="1" style="font-size: 14px;">{{ number_format(($net_total / 100) * 18 ,2) }}</td>
                 </tr>
                 <tr class="financials" style="background-color: #f0f0f0">
-                    <td colspan="{{ $counter - 1 }}" style="font-size: 14px;font-weight: bold">Net Total</td>
-                    <td colspan="1" style="font-size: 9px;font-weight: bold">{{ number_format(($net_total + ($net_total / 100) * 18),2) }}
+                    <td colspan="{{ $counter - 1 }}" style="font-size: 16px;font-weight: bold">Net Total</td>
+                    <td colspan="1" style="font-size: 16px;font-weight: bold">{{ number_format(($net_total + ($net_total / 100) * 18),2) }}
                     </td>
                 </tr>
             </tbody>

@@ -410,12 +410,12 @@
                                 Minimum</option>
                             <option value="customize" {{ old('type', $estimate->type) == 'customize' ? 'selected' : '' }}> Customize</option>
                     </x-adminlte-select2>
-                    <x-adminlte-select2 name="status" fgroup-class="col-md-2" required label="Status">
+                    {{-- <x-adminlte-select2 name="status" fgroup-class="col-md-2" required label="Status">
                         <option value="">Select Status</option>
                         <option value="0" @if ($estimate->status == '0') selected @endif>Pending</option>
                         <option value="1" @if ($estimate->status == '1') selected @endif>Approve</option>
                         <option value="2" @if ($estimate->status == '2') selected @endif>Reject</option>
-                    </x-adminlte-select2>
+                    </x-adminlte-select2> --}}
                     
 
                    
