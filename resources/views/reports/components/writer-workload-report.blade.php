@@ -65,8 +65,7 @@
                             <option value="{{ $language->id }}">{{ $language->name }}</option>
                         @endforeach
                     </x-adminlte-select2>
-                    <x-adminlte-select2 :config="$config" name="writer" id="writer" fgroup-class="col-md-6" required value="{{ old('writer') }}"
-                        label="Writer">
+                    <x-adminlte-select2 name="writer" id="writer" fgroup-class="col-md-6" required label="Writer">
                         <option value="">Select Writer</option>
                         @foreach ($writers as $writer)
                             <option value="{{ $writer->id }}">{{ $writer->writer_name }}</option>
@@ -79,3 +78,18 @@
         </x-adminlte-card>
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        // $('#lang').change(function() {
+        //     const lang = JSON.stringify(Array.from(this.selectedOptions).map(option => option.value));
+        //     $.ajax({
+        //         url: "/writer-workload-report/languages/" + lang,
+        //         method: 'GET',
+        //         success: function(data) {
+        //             console.log(data);
+        //             $('#writer').html(data.html);
+        //         }
+        //     });
+        // });
+    });
+</script>

@@ -129,11 +129,11 @@
         <table class="heading-section" border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td style="width: 60%;vertical-align: top;"><strong>{{ $estimate->client_person->name }}</strong></td>
-                <td style="width: 40%"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</td>
+                <td><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</td>
             </tr>
             <tr>
                 <td><strong>{{ $estimate->client->name }}</td>
-                <td><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</td>
+                <td style="width: 40%"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</td>
             </tr>
             <tr>
                 <td style="line-height: 1">{{ $estimate->client->address }}</td>

@@ -212,6 +212,27 @@ class HomeController extends Controller
         return $pdf->stream();
     }
 
+    public function getWritersByLangIds($ids)
+    {
+        $langIds = json_decode($ids);
+        $html = '<option value="">Select Writer</option>';
+        if ( count($langIds) > 0) {
+            $writers = Writer::with('writer_language_map')->where('status', 1)->orderBy('created_at', 'desc')->get();
+            $writers = $writers->filter(function($writer) use ($langIds){
+                $count = 0;
+                foreach($writer->writer_language_map as $lang){
+                    $count += in_array($lang->id,$langIds)?1:0;
+                }
+                return $count>0?true:false;
+            });
+            foreach ($writers as $writer) {
+                $html .= '<option value="' . $writer->id . '">' . $writer->name . '</option>';
+            }
+        }
+
+        return response()->json(['html' => $html]);
+    }
+
     // private function processData($data)
     // {
     //     $result = [];

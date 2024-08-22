@@ -29,3 +29,4 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('/writer-workload-report', [App\Http\Controllers\HomeController::class, 'writerWorkloadRedirect'])->name('writerWorkloadRedirect')->middleware('auth');
 Route::post('/writer-workload-report', [App\Http\Controllers\HomeController::class, 'writerWorkload'])->name('report.writerWorkload')->middleware('auth');
+Route::get('/writer-workload-report/languages/{ids}', [App\Http\Controllers\HomeController::class, 'getWritersByLangIds'])->middleware('auth');
