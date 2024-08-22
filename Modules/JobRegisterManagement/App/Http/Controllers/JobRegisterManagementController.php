@@ -281,6 +281,9 @@ class JobRegisterManagementController extends Controller
         if(isset($request['lang']) && count($request['lang'])>0){
             $languages = $request['lang'];
             $estimate = NoEstimates::where('id',$jobRegister->estimate_id)->first();
+            if(!$estimate){
+                return redirect()->back()->with('alert','No estimate found for job register no '. $jobRegister->sr_no .'.');
+            }
             $estimate->client_id = $request->client_id;
             $estimate->client_contact_person_id = $request->client_contact_person_id;
             $estimate->updated_by = Auth()->user()->id;
