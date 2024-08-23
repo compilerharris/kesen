@@ -242,6 +242,7 @@ class JobRegisterManagementController extends Controller
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $jobRegister = JobRegister::findOrFail($id);
+        $jobRegister->estimateType = Estimates::where('id',$jobRegister->estimate_id)->first()?"estimate":"no_estimate";
         $jobRegister->languages = EstimatesDetails::where('estimate_id',$jobRegister->estimate_id)->where('document_name',$jobRegister->estimate_document_id)->pluck('lang')->toArray();
         $jobRegister->languagesNames = Language::whereIn('id', $jobRegister->languages)->get('name')->pluck('name')->toArray();
         $jobRegister->clientName = Client::where('id',$jobRegister->client_id)->first('name')->name;
