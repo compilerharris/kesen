@@ -132,7 +132,7 @@
                 <td><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</td>
             </tr>
             <tr>
-                <td><strong>{{ $estimate->client->name }}</td>
+                <td style="vertical-align: text-top;"><strong>{{ $estimate->client->name }}</td>
                 <td style="width: 40%"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</td>
             </tr>
             <tr>
