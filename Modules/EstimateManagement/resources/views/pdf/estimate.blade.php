@@ -266,7 +266,7 @@
                             <td>
                                 @if($detail->layout_charges)
                                     <span>{{"Rs. ".$detail->layout_charges}}<br>
-                                    <span>{{"x".$detail->layout_pages."pgs ="}}</span><br>
+                                    <span>{{"x ".$detail->layout_pages." pgs ="}}</span><br>
                                     <span>{{"Rs. ".($detail->layout_pages*$detail->layout_charges)."/-"}}</span>
                                 @else
                                     ---
@@ -287,7 +287,7 @@
                             <td>
                                 @if($detail->layout_charges_2)
                                     <span>{{"Rs. ".$detail->layout_charges_2}}<br>
-                                    <span>{{"x".$detail->bt_layout_pages."pgs ="}}</span><br>
+                                    <span>{{"x ".$detail->bt_layout_pages." pgs ="}}</span><br>
                                     <span>{{"Rs. ".($detail->bt_layout_pages*$detail->layout_charges_2)."/-"}}</span>
                                 @else
                                     ---
