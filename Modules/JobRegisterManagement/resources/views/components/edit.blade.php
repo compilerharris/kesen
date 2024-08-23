@@ -9,7 +9,7 @@
 @php $estimates_details=Modules\EstimateManagement\App\Models\EstimatesDetails::distinct()->pluck('document_name'); @endphp
 @php $clients=Modules\ClientManagement\App\Models\Client::where('status',1)->get(); @endphp
 
-@php $contact_persons=Modules\ClientManagement\App\Models\ContactPerson::where('status',1)->get(); @endphp
+@php $contact_persons=Modules\ClientManagement\App\Models\ContactPerson::where('client_id',$jobRegister->client_id)->where('status',1)->get(); @endphp
 @php
 $users = App\Models\User::where('email', '!=', 'developer@kesen.com')
         ->where('status',1)
@@ -93,15 +93,18 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
 
 
                     {{-- no estimate start --}}
+                    {{-- document --}}
                     <x-adminlte-input name="document_name" placeholder="Document Name"
                     fgroup-class="col-md-2 no_estimate" type="text" value="{{ old('document_name',$jobRegister->estimate_document_id) }}" label="Document Name" readonly />
-                    <x-adminlte-select2  :config="$config" name="client_id" id="client_id" fgroup-class="col-md-2" required label="Client">
+                    {{-- client --}}
+                    <x-adminlte-select2 name="client_id" id="client_id" fgroup-class="col-md-2" required label="Client">
                         <option value="">Select Client</option>
                         @foreach ($clients as $client)
                             <option value="{{ $client->id }}"
                                 {{ $jobRegister->client_id == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
                         @endforeach
                     </x-adminlte-select2>
+                    {{-- contact person --}}
                     <x-adminlte-select2 name="client_contact_person_id" id="client_contact_person_id"
                         fgroup-class="col-md-2" required label="Contact Person">
                         <option value="">Select Contact Person</option>
@@ -111,9 +114,10 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                                 {{ $contactPerson->name }}</option>
                         @endforeach
                     </x-adminlte-select2>
+                    {{-- languages --}}
                     <div class="form-group col-md-3 no_estimate">
                         <label for="lang">Language</label>
-                        <x-adminlte-select2 name="lang[]" value="{{implode(',',$jobRegister->languagesNames)}}" id="lang" multiple :config="['closeOnSelect' => false]">
+                        <x-adminlte-select2 name="lang[]" id="lang" multiple :config="['closeOnSelect' => false]">
                             @foreach ($languages as $language)
                                 <option value="{{ $language->id }}" {{ in_array($language->id, $jobRegister->languages) ? 'selected' : '' }}>
                                     {{ $language->name }}</option>

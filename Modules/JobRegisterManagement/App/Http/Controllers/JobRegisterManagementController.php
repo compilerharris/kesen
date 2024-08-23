@@ -170,12 +170,12 @@ class JobRegisterManagementController extends Controller
                 $job_register->created_by_id = auth()->user()->id;
                 $job_register->other_details = $request->other_details!=null?implode(',',$request->other_details):null;
                 $job_register->category = $request->category;
-                $job_register->estimate_document_id = $request->document_name;
+                $job_register->estimate_document_id = html_entity_decode($request->document_name);
                 $job_register->type = $request->type;
                 $job_register->old_job_no=$request->old_job_no??'';
                 $job_register->client_accountant_person_id = $request->client_contact_person_id;
                 $job_register->date = $request->date;
-                $job_register->description = $request->document_name;
+                $job_register->description = html_entity_decode($request->document_name);
                 $job_register->protocol_no = $request->protocol_no;
                 $job_register->version_date = $request->version_date;
                 $job_register->version_no = $request->version_no;
@@ -242,7 +242,7 @@ class JobRegisterManagementController extends Controller
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $jobRegister = JobRegister::findOrFail($id);
-        $jobRegister->languages = $jobRegister->estimate_details->pluck('lang')->toArray();
+        $jobRegister->languages = EstimatesDetails::where('estimate_id',$jobRegister->estimate_id)->where('document_name',$jobRegister->estimate_document_id)->pluck('lang')->toArray();
         $jobRegister->languagesNames = Language::whereIn('id', $jobRegister->languages)->get('name')->pluck('name')->toArray();
         $jobRegister->clientName = Client::where('id',$jobRegister->client_id)->first('name')->name;
        
@@ -279,6 +279,7 @@ class JobRegisterManagementController extends Controller
         $jobRegister = JobRegister::where('id', $id)->first();
 
         if(isset($request['lang']) && count($request['lang'])>0){
+            $request->document_name = html_entity_decode($request->document_name);
             $languages = $request['lang'];
             $estimate = NoEstimates::where('id',$jobRegister->estimate_id)->first();
             if(!$estimate){
@@ -289,7 +290,7 @@ class JobRegisterManagementController extends Controller
             $estimate->updated_by = Auth()->user()->id;
             $estimate->save();
 
-            $previous_lang=EstimatesDetails::where('document_name', $request->document_name)->where('estimate_id', $estimate->id)->get('lang')->pluck('lang')->toArray();
+            $previous_lang=EstimatesDetails::where('document_name', $request->document_name)->where('estimate_id', $estimate->id)->pluck('lang')->toArray();
             $deleted_lang=array_diff($previous_lang,$languages);
             
             if(count($deleted_lang)>0){
@@ -324,6 +325,22 @@ class JobRegisterManagementController extends Controller
                     ]);
                 }
             }
+            $jobRegister->client_id = $request->client_id;
+            $jobRegister->client_contact_person_id = $request->client_contact_person_id;
+            $jobRegister->handled_by_id = $request->handled_by_id;
+            $jobRegister->other_details = $request->other_details!=null?implode(',',$request->other_details):null;
+            $jobRegister->category = $request->category;
+            $jobRegister->type = $request->type;
+            $jobRegister->old_job_no=$request->old_job_no??'';
+            $jobRegister->date = $request->date;
+            $jobRegister->protocol_no = $request->protocol_no;
+            $jobRegister->version_date = $request->version_date;
+            $jobRegister->version_no = $request->version_no;
+            $jobRegister->status = 0;
+            $jobRegister->informed_to = $request->client_contact_person_id;
+            $jobRegister->sent_date = $request->sent_date;
+            $jobRegister->save();
+            return redirect()->route('jobregistermanagement.index')->with('message', 'Job register updated successfully.');
         }
         $jobRegister->handled_by_id = $request->handled_by_id;
         $jobRegister->other_details = $request->other_details!=null?implode(',',$request->other_details):null;
