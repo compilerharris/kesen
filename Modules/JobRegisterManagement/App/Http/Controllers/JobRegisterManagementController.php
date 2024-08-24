@@ -7,6 +7,7 @@ use App\Models\User;
 use Modules\ClientManagement\App\Models\ContactPerson;
 use Modules\EstimateManagement\App\Models\EstimatesDetails;
 use Modules\EstimateManagement\App\Models\NoEstimates;
+use Modules\JobCardManagement\App\Models\JobCard;
 use Modules\JobRegisterManagement\App\Sheet\KesenExport;
 use App\Http\Controllers\Controller;
 use App\Mail\JobCompleted;
@@ -67,6 +68,10 @@ class JobRegisterManagementController extends Controller
         // Count complete and canceled jobs
         $job_registers->complete_count = $job_registers->where('status', 1)->count();
         $job_registers->cancel_count = $job_registers->where('status', 2)->count();
+
+        foreach($job_registers as $job_register){
+            $job_register->isJobCard = JobCard::where('job_no',$job_register->sr_no)->first()??false;
+        }
 
         // Check if the request is AJAX and return the partial view if true
         if ($request->ajax()) {
@@ -448,6 +453,10 @@ class JobRegisterManagementController extends Controller
 
         $job_registers->complete_count = $job_registers->where('status', 1)->count();
         $job_registers->cancel_count = $job_registers->where('status', 2)->count();
+        
+        foreach($job_registers as $job_register){
+            $job_register->isJobCard = JobCard::where('job_no',$job_register->sr_no)->first()??false;
+        }
 
         $min = null;
         $max = null;

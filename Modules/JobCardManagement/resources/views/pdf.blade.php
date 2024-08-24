@@ -519,7 +519,7 @@
             </tr>
             <tr>
                 <td>Old Job No</td>
-                <td style="border-left-style: hidden;font-weight: bold;">{{ $job->old_job_no ?? '' }}</td>
+                <td style="border-left-style: hidden;font-weight: bold;font-size:20px;">{{ $job->old_job_no ?? '' }}</td>
                 <td>Bill sent on</td>
                 <td style="border-left-style: hidden;font-weight: bold;">
                     {{ $job->sent_date ? \Carbon\Carbon::parse($job->sent_date)->format('j M Y') : '' }}</td>

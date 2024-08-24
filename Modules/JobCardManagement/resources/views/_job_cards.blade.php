@@ -64,7 +64,7 @@
                 @endif
                 <td
                         class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
-                        {{ $row->status == 0 ? 'In Progress' : ($row->status == 1 ? 'Completed' : 'Canceled') }}
+                        {{ $row->status == 0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}
                 </td>
                 <td style="width:250px;">
                     

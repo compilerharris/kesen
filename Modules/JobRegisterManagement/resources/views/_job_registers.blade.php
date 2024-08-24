@@ -76,7 +76,7 @@
                     <td>{{ $row->client->name }}</td>
                     <td>{{ $row->created_by_id?app\Models\User::where('id',$row->created_by_id)->first()->name:'' }}</td>
                     <td class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
-                            {{ $row->status == 0 ? 'In Progress' : ($row->status == 1 ? 'Completed' :  'Canceled - '.$row->cancel_reason) }}
+                            {{ $row->status == 0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' :  'Canceled - '.$row->cancel_reason) }}
                     </td>
                     <td width="500px">
                         @if(!Auth::user()->hasRole('Accounts'))

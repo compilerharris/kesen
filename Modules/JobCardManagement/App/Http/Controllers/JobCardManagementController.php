@@ -79,6 +79,10 @@ class JobCardManagementController extends Controller
         $job_register->complete_count = $job_register->where('status', 1)->count();
         $job_register->cancel_count = $job_register->where('status', 2)->count();
 
+        foreach($job_register as $job_reg){
+            $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
+        }
+
         if ($request->ajax()) {
             return view('jobcardmanagement::_job_cards', compact('job_register', 'min', 'max','search'))->render();
         }

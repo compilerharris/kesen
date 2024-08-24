@@ -260,7 +260,9 @@
                                             <td>{{ $detail->sentDate?\Carbon\Carbon::parse($detail->sentDate)->format('j M Y'):'---' }}</td>
                                             <td width="250px">
                                                 <a href="{{route('jobcardmanagement.manage.add', ['job_id' => $job_register->id, 'estimate_detail_id' => $detail->id])}}" class="btn btn-info btn-sm mb-2">{{ $detail->partCopyCreate=='Yes'?'Edit':'Add' }}</a>
-                                                <button data-id="{{ $detail->id }}" id="sentDateBtn" data-toggle="modal" data-target="#sentDate" class="btn btn-success btn-sm mb-2">Sent Date</button>
+                                                @if($detail->partCopyCreate=='Yes')
+                                                    <button data-id="{{ $detail->id }}" onclick="openModal(this)" data-toggle="modal" data-target="#sentDate" class="btn btn-success btn-sm mb-2">Sent Date</button>
+                                                @endif
                                             </td>
                                             {{-- data-id="{{ $job_register->sr_no }}" --}}
                                         </tr>
@@ -300,12 +302,17 @@
         </div>
     </div>
     <script>
+        function openModal(btn) {
+            var estimateDetailId = $(btn).data('id');
+            var actionUrl = '/job-card-management/sentDate/' + @json($job_register->id) + '/' + @json($job_register->sr_no) + '/' + estimateDetailId + '/' + @json($job_register->estimate_document_id);
+            $('#sentDateForm').attr('action', actionUrl);
+        }
         $(document).ready(function() {
-            $('#sentDateBtn').click(function() {
-                var estimateDetailId = $(this).data('id');
-                var actionUrl = '/job-card-management/sentDate/' + @json($job_register->id) + '/' + @json($job_register->sr_no) + '/' + estimateDetailId + '/' + @json($job_register->estimate_document_id);
-                $('#sentDateForm').attr('action', actionUrl);
-            });
+            // $('#sentDateBtn').click(function() {
+            //     var estimateDetailId = $(this).data('id');
+            //     var actionUrl = '/job-card-management/sentDate/' + @json($job_register->id) + '/' + @json($job_register->sr_no) + '/' + estimateDetailId + '/' + @json($job_register->estimate_document_id);
+            //     $('#sentDateForm').attr('action', actionUrl);
+            // });
             $('#closesentDateModal').click(function() {
                 $('#sentDateForm').removeAttr('action');
             });

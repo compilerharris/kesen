@@ -104,6 +104,12 @@
                         </tr>
                     </tbody>
                 </table>
+                <span class="right badge badge-primary p-2 fs-6 mt-2 mb-2">Total Job Card:
+                    {{ $job_registers->total() }}</span>
+                <span class="right badge badge-success p-2 fs-6">Total Completed:
+                    {{ $job_registers->complete_count }}</span>
+                <span class="right badge badge-danger p-2 fs-6">Total Canceled:
+                    {{ $job_registers->cancel_count }}</span>
                 <div class="card" id="job-register-data">
                     @include('jobregistermanagement::_job_registers')
                 </div>
