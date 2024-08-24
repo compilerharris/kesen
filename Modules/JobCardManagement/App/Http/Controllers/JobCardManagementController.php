@@ -262,7 +262,7 @@ class JobCardManagementController extends Controller
             'btv_unit' => $request['btv_unit'][$index]??null,
             'btv_employee_code' => $request['btv_employee_code'][$index]??null,
             'btv_pd' => $request['btv_pd'][$index]??null,
-            'btv_cr' => $request['v2_cr'][$index]??null,
+            'btv_cr' => $request['btv_cr'][$index]??null,
             'estimate_detail_id' => $request['estimate_detail_id'][0],
             'sync_no' => $carbon,
 
