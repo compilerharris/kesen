@@ -548,7 +548,8 @@
                 
                 <button type="button" class="btn btn-primary mt-2" id="add-item">Add Document</button>
                 <br>
-                <x-adminlte-button label="Submit" type="submit" onclick="checkValidLan(event)" class="mt-3" />
+                <button type="submit" class="mt-3 btn btn-success" onclick="checkValidLan(event)" style="padding: 5px 15px; font-size: 1.5rem;">Submit</button>
+                {{-- <x-adminlte-button label="Submit" type="submit" onclick="checkValidLan(event)" class="mt-3" /> --}}
             </form>
         </x-adminlte-card>
     </div>

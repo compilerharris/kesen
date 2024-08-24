@@ -186,11 +186,7 @@ class JobRegisterManagementController extends Controller
                 $job_register->version_no = $request->version_no;
                 $job_register->status = 0;
                 $job_register->cancel_reason = $request->cancel_reason;
-                $job_register->bill_no = $request->bill_no;
-                $job_register->bill_date = $request->bill_date;
                 $job_register->informed_to = $request->client_contact_person_id;
-                $job_register->invoice_date = $request->invoice_date;
-                $job_register->sent_date = $request->sent_date;
                 $job_register->operator = $request->operator;
                 $job_register->save();
                 return redirect()->route('jobregistermanagement.index')->with('message', 'Job register created successfully.');
@@ -217,11 +213,7 @@ class JobRegisterManagementController extends Controller
         $job_register->version_no = $request->version_no;
         $job_register->status = 0;
         $job_register->cancel_reason = $request->cancel_reason;
-        $job_register->bill_no = $request->bill_no;
-        $job_register->bill_date = $request->bill_date;
         $job_register->informed_to = $request->client_contact_person_id;
-        $job_register->invoice_date = $request->invoice_date;
-        $job_register->sent_date = $request->sent_date;
         $job_register->operator = $request->operator;
         #$job_register->site_specific = $request->site_specific;
         $job_register->save();
@@ -359,9 +351,6 @@ class JobRegisterManagementController extends Controller
         $jobRegister->version_date = $request->version_date;
         $jobRegister->version_no = $request->version_no;
         $jobRegister->cancel_reason = $request->cancel_reason;
-        $jobRegister->bill_no = $request->bill_no;
-        $jobRegister->bill_date = $request->bill_date;
-        $jobRegister->invoice_date = $request->invoice_date;
         $jobRegister->sent_date = $request->sent_date;
         $jobRegister->operator = $request->operator;
         $jobRegister->status = 0;

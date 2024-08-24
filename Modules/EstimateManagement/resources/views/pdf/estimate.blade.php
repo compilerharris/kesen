@@ -114,9 +114,9 @@
     </header>
 
     <section>
-        <div>
+        {{-- <div>
             <div class="right-align" style="font-weight: bold;">F/P/7.2.3</div>
-        </div>
+        </div> --}}
         <div style="margin-top: 10px;margin-bottom: 10px">
             <span style="display: inline;font-weight: bold;">No: {{ $estimate->estimate_no }}</span>
             <span class="sub-title" style="margin-left: 13%;font-weight: bold;" >PROFORMA</span>
@@ -128,16 +128,18 @@
         </div>
         <table class="heading-section" border="0" cellspacing="0" cellpadding="0">
             <tr>
-                <td style="width: 60%;vertical-align: top;"><strong>{{ $estimate->client_person->name }}</strong></td>
+                <td style="width: 50%;vertical-align: top;"><strong>{{ $estimate->client_person->name }}</strong></td>
                 <td><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</td>
             </tr>
             <tr>
                 <td style="vertical-align: text-top;"><strong>{{ $estimate->client->name }}</td>
-                <td style="width: 40%"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</td>
+                <td style="width: 50%"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</td>
             </tr>
-            <tr>
-                <td style="line-height: 1">{{ $estimate->client->address }}</td>
-            </tr>
+            @if($estimate->client->address)
+                <tr>
+                    <td style="line-height: 1">{{ $estimate->client->address }}</td>
+                </tr>
+            @endif
             <tr>
                 <td style="line-height: 1.5" colspan="2"><strong>Languages Required:</strong>
                     @php $languages_list=collect(); @endphp
