@@ -112,7 +112,7 @@
                             </tbody>
                         </table>
                         <span class="right badge badge-primary p-2 fs-6 mt-2 mb-2">Total Job Card:
-                            {{ $job_register->count() }}</span>
+                            {{ $job_register->total() }}</span>
                         <span class="right badge badge-success p-2 fs-6">Total Completed:
                             {{ $job_register->complete_count }}</span>
                         <span class="right badge badge-danger p-2 fs-6">Total Canceled:

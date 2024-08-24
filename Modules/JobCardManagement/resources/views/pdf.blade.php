@@ -209,7 +209,7 @@
                             <td>{{ $card->t_pd ? \Carbon\Carbon::parse($card->t_pd)->format('j M Y') : '' }}</td>
                             <td>{{ $card->t_cr ? \Carbon\Carbon::parse($card->t_cr)->format('j M Y') : '' }}</td>
                             <td>{{ $card->t_cnc }}</td>
-                            <td>{{ $card->t_dv!=null? (App\Models\User::where('id', $card->t_dv)->first()->name??''):''  }}</td>
+                            <td>{{ $card->t_dv!=null? (App\Models\User::where('id', $card->t_dv)->first()->code??''):''  }}</td>
                             <td>{{ $card->t_fqc!=null? App\Models\User::where('id', $card->t_fqc)->first()->name??$card->t_fqc:''  }}</td>
                             <td>{{ $card->t_sentdate ? \Carbon\Carbon::parse($card->t_sentdate)->format('j M Y') : '' }}</td>
                             @php $pageBreakIndex+=1;@endphp
