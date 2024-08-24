@@ -54,7 +54,7 @@
                     </span>
                 </div>
 
-                <x-adminlte-button label="Submit" type="submit" class="mt-3" />
+                <button type="submit" class="mt-3 btn btn-info" >Submit</button>
 
             </form>
         </x-adminlte-card>

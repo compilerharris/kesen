@@ -54,7 +54,8 @@
                         type="hidden" value="{{ $contact_person->id }}" />
                 </div>
 
-                <x-adminlte-button label="Submit" type="submit" class="mt-3" />
+                <button type="submit" class="mt-3 btn btn-info" >Submit</button>
+                {{-- <x-adminlte-button label="Submit" type="submit" class="mt-3" /> --}}
 
             </form>
         </x-adminlte-card>

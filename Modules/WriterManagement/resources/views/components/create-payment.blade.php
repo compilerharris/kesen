@@ -88,7 +88,8 @@
                     <x-adminlte-input name="writer_id" fgroup-class="col-md-3" required value="{{ $id }}"
                         hidden />
                 </div>
-                <x-adminlte-button label="Submit" type="submit" class="mt-3" />
+                <button type="submit" class="mt-3 btn btn-info" >Submit</button>
+                {{-- <x-adminlte-button label="Submit" type="submit" class="mt-3" /> --}}
             </form>
         </x-adminlte-card>
     </div>
