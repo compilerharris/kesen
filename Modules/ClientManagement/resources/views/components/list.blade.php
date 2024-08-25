@@ -106,7 +106,7 @@
                                         <td>{{ $row->email }}</td>
                                         <td>{{ $row->phone_no }}</td>
                                         {{-- <td>{{ $row->landline }}</td> --}}
-                                        <td>{{ App\Models\User::where('id', $row->client_accountant_person_id)->first()->name ?? '' }}
+                                        <td>{{ App\Models\User::where('id', $row->client_accountant_person_id)->first()->name ?? '---' }}
                                         </td>
                                         <td>{{ $row->address }}</td>
                                         <td width="250px">

@@ -102,15 +102,15 @@
                     <tr>
 
                         <td>{{ $index+1 }}</td>
-                        <td>{{ Modules\EstimateManagement\App\Models\Estimates::where('id',$row->estimate_id)->first()->estimate_no??''}}</td>
+                        <td>{{ Modules\EstimateManagement\App\Models\Estimates::where('id',$row->estimate_id)->first()->estimate_no??'---'}}</td>
                         <td>{{ $row->date}}</td>
                         <td>{{  $row->protocol_no}}</td>
-                        <td>{{ Modules\ClientManagement\App\Models\Client::where('id',$row->client_id)->first()->name??'';}}</td>
+                        <td>{{ Modules\ClientManagement\App\Models\Client::where('id',$row->client_id)->first()->name??'---';}}</td>
                         <td>{{ $row->description }}</td>
                         <td>{{ $row->handle_by->name }}</td>
                         <td>{{ $row->bill_no }}</td>
                         <td>{{ $row->bill_date }}</td>
-                        <td>{{  App\Models\User::where('id',$row->informed_to)->first()->name??'';}}</td>
+                        <td>{{  App\Models\User::where('id',$row->informed_to)->first()->name??'---';}}</td>
                         <td>{{ $row->invoice_date }}</td>
                         <td width="250px">
                             <a href="{{route('jobcardmanagement.manage', $row->id)}}"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">

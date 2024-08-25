@@ -210,7 +210,7 @@
                             <td>{{ $card->t_cr ? \Carbon\Carbon::parse($card->t_cr)->format('j M Y') : '' }}</td>
                             <td>{{ $card->t_cnc }}</td>
                             <td>{{ $card->t_dv!=null? (App\Models\User::where('id', $card->t_dv)->first()->code??''):''  }}</td>
-                            <td>{{ $card->t_fqc!=null? App\Models\User::where('id', $card->t_fqc)->first()->name??$card->t_fqc:''  }}</td>
+                            <td>{{ $card->t_fqc!=null? App\Models\User::where('id', $card->t_fqc)->first()->code??$card->t_fqc:''  }}</td>
                             <td>{{ $card->t_sentdate ? \Carbon\Carbon::parse($card->t_sentdate)->format('j M Y') : '' }}</td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
@@ -224,7 +224,7 @@
                             <td>{{ $card->v_cr ? \Carbon\Carbon::parse($card->v_cr)->format('j M Y') : '' }}</td>
                             <td>{{ $card->v_cnc }}</td>
                             <td>{{ $card->v_dv }}</td>
-                            <td>{{ $card->v_fqc!=null? App\Models\User::where('id', $card->v_fqc)->first()->name??'':'' }}</td>
+                            <td>{{ $card->v_fqc!=null? App\Models\User::where('id', $card->v_fqc)->first()->code??'':'' }}</td>
                             <td>{{ $card->v_sentdate ? \Carbon\Carbon::parse($card->v_sentdate)->format('j M Y') : '' }}</td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
@@ -251,8 +251,8 @@
                             <td>{{ $card->bt_pd ? \Carbon\Carbon::parse($card->bt_pd)->format('j M Y') : '' }}</td>
                             <td>{{ $card->bt_cr ? \Carbon\Carbon::parse($card->bt_cr)->format('j M Y') : '' }}</td>
                             <td>{{ $card->estimateDetail->bt?$card->bt_cnc:'' }}</td>
-                            <td>{{ $card->estimateDetail->bt?($card->bt_dv!=null? App\Models\User::where('id', $card->bt_dv)->first()->name??'':''):'' }}</td>
-                            <td>{{ $card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->name??$card->bt_fqc:''  }}</td>
+                            <td>{{ $card->estimateDetail->bt?($card->bt_dv!=null? App\Models\User::where('id', $card->bt_dv)->first()->code??'':''):'' }}</td>
+                            <td>{{ $card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->code??$card->bt_fqc:''  }}</td>
                             <td>{{ $card->bt_writer_code ? ($card->bt_sentdate ? \Carbon\Carbon::parse($card->bt_sentdate)->format('j M Y') : ''):'' }}</td>
                             @php $pageBreakIndex+=1;@endphp
                         </tr>
