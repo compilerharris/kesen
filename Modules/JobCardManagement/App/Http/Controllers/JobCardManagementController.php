@@ -46,6 +46,7 @@ class JobCardManagementController extends Controller
             }
             $min = null;
             $max = null;
+            $cp = null;
         }else{
             $search = null;
             if(!$request->get('min')&& !$request->get('max')){
