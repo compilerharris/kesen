@@ -51,10 +51,10 @@
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $row->sr_no }}</td>
-                <td>{{ $row->estimate?$row->estimate->client->name:$row->no_estimate->client->name }}</td>
-                <td>{{ $row->estimate_document_id }}</td>
-                <td><p style="width: 70px;">{{ $row->protocol_no }}</p></td>
-                <td>{{ $row->handle_by->code }}</td>
+                <td>{{ $row->estimate?$row->estimate->client->name:($row->no_estimate?$row->no_estimate->client->name:'') }}</td>
+                <td>{{ $row->estimate_document_id??'' }}</td>
+                <td><p style="width: 70px;">{{ $row->protocol_no??'' }}</p></td>
+                <td>{{ $row->handle_by?$row->handle_by->code:'' }}</td>
                 <td>{{ $row->estimate?$row->estimate->client_person->name:($row->no_estimate->client_person->name??'') }}</td>
                 <td>{{ $row->date?\Carbon\Carbon::parse($row->date)->format('j M Y'):'---' }}</td>
                 @if (Auth::user()->hasRole('Accounts'))
