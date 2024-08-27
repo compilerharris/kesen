@@ -184,7 +184,12 @@
                 @php $temp_index=1;@endphp
                 @php $pageBreakIndex=0;@endphp
                 @php $lanIndex=0;@endphp
-                @php $estimates = $job->estimate?$job->estimate->details:$job->no_estimate->details; @endphp
+                @php
+                    $estimates = $job->estimate?$job->estimate->details:$job->no_estimate->details;
+                    $estimates = $estimates->filter(function ($estimate) use ($job) {
+                        return $estimate->document_name == $job->estimate_document_id;
+                    });
+                @endphp
                 @foreach($estimates as $index => $estimate)
                     @php $partCopyIndex = $estimate->jobCards->count(); @endphp
                     @if($partCopyIndex > 0)
