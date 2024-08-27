@@ -43,7 +43,7 @@ class JobRegister extends Model
 
     public function jobCard()
     {
-        return $this->hasMany(JobCard::class, 'job_no','sr_no')->orderBy('estimate_detail_id', 'desc');
+        return $this->hasMany(JobCard::class, 'job_no','sr_no')->orderBy('job_no', 'desc');
     }
 
     public function client(){

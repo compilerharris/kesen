@@ -137,22 +137,18 @@
                                                 </x-adminlte-select>
                                                 <x-adminlte-input name="v_pd[{{ $index }}]" placeholder="V1 PD" fgroup-class="col-md-2"
                                                     value="{{ old('v_pd.' . $index, $job->v_pd) }}" label="V1 PD"  type='date' />
-                                                <x-adminlte-input name="v_cr[{{ $index }}]" placeholder="V1 CR" fgroup-class="col-md-2"
-                                                    value="{{ old('v_cr.' . $index, $job->v_cr) }}" label="V1 CR"  type='date' />
-                                                    <x-adminlte-input name="v2_unit[{{ $index }}]" placeholder="V2 Unit" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_unit.' . $index, $job->v2_unit) }}" label="V2 Unit" />
+                                                <x-adminlte-input name="v_cr[{{ $index }}]" placeholder="V1 CR" fgroup-class="col-md-2" value="{{ old('v_cr.' . $index, $job->v_cr) }}" label="V1 CR"  type='date' />
+                                                <x-adminlte-input name="v2_unit[{{ $index }}]" placeholder="V2 Unit" fgroup-class="col-md-2" value="{{ old('v2_unit.' . $index, $job->v2_unit) }}" label="V2 Unit" disabled/>
                                                 <x-adminlte-select name="v2_employee_code[{{ $index }}]" fgroup-class="col-md-2" 
-                                                     label="V2 Employee">
+                                                     label="V2 Employee" disabled>
                                                     <option value="">Select Employee</option>
                                                     @foreach ($qce_users as $user)
                                                         <option value="{{ $user->id }}" {{ $job->v2_employee_code == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
                                                     @endforeach
                                                 </x-adminlte-select>
-                                                <x-adminlte-input name="v2_pd[{{ $index }}]" placeholder="V2 PD" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_pd.' . $index, $job->v2_pd) }}" label="V2 PD" type='date' />
-                                                <x-adminlte-input name="v2_cr[{{ $index }}]" placeholder="V2 CR" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_cr.' . $index, $job->v2_cr) }}" label="V2 CR" type='date' />
-                                                    <x-adminlte-select name="t_fqc[{{ $index }}]" fgroup-class="col-md-2" 
+                                                <x-adminlte-input name="v2_pd[{{ $index }}]" placeholder="V2 PD" fgroup-class="col-md-2" value="{{ old('v2_pd.' . $index, $job->v2_pd) }}" label="V2 PD" type='date' disabled />
+                                                <x-adminlte-input name="v2_cr[{{ $index }}]" placeholder="V2 CR" fgroup-class="col-md-2" value="{{ old('v2_cr.' . $index, $job->v2_cr) }}" label="V2 CR" type='date' disabled />
+                                                <x-adminlte-select name="t_fqc[{{ $index }}]" fgroup-class="col-md-2" 
                                                     value="{{ old('t_fqc.' . $index, $job->t_fqc) }}" label="T F/QC">
                                                     <option value="">T F/QC</option>
                                                     @foreach ($qce_users as $tfc_user)

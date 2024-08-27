@@ -94,6 +94,8 @@
                         </tr>
                         <tr>
                             <form action="job-register-management">
+                                <td>Client / Protocol no:</td>
+                                <td><input type="text" id="cp" name="cp" value="{{$cp??''}}" placeholder="Client/Protocol no"></td>
                                 <td>From Date:</td>
                                 <td><input type="date" required id="min" name="min" value="{{$min??''}}"></td>
                                 <td>To Date:</td>

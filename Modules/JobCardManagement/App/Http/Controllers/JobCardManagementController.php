@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use DB;
 use Illuminate\Http\Request;
 use Modules\ClientManagement\App\Models\Client;
 use Modules\ClientManagement\App\Models\ContactPerson;
@@ -38,6 +39,7 @@ class JobCardManagementController extends Controller
             ->orWhereIn('handled_by_id',count($user)>0?$user->pluck('id')->toArray():[])
             ->orWhere('description','like',"%{$search}%")
             ->orWhere('status','like',"%{$search}%")
+            ->orderBy('sr_no','desc')
             ->paginate(10);
             if($job_register->count() == 0){
                 return redirect()->back()->with('alert',"No job found with {$search}");
@@ -48,11 +50,11 @@ class JobCardManagementController extends Controller
             $search = null;
             if(!$request->get('min')&& !$request->get('max')){
                 $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-                    ->orderBy('created_at', 'desc')
+                    ->orderBy('sr_no', 'desc')
                     ->paginate(10);
-    
                 $min = null;
                 $max = null;
+                $cp = null;
             }else{
                 $noOfDays = env('NO_OF_DAYS', 30);
                 $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
@@ -60,34 +62,72 @@ class JobCardManagementController extends Controller
         
                 $min = $request->get('min', $startDate);
                 $max = $request->get('max', $endDate);
+                $cp = $request->get('cp');
         
-                $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-                    ->when($min && $max, function ($query) use ($min, $max) {
-                        $query->whereBetween('created_at', [$min,$max]);
-                    })
-                    ->when($min, function ($query) use ($min) {
-                        $query->where('created_at', '>=',$min);
-                    })
-                    ->when($max, function ($query) use ($max) {
-                        $query->where('created_at', '<=',$max);
-                    })
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(10); // 10 records per page
+                if(!isset($cp)){
+                    $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+                        ->when($min && $max, function ($query) use ($min, $max) {
+                            $query->whereBetween('created_at', [$min,$max]);
+                        })
+                        ->when($min, function ($query) use ($min) {
+                            $query->where('created_at', '>=',$min);
+                        })
+                        ->when($max, function ($query) use ($max) {
+                            $query->where('created_at', '<=',$max);
+                        })
+                        ->orderBy('sr_no', 'desc')
+                        ->paginate(10);
+                }else{
+                    $clientIds = Client::where('name','like',"%{$cp}%")->pluck('id')->toArray();
+                    if(count($clientIds)>0){
+                        $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+                            ->when($min && $max, function ($query) use ($min, $max) {
+                                $query->whereBetween('created_at', [$min,$max]);
+                            })
+                            ->when($min, function ($query) use ($min) {
+                                $query->where('created_at', '>=',$min);
+                            })
+                            ->when($max, function ($query) use ($max) {
+                                $query->where('created_at', '<=',$max);
+                            })
+                            ->whereIn('client_id',$clientIds)
+                            ->orderBy('sr_no', 'desc')
+                            ->paginate(10);
+                    }else{
+                        $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+                            ->when($min && $max, function ($query) use ($min, $max) {
+                                $query->whereBetween('created_at', [$min,$max]);
+                            })
+                            ->when($min, function ($query) use ($min) {
+                                $query->where('created_at', '>=',$min);
+                            })
+                            ->when($max, function ($query) use ($max) {
+                                $query->where('created_at', '<=',$max);
+                            })
+                            ->where('protocol_no','like',"%{$cp}%")
+                            ->orderBy('sr_no', 'desc')
+                            ->paginate(10);
+                    }
+                }
             }
         }
 
-        $job_register->complete_count = $job_register->where('status', 1)->count();
-        $job_register->cancel_count = $job_register->where('status', 2)->count();
+        $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
+        ->groupBy('status')
+        ->pluck('total', 'status');
+        // Count complete and canceled jobs
+        $job_register->complete_count = $statusCounts['1'] ?? 0;
+        $job_register->cancel_count = $statusCounts['2'] ?? 0;
 
         foreach($job_register as $job_reg){
             $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
         }
 
         if ($request->ajax()) {
-            return view('jobcardmanagement::_job_cards', compact('job_register', 'min', 'max','search'))->render();
+            return view('jobcardmanagement::_job_cards', compact('job_register', 'min', 'max','search','cp'))->render();
         }
 
-        return view('jobcardmanagement::manage', compact('job_register', 'min', 'max','search'));
+        return view('jobcardmanagement::manage', compact('job_register', 'min', 'max','search','cp'));
         
     }
 

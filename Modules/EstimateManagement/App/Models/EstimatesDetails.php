@@ -30,6 +30,11 @@ class EstimatesDetails extends Model
         return $this->hasOne(JobCard::class, 'estimate_detail_id', 'id');
     }
 
+    public function jobCards()
+    {
+        return $this->hasMany(JobCard::class, 'estimate_detail_id', 'id');
+    }
+
     public function language()
     {
         return $this->belongsTo(Language::class, 'lang', 'id');

@@ -122,18 +122,18 @@
                                                 <x-adminlte-input name="v_cr[0]" placeholder="V1 CR" fgroup-class="col-md-2"
                                                     value="{{ old('v_cr[0]') }}" label="V1 CR" type='date' />
                                                 <x-adminlte-input name="v2_unit[0]" placeholder="V2 Unit" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_unit[0]') }}" label="V2 Unit" />
+                                                    value="{{ old('v2_unit[0]') }}" label="V2 Unit" disabled />
                                                 <x-adminlte-select name="v2_employee_code[0]" fgroup-class="col-md-2" 
-                                                    value="{{ old('v2_employee_code[0]') }}" label="V2 Employee">
+                                                    value="{{ old('v2_employee_code[0]') }}" label="V2 Employee" disabled>
                                                     <option value="">Select Employee</option>
                                                     @foreach ($qce_users as $user)
                                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                                                     @endforeach
                                                 </x-adminlte-select>
                                                 <x-adminlte-input name="v2_pd[0]" placeholder="V2 PD" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_pd[0]') }}" label="V2 PD" type='date' />
+                                                    value="{{ old('v2_pd[0]') }}" label="V2 PD" type='date' disabled />
                                                 <x-adminlte-input name="v2_cr[0]" placeholder="V2 CR" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_cr[0]') }}" label="V2 CR" type='date' />
+                                                    value="{{ old('v2_cr[0]') }}" label="V2 CR" type='date' disabled />
                                                 <x-adminlte-select name="t_fqc[0]" fgroup-class="col-md-2" 
                                                     value="{{ old('t_fqc[0]') }}" label="T F/QC">
                                                     <option value="">T F/QC</option>

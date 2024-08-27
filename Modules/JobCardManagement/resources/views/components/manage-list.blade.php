@@ -37,7 +37,7 @@
         ['label' => '#'],
         ['label' => 'Document Name'],
         ['label' => 'Language'],
-        ['label' => 'Part Copy Created'],
+        ['label' => 'Part Copy'],
         ['label' => 'Sent Date'],
         ['label' => 'Action'],
     ];
@@ -100,8 +100,10 @@
                                     </form>
                                 </tr>
                                 <tr>
-                                    <td>From Date:</td>
                                     <form action="job-card-management">
+                                        <td>Client / Protocol no:</td>
+                                        <td><input type="text" id="cp" name="cp" value="{{$cp??''}}" placeholder="Client/Protocol no"></td>
+                                        <td>From Date:</td>
                                         <td><input type="date" required id="min" name="min" value="{{$min??''}}"></td>
                                         <td>To Date:</td>
                                         <td><input type="date" required id="max" name="max" value="{{$max??''}}"></td>
@@ -256,7 +258,7 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $detail->document_name }}</td>
                                             <td>{{ $detail->language->name }}</td>
-                                            <td class="{{ $detail->partCopyCreate=='Yes'?'fw-bold':'' }}">{{ $detail->partCopyCreate == 'Yes'?'Yes - '.$detail->partCopyCreateCount.' Copy':"" }}</td>
+                                            <td class="{{ $detail->partCopyCreate=='Yes'?'fw-bold':'' }}">{{ $detail->partCopyCreate == 'Yes'?$detail->partCopyCreateCount.' Copy':"---" }}</td>
                                             <td>{{ $detail->sentDate?\Carbon\Carbon::parse($detail->sentDate)->format('j M Y'):'---' }}</td>
                                             <td width="250px">
                                                 <a href="{{route('jobcardmanagement.manage.add', ['job_id' => $job_register->id, 'estimate_detail_id' => $detail->id])}}" class="btn btn-info btn-sm mb-2">{{ $detail->partCopyCreate=='Yes'?'Edit':'Add' }}</a>
