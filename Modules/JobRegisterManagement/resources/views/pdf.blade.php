@@ -68,13 +68,13 @@
 <body>
     <div class="container">
         @if ($jobRegister->estimate->client->client_metric->code == 'KCP')
-            <img src="{{ public_path('img/kesen-communication.png') }}" alt="Iceberg Image" width="100%">
+            <img src="{{ public_path('img/kesen-communication.jpg') }}" alt="Iceberg Image" width="100%">
         @elseif ($jobRegister->estimate->client->client_metric->code == 'KLB')
-            <img src="{{ public_path('img/kesen-language-buea.png') }}" alt="Iceberg Image" width="100%">
+            <img src="{{ public_path('img/kesen-language-buea.jpg') }}" alt="Iceberg Image" width="100%">
         @elseif ($jobRegister->estimate->client->client_metric->code == 'LGS')
-            <img src="{{ public_path('img/kesen-linguist-system.png') }}" alt="Iceberg Image" width="100%">
+            <img src="{{ public_path('img/kesen-linguist-system.jpg') }}" alt="Iceberg Image" width="100%">
         @else
-            <img src="{{ public_path('img/kesen-linguist-Servi-llp.png') }}" alt="Iceberg Image" width="100%">
+            <img src="{{ public_path('img/kesen-linguist-servi-llp.jpg') }}" alt="Iceberg Image" width="100%">
         @endif
         
         <div class="subtitle">JOB REGISTER <span class="job-register">{{$jobRegister->sr_no}}</span></div>
