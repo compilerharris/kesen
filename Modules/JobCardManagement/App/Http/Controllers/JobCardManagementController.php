@@ -23,113 +23,68 @@ use Modules\LanguageManagement\App\Models\Language;
 use Maatwebsite\Excel\Facades\Excel;
 class JobCardManagementController extends Controller
 {
+    public $jobNo = null;
+    public $cp = null;
+    public $document = null;
+    public $pm = null;
+    public $contactPerson = null;
+    public $from = null;
+    public $to = null;
+    public $status = null;
 
     public function index(Request $request)
-    { 
-        if($request->get('search') != ''){
-            $search = $request->get('search');
-            $client = Client::where('name','like',"%{$search}%")->get();
-            $clientContact = ContactPerson::where('name','like',"%{$search}%")->get();
-            $user = User::where('name','like',"%{$search}%")->orWhere('code','like',"%{$search}%")->get();
-            $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-            ->where('sr_no',$search)
-            ->orWhere('protocol_no','like',"%{$search}%")
-            ->orWhereIn('client_id',count($client)>0?$client->pluck('id')->toArray():[])
-            ->orWhereIn('client_contact_person_id',count($clientContact)>0?$clientContact->pluck('id')->toArray():[])
-            ->orWhereIn('handled_by_id',count($user)>0?$user->pluck('id')->toArray():[])
-            ->orWhere('description','like',"%{$search}%")
-            ->orWhere('status','like',"%{$search}%")
-            ->orderBy('sr_no','desc')
-            ->paginate(10);
-            if($job_register->count() == 0){
-                return redirect()->back()->with('alert',"No job found with {$search}");
-            }
-            $min = null;
-            $max = null;
-            $cp = null;
-        }else{
-            $search = null;
-            if(!$request->get('min')&& !$request->get('max')){
-                $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-                    ->orderBy('sr_no', 'desc')
-                    ->paginate(10);
-                $min = null;
-                $max = null;
-                $cp = null;
-            }else{
-                $noOfDays = env('NO_OF_DAYS', 30);
-                $startDate = Carbon::now()->subDays($noOfDays)->format('Y-m-d');
-                $endDate = Carbon::now()->format('Y-m-d');
-        
-                $min = $request->get('min', $startDate);
-                $max = $request->get('max', $endDate);
-                $cp = $request->get('cp');
-        
-                if(!isset($cp)){
-                    $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-                        ->when($min && $max, function ($query) use ($min, $max) {
-                            $query->whereBetween('created_at', [$min,$max]);
-                        })
-                        ->when($min, function ($query) use ($min) {
-                            $query->where('created_at', '>=',$min);
-                        })
-                        ->when($max, function ($query) use ($max) {
-                            $query->where('created_at', '<=',$max);
-                        })
-                        ->orderBy('sr_no', 'desc')
-                        ->paginate(10);
-                }else{
-                    $clientIds = Client::where('name','like',"%{$cp}%")->pluck('id')->toArray();
-                    if(count($clientIds)>0){
-                        $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-                            ->when($min && $max, function ($query) use ($min, $max) {
-                                $query->whereBetween('created_at', [$min,$max]);
-                            })
-                            ->when($min, function ($query) use ($min) {
-                                $query->where('created_at', '>=',$min);
-                            })
-                            ->when($max, function ($query) use ($max) {
-                                $query->where('created_at', '<=',$max);
-                            })
-                            ->whereIn('client_id',$clientIds)
-                            ->orderBy('sr_no', 'desc')
-                            ->paginate(10);
-                    }else{
-                        $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-                            ->when($min && $max, function ($query) use ($min, $max) {
-                                $query->whereBetween('created_at', [$min,$max]);
-                            })
-                            ->when($min, function ($query) use ($min) {
-                                $query->where('created_at', '>=',$min);
-                            })
-                            ->when($max, function ($query) use ($max) {
-                                $query->where('created_at', '<=',$max);
-                            })
-                            ->where('protocol_no','like',"%{$cp}%")
-                            ->orderBy('sr_no', 'desc')
-                            ->paginate(10);
-                    }
-                }
-            }
-        }
+    {
+        if(empty($request->query()) || (array_key_exists('page', $request->query()) && count($request->query()) === 1)){
+            $job_register = JobRegister::orderBy('sr_no','desc')->paginate(10);
 
-        $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
-        ->groupBy('status')
-        ->pluck('total', 'status');
-        // Count complete and canceled jobs
-        $job_register->complete_count = $statusCounts['1'] ?? 0;
-        $job_register->cancel_count = $statusCounts['2'] ?? 0;
+            $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+            $job_register->complete_count = $statusCounts['1'] ?? 0;
+            $job_register->cancel_count = $statusCounts['2'] ?? 0;
+    
+            foreach($job_register as $job_reg){
+                $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
+            }
+    
+            $jobNo = $this->jobNo;
+            $cp = $this->cp;
+            $document = $this->document;
+            $pm = $this->pm;
+            $contactPerson = $this->contactPerson;
+            $from = $this->from;
+            $to = $this->to;
+            $status = $this->status;
+
+            if ($request->ajax()) {
+                return view('jobcardmanagement::_job_cards', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'))->render();
+            }
+
+            return view('jobcardmanagement::manage', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'));
+        }
+        $job_register = $this->jobSearch($request);
+        if($job_register->count() == 0){
+            return redirect()->back()->with('alert',"No job found.");
+        }
 
         foreach($job_register as $job_reg){
             $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
         }
 
+        $jobNo = $this->jobNo;
+        $cp = $this->cp;
+        $document = $this->document;
+        $pm = $this->pm;
+        $contactPerson = $this->contactPerson;
+        $from = $this->from;
+        $to = $this->to;
+        $status = $this->status;
+
         if ($request->ajax()) {
-            return view('jobcardmanagement::_job_cards', compact('job_register', 'min', 'max','search','cp'))->render();
+            return view('jobcardmanagement::_job_cards', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'))->render();
         }
 
-        return view('jobcardmanagement::manage', compact('job_register', 'min', 'max','search','cp'));
-        
+        return view('jobcardmanagement::manage', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'));
     }
 
     public function create($job_id,$estimate_detail_id){
@@ -485,27 +440,12 @@ class JobCardManagementController extends Controller
         return back()->with('alert', 'Can not find job status.');
     }
 
-    public function exportJobCard()
+    public function exportJobCard(Request $request)
     {
-        if(!request()->get("reset")){
-            if(request()->get("min")&&request()->get("max")==null) {
-                $jobCard = JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->orderBy('created_at', 'desc')->get();    
-            }elseif(request()->get("min")!=''&&request()->get("max")!='') {
-                $jobCard = JobRegister::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
-            }elseif(request()->get("min")==null&&request()->get("max")){
-                $jobCard = JobRegister::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
-            }else{
-                $min=Carbon::now()->startOfMonth();
-                $max=Carbon::now()->endOfMonth();
-                $jobCard = JobRegister::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();    
-            }
-        }else{
-            $min=Carbon::now()->startOfMonth();
-            $max=Carbon::now()->endOfMonth();
-            $jobCard = JobRegister::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();    
+        $jobCard = $this->jobSearch($request);
+        if($jobCard->count() == 0){
+            return redirect()->back()->with('alert',"No job found.");
         }
-        $jobCard->complete_count=$jobCard->where('status',1)->count();
-        $jobCard->cancel_count=$jobCard->where('status',2)->count();
         $excelFormat = collect();
         foreach($jobCard as $index => $job){
             $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
@@ -533,6 +473,72 @@ class JobCardManagementController extends Controller
         // return $pdf->stream();
     }
 
+    public function jobSearch($request){
+        if($request->get('jobNo') != ''){
+            $this->jobNo = $request->get('jobNo');
+            $this->cp = $this->document = $this->pm = $this->contactPerson = $this->from = $this->to = $this->status = null;
+            $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+            ->where('sr_no',$this->jobNo)
+            ->orderBy('sr_no','desc')
+            ->paginate(10);
+            if( $job_register->count() == 0 ){
+                return [];  
+            }
+            $job_register->complete_count = 1;
+            $job_register->cancel_count = 1;
+            return $job_register;
+        }
+        $endDate = Carbon::now()->format('Y-m-d');
+
+        $this->jobNo = null;
+        $this->cp = $request->get('cp', null);
+        $this->document = $request->get('document', null);
+        $this->pm = $request->get('pm', null);
+        $this->contactPerson = $request->get('contactPerson', null);
+        $this->from = $request->get('from', null);
+        $this->to = $request->get('to', null);
+        $this->status =  $request->get('status', null);
+
+        $clientIds = Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray();
+        $userIds = User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray();
+        $clientContactIds = ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray();
+        $job_register_query = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+        ->when(count($clientIds)>0, function ($query) use ($clientIds) {
+            $query->whereIn('client_id', $clientIds);
+        })
+        ->when(count($clientIds)==0, function ($query){
+            $query->where('protocol_no','like',"%{$this->cp}%");
+        })
+        ->when($this->document, function ($query){
+            $query->where('description','like',"%{$this->document}%");
+        })
+        ->when(count($userIds)>0, function ($query) use ($userIds) {
+            $query->whereIn('handled_by_id',$userIds);
+        })
+        ->when(count($clientContactIds)>0, function ($query) use ($clientContactIds) {
+            $query->whereIn('client_contact_person_id',$clientContactIds);
+        })
+        ->when($this->from && $this->to, function ($query){
+            $query->whereBetween('created_at', [$this->from,$this->to]);
+        })
+        ->when($this->from, function ($query) use ($endDate){
+            $query->whereBetween('created_at', [$this->from,$endDate]);
+        })
+        ->when($this->status, function ($query){
+            $query->where('status',$this->status);
+        });
+        $statusCountsQuery = clone $job_register_query;
+        $job_register = $job_register_query->orderBy('sr_no', 'desc')->paginate(10);
+        if( $job_register->count() == 0 ){
+            return [];  
+        }
+        $statusCounts = $statusCountsQuery->select('status', DB::raw('count(*) as total'))->groupBy('status')->pluck('total', 'status');
+        
+        $job_register->complete_count = $statusCounts['1'] ?? 0;
+        $job_register->cancel_count = $statusCounts['2'] ?? 0;
+        return $job_register;
+    }
+
     public function changeRemark(Request $request,$id){
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.');
@@ -551,27 +557,6 @@ class JobCardManagementController extends Controller
         $job_register->wu_text = $request->wu??null;
         $job_register->save();
         return redirect()->back()->with('message', 'Words/Units updated successfully.');
-    }
-
-    public function jobSearch(Request $request){ 
-        if($request->get('search') == ''){
-            return redirect()->back()->with('alert','Please enter job no.');
-        }
-
-        $search = $request->get('search');
-        $job_registers = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])->where('sr_no',$search)->paginate(10);
-
-        if($job_registers->count() == 0){
-            return redirect()->back()->with('alert',"No job found with job no {$search}");
-        }
-
-        $job_registers->complete_count = $job_registers->where('status', 1)->count();
-        $job_registers->cancel_count = $job_registers->where('status', 2)->count();
-
-        $min = null;
-        $max = null;
-
-        return view('jobcardmanagement::index', compact('job_registers', 'min', 'max','search'));
     }
 
     public function sentDate(Request $request, $jobRegisterId, $jobNo, $estimateDetailId, $estimateDocumentId){ 

@@ -46,7 +46,7 @@
     $config_manage['paging'] = false;
 @endphp
 <div class="card-body">
-    <x-adminlte-datatable id="table8" :heads="Auth::user()->hasRole('Accounts') ? $aHeads : $oHeads" head-theme="dark" striped :config="$config" with-buttons>
+    <x-adminlte-datatable id="table8" :heads="Auth::user()->hasRole('Accounts') ? $aHeads : $oHeads" head-theme="dark" striped :config="$config">
         @foreach ($job_register as $index => $row)
             <tr>
                 <td>{{ $index + 1 }}</td>
@@ -182,13 +182,19 @@
             });
             $(document).on('click', '.custom-pagination', function(event) {
                 event.preventDefault();
-                let page = $(this).attr('href').split('page=')[1];
-                fetch_data(page);
+                console.log($(this).attr('href').split('page=')[1])
+                if(document.location.href.split('?')[1]){
+                    const url = window.location.href + "&page=" + $(this).attr('href').split('page=')[1];
+                    fetch_data(url);
+                }else{
+                    const url = "/job-card-management?page=" + $(this).attr('href').split('page=')[1];
+                    fetch_data(url);
+                }
             });
 
-            function fetch_data(page) {
+            function fetch_data(url) {
                 $.ajax({
-                    url: "/job-card-management?page=" + page,
+                    url: url,
                     success: function(data) {
                         $('#job-card-data').html(data);
                     }
