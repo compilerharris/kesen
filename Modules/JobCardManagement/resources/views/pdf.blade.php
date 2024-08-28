@@ -196,7 +196,7 @@
                         @php $lanRowCount = $partCopyIndex; @endphp
                         @foreach($estimate->jobCards as $cardIndex => $card)
                             {{-- t --}}
-                            <tr>
+                            <tr style="{{$cardIndex==0?'border-top: solid 2px #000':''}}">
                                 @if($lanRowCount == $partCopyIndex)
                                     @php $lanIndex = $lanIndex==0?1:0;@endphp
                                     <td rowspan="5" style={{$lanIndex == 0?"background-color:#fff;width:50px":"background-color:lightgrey;width:50px;border-top:2px"}}><b>{{ $estimate->language->name }}</b></td>
@@ -339,7 +339,7 @@
                         @endforeach
                     @else
                         {{-- t --}}
-                        <tr>
+                        <tr style="border-top: solid 3px #000">
                             @php $lanIndex = $lanIndex==0?1:0;@endphp
                             <td rowspan="5" style={{$lanIndex == 0?"background-color:#fff;width:50px":"background-color:lightgrey;width:50px;border-top:2px"}}><b>{{ $estimate->language->name }}</b></td>
                             <td rowspan="5">PC</td>
