@@ -63,7 +63,7 @@ class JobCardManagementController extends Controller
             return view('jobcardmanagement::manage', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'));
         }
         $job_register = $this->jobSearch($request);
-        if($job_register->count() == 0){
+        if(count($job_register) == 0){
             return redirect()->back()->with('alert',"No job found.");
         }
 
@@ -442,7 +442,92 @@ class JobCardManagementController extends Controller
 
     public function exportJobCard(Request $request)
     {
-        $jobCard = $this->jobSearch($request);
+        if($request->get('jobNo') != ''){
+            $this->jobNo = $request->get('jobNo');
+            $this->cp = $this->document = $this->pm = $this->contactPerson = $this->from = $this->to = $this->status = null;
+            $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+            ->where('sr_no',$this->jobNo)
+            ->orderBy('sr_no','desc')
+            ->paginate(10);
+            if( $job_register->count() == 0 ){
+                return redirect()->back()->with('alert',"No job found.");
+            }
+            $job_register->complete_count = 1;
+            $job_register->cancel_count = 1;
+            $jobCard = $job_register;
+            $excelFormat = collect();
+            foreach($jobCard as $index => $job){
+                $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
+                $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('name')->toArray());
+                $excelFormat->push([
+                    'sr' => $index+1,
+                    'date' => $job->date?Carbon::parse($job->date)->format('j M Y'):'',
+                    'sr_no' => $job->sr_no,
+                    'handledBy' => $job->handle_by->name??'',
+                    'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
+                    'clientContact' => $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name??''),
+                    'estimateNo' => $job->estimate?$job->estimate->estimate_no:'No Estimate',
+                    'languages' => $languages,
+                    'oldJobNo' => $job->old_job_no??'',
+                    'protocolNo' => $job->protocol_no,
+                    'jobType' => $job->type??'',
+                    'docName' => $job->estimate_document_id,
+                    'remark' => $job->remark??'',
+                    'status' => $job->status == 0 ? 'In Progress' : ($job->status == 1 ? 'Completed' : 'Canceled')
+                ]);
+            }
+            $todayDate = Carbon::now()->format('j-M-Y');
+            return Excel::download(new JobCardExcelExport($excelFormat), "job-card-export-sheet-{$todayDate}.xlsx");
+        }
+        $endDate = Carbon::now()->format('Y-m-d');
+
+        $this->jobNo = null;
+        $this->cp = $request->get('cp', null);
+        $this->document = $request->get('document', null);
+        $this->pm = $request->get('pm', null);
+        $this->contactPerson = $request->get('contactPerson', null);
+        $this->from = $request->get('from', null);
+        $this->to = $request->get('to', null);
+        $this->status =  $request->get('status', null);
+
+        $clientIds = Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray();
+        $userIds = User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray();
+        $clientContactIds = ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray();
+        $job_register_query = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+        ->when(count($clientIds)>0, function ($query) use ($clientIds) {
+            $query->whereIn('client_id', $clientIds);
+        })
+        ->when(count($clientIds)==0, function ($query){
+            $query->where('protocol_no','like',"%{$this->cp}%");
+        })
+        ->when($this->document, function ($query){
+            $query->where('description','like',"%{$this->document}%");
+        })
+        ->when(count($userIds)>0, function ($query) use ($userIds) {
+            $query->whereIn('handled_by_id',$userIds);
+        })
+        ->when(count($clientContactIds)>0, function ($query) use ($clientContactIds) {
+            $query->whereIn('client_contact_person_id',$clientContactIds);
+        })
+        ->when($this->from && $this->to, function ($query){
+            $query->whereBetween('created_at', [$this->from,$this->to]);
+        })
+        ->when($this->from, function ($query) use ($endDate){
+            $query->whereBetween('created_at', [$this->from,$endDate]);
+        })
+        ->when(in_array($this->status,['0','1','2']), function ($query){
+            $query->where('status',$this->status);
+        });
+        $statusCountsQuery = clone $job_register_query;
+        $job_register = $job_register_query->orderBy('sr_no', 'desc')->get();
+        if( $job_register->count() == 0 ){
+            return [];  
+        }
+        $statusCounts = $statusCountsQuery->select('status', DB::raw('count(*) as total'))->groupBy('status')->pluck('total', 'status');
+        
+        $job_register->complete_count = $statusCounts['1'] ?? 0;
+        $job_register->cancel_count = $statusCounts['2'] ?? 0;
+        $jobCard = $job_register;
         if($jobCard->count() == 0){
             return redirect()->back()->with('alert',"No job found.");
         }
@@ -524,7 +609,7 @@ class JobCardManagementController extends Controller
         ->when($this->from, function ($query) use ($endDate){
             $query->whereBetween('created_at', [$this->from,$endDate]);
         })
-        ->when(in_array($this->status,[0,1,2]), function ($query){
+        ->when(in_array($this->status,['0','1','2']), function ($query){
             $query->where('status',$this->status);
         });
         $statusCountsQuery = clone $job_register_query;

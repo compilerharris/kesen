@@ -65,7 +65,7 @@ class JobRegisterManagementController extends Controller
             return view('jobregistermanagement::index', compact('job_registers','jobNo','cp','document','pm','contactPerson','from','to','status'));
         }
         $job_registers = $this->jobCardService->jobSearch($request);
-        if($job_registers->count() == 0){
+        if(count($job_registers) == 0){
             return redirect()->back()->with('alert',"No job found.");
         }
 

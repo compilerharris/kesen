@@ -111,9 +111,9 @@
                                         <x-adminlte-input type="date" name="to" fgroup-class="col-md-2" value="{{$to??''}}" label="To Date:" />
                                         <x-adminlte-select2 name="status" fgroup-class="col-md-1" value="{{ old('status') }}" label="Status:">
                                             <option value="">Select Status</option>
-                                            <option value="0">In Progress</option>
-                                            <option value="1">Completed</option>
-                                            <option value="2">Cancelled</option>
+                                            <option value="0" {{$status=='0'?'selected':''}}>In Progress</option>
+                                            <option value="1" {{$status=='1'?'selected':''}}>Completed</option>
+                                            <option value="2" {{$status=='2'?'selected':''}}>Cancelled</option>
                                         </x-adminlte-select2>
                                     </div>
                                 </div>
