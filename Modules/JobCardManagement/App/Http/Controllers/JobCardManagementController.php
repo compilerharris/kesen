@@ -524,7 +524,7 @@ class JobCardManagementController extends Controller
         ->when($this->from, function ($query) use ($endDate){
             $query->whereBetween('created_at', [$this->from,$endDate]);
         })
-        ->when($this->status, function ($query){
+        ->when(in_array($this->status,[0,1,2]), function ($query){
             $query->where('status',$this->status);
         });
         $statusCountsQuery = clone $job_register_query;
