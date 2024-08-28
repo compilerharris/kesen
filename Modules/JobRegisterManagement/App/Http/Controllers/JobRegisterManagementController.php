@@ -49,14 +49,14 @@ class JobRegisterManagementController extends Controller
                 $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
             }
     
-            $jobNo = $this->jobNo;
-            $cp = $this->cp;
-            $document = $this->document;
-            $pm = $this->pm;
-            $contactPerson = $this->contactPerson;
-            $from = $this->from;
-            $to = $this->to;
-            $status = $this->status;
+            $jobNo = $this->jobCardService->jobNo;
+            $cp = $this->jobCardService->cp;
+            $document = $this->jobCardService->document;
+            $pm = $this->jobCardService->pm;
+            $contactPerson = $this->jobCardService->contactPerson;
+            $from = $this->jobCardService->from;
+            $to = $this->jobCardService->to;
+            $status = $this->jobCardService->status;
 
             if ($request->ajax()) {
                 return view('jobregistermanagement::_job_registers', compact('job_registers','jobNo','cp','document','pm','contactPerson','from','to','status'))->render();
