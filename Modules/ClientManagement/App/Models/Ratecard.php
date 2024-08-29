@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\ClientManagement\Database\factories\RatecardFactory;
+use Modules\LanguageManagement\App\Models\Language;
 
 class Ratecard extends Model
 {
@@ -17,6 +18,10 @@ class Ratecard extends Model
      */
     protected $guarded = ['id'];
     protected $table='ratecards';
-    
+
+    public function language()
+    {
+        return $this->belongsTo(Language::class, 'lang', 'id');
+    }
     
 }

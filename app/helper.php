@@ -272,7 +272,7 @@ if (!function_exists('sort_languages')) {
     function sort_languages($languages)
     {
         $languageSequence = [
-            'Hindi', 'Marathi', 'Gujarati', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Oriya', 'Assamese', 'Bengali', 'Punjabi', 'Urdu'
+            'Hindi', 'Marathi', 'Gujarati', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Bengali', 'Assamese', 'Punjabi', 'Oriya', 'Urdu'
         ];
         // Convert the collection to an array and sort based on the predefined sequence
         $sortedLanguages = $languages->sort(function ($a, $b) use ($languageSequence) {
@@ -294,7 +294,7 @@ if (!function_exists('sort_languages_job_card_lang_list')) {
     function sort_languages_job_card_lang_list($languages)
     {
         $languageSequence = [
-            'Hindi', 'Marathi', 'Gujarati', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Oriya', 'Assamese', 'Bengali', 'Punjabi', 'Urdu'
+            'Hindi', 'Marathi', 'Gujarati', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Bengali', 'Assamese', 'Punjabi', 'Oriya', 'Urdu'
         ];
         // Convert the collection to an array and sort based on the predefined sequence
         $sortedLanguages = $languages->sort(function ($a, $b) use ($languageSequence) {
@@ -316,12 +316,12 @@ if (!function_exists('sort_languages_job_card_preview')) {
     function sort_languages_job_card_preview($languages)
     {
         $languageSequence = [
-            'Hindi', 'Marathi', 'Gujarati', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Oriya', 'Assamese', 'Bengali', 'Punjabi', 'Urdu'
+            'Hindi', 'Marathi', 'Gujarati', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Bengali', 'Assamese', 'Punjabi', 'Oriya', 'Urdu'
         ];
         // Convert the collection to an array and sort based on the predefined sequence
         $sortedLanguages = $languages->sort(function ($a, $b) use ($languageSequence) {
-            $posA = array_search($a->estimateDetail->language->name, $languageSequence);
-            $posB = array_search($b->estimateDetail->language->name, $languageSequence);
+            $posA = array_search($a->language->name, $languageSequence);
+            $posB = array_search($b->language->name, $languageSequence);
 
             // Languages not in the predefined sequence should be placed at the end
             if ($posA === false) $posA = count($languageSequence);

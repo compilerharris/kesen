@@ -146,7 +146,7 @@
             </tr>
             <tr>
                 <th>Verion Date.</th>
-                <td>{{ $job->version_date ? \Carbon\Carbon::parse($job->version_date)->format('j M Y') : '' }}</td>
+                <td>{{ $job->version_date&&$job->version_date!='0000-00-00' ? \Carbon\Carbon::parse($job->version_date)->format('j M Y') : '' }}</td>
                 <th>Contact Name</th>
                 <td><b>{{ $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name?? '') }}</b></td>
             </tr>
@@ -189,6 +189,7 @@
                     $estimates = $estimates->filter(function ($estimate) use ($job) {
                         return $estimate->document_name == $job->estimate_document_id;
                     });
+                    $estimates = sort_languages_job_card_preview($estimates);
                 @endphp
                 @foreach($estimates as $index => $estimate)
                     @php $partCopyIndex = $estimate->jobCards->count(); @endphp
@@ -524,14 +525,14 @@
                 <td style="border-left-style: hidden;font-weight: bold;">{{$job->wu_text??"As per proforma"}}</td>
                 <td>Bill Date</td>
                 <td style="border-left-style: hidden;font-weight: bold;">
-                    {{ $job->bill_date ? \Carbon\Carbon::parse($job->bill_date)->format('j M Y') : '' }}</td>
+                    {{ $job->bill_date&&$job->bill_date!='0000-00-00' ? \Carbon\Carbon::parse($job->bill_date)->format('j M Y') : '' }}</td>
             </tr>
             <tr>
                 <td>Old Job No</td>
                 <td style="border-left-style: hidden;font-weight: bold;font-size:20px;">{{ $job->old_job_no ?? '' }}</td>
                 <td>Bill sent on</td>
                 <td style="border-left-style: hidden;font-weight: bold;">
-                    {{ $job->sent_date ? \Carbon\Carbon::parse($job->sent_date)->format('j M Y') : '' }}</td>
+                    {{ $job->sent_date&&$job->sent_date!='0000-00-00' ? \Carbon\Carbon::parse($job->sent_date)->format('j M Y') : '' }}</td>
             </tr>
             <tr>
                 <!-- <td>Checked with Operator</td>

@@ -122,7 +122,7 @@
                                 @foreach ($ratecards as $index => $row)
                                     <tr>
         
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $loop->index + 1 }}</td>
                                         <td>{{ \Modules\LanguageManagement\App\Models\Language::where('id',$row->lang)->first()->name }}</td>
                                         <td>{{ $row->type=='rush'?"Rush":"Normal" }}</td>
                                         <td>{{ $row->t_rate }}</td>

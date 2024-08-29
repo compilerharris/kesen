@@ -228,7 +228,8 @@ class ClientManagementController extends Controller
     // rate card
 
     public function redirectToRatecardList($id){
-        $ratecards=Ratecard::where('client_id',$id)->orderBy('created_at','desc')->get();
+        $ratecards = Ratecard::where('client_id',$id)->orderBy('created_at','desc')->get();
+        $ratecards = sort_languages_job_card_lang_list($ratecards);
         return view('clientmanagement::list_ratecards')->with('id',$id)->with('ratecards',$ratecards);
     }
 

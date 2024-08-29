@@ -108,8 +108,6 @@ class JobCardManagementController extends Controller
         ->where('id', $job_id)
         ->first();
 
-        $job->jobCard = sort_languages_job_card_preview($job->jobCard);
-
         // return view('jobcardmanagement::pdf', compact('job'));
         $pdf = FacadePdf::loadView('jobcardmanagement::pdf', compact('job'));
 

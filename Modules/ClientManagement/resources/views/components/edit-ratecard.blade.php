@@ -41,7 +41,7 @@
                 @method('PUT')
                 @csrf
                 <div class="row pt-2">
-                    <x-adminlte-input name="" fgroup-class="col-md-2" label="Lnaguage" readonly value="{{ Modules\LanguageManagement\App\Models\Language::where('id',$ratecard->lang)->first()->name }}"/>
+                    <x-adminlte-input name="" fgroup-class="col-md-2" label="Language" readonly value="{{ Modules\LanguageManagement\App\Models\Language::where('id',$ratecard->lang)->first()->name }}"/>
                     <x-adminlte-select2 name="type" fgroup-class="col-md-2" id="type" required
                          label="Rate Type" placeholder="Rate Type">
                         <option value="">Rate Type</option>

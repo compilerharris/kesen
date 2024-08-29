@@ -43,6 +43,7 @@
         ['label' => 'Action'],
     ];
     $config_manage['paging'] = true;
+    $config_manage['order'] = [1, 'asc'];
 @endphp
 
 @if (!isset($list_estimate_language))
@@ -196,7 +197,7 @@
                                 <x-adminlte-datatable id="table8" :heads="$heads_manage" head-theme="dark" striped :config="$config_manage" with-buttons>
                                     @foreach ($estimate_detail as $index => $detail)
                                         <tr>
-                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $loop->index + 1 }}</td>
                                             <td>{{ $detail->document_name }}</td>
                                             <td>{{ $detail->language->name }}</td>
                                             <td class="{{ $detail->partCopyCreate=='Yes'?'fw-bold':'' }}">{{ $detail->partCopyCreate == 'Yes'?$detail->partCopyCreateCount.' Copy':"---" }}</td>
