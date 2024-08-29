@@ -94,8 +94,8 @@
                     @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
                     <a href="{{ route('jobcardmanagement.bill', ['job_id' => $row->id]) }}" class="btn btn-info btn-sm mb-2">Billing</a>
                     @endif
-                    <button data-id="{{ $row->id }}" id="cancelJob" data-toggle="modal" data-target="#cancelModal" class="btn btn-warning btn-sm mb-2">Remark</button>
-                    <button data-id="{{ $row->id }}" id="wUTextBtn" data-toggle="modal" data-target="#wUText" class="btn btn-warning btn-sm mb-2">Words/Units</button>
+                    <button data-id="{{ $row->id }}" onclick="openModal(this)" data-toggle="modal" data-target="#cancelModal" class="btn btn-warning btn-sm mb-2">Remark</button>
+                    <button data-id="{{ $row->id }}" onclick="openModalwU(this)" data-toggle="modal" data-target="#wUText" class="btn btn-warning btn-sm mb-2">Words/Units</button>
                     
                 </td>
             </tr>
@@ -163,19 +163,19 @@
 
 @section('js')
     <script>
+        function openModal(btn) {
+            var jobId = $(btn).data('id');
+            var actionUrl = 'job-card-management/remark/' + jobId;
+            $('#cancelForm').attr('action', actionUrl);
+        }
+        function openModalwU(btn) {
+            var jobId = $(btn).data('id');
+            var actionUrl = 'job-card-management/wUText/' + jobId;
+            $('#cancelwUTextForm').attr('action', actionUrl);
+        }
         $(document).ready(function() {
-            $('#cancelJob').click(function() {
-                var jobId = $(this).data('id');
-                var actionUrl = 'job-card-management/remark/' + jobId;
-                $('#cancelForm').attr('action', actionUrl);
-            });
             $('#closeModal').click(function() {
                 $('#cancelForm').removeAttr('action');
-            });
-            $('#wUTextBtn').click(function() {
-                var jobId = $(this).data('id');
-                var actionUrl = 'job-card-management/wUText/' + jobId;
-                $('#cancelwUTextForm').attr('action', actionUrl);
             });
             $('#closewUTextModal').click(function() {
                 $('#cancelwUTextForm').removeAttr('action');
