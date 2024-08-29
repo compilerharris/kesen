@@ -193,7 +193,7 @@
                     <span id="cancel" class="col-md-3"></span>
                 </div>
 
-                <x-adminlte-button label="Submit" type="submit" id="jobRegisterSubmit" class="mt-3 btn btn-info" />
+                <button type="submit" id="jobRegisterSubmit" class="mt-3 btn btn-info">Submit</button>
 
             </form>
         </x-adminlte-card>

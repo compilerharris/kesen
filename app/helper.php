@@ -320,14 +320,16 @@ if (!function_exists('sort_languages_job_card_preview')) {
         ];
         // Convert the collection to an array and sort based on the predefined sequence
         $sortedLanguages = $languages->sort(function ($a, $b) use ($languageSequence) {
-            $posA = array_search($a->language->name, $languageSequence);
-            $posB = array_search($b->language->name, $languageSequence);
-
-            // Languages not in the predefined sequence should be placed at the end
-            if ($posA === false) $posA = count($languageSequence);
-            if ($posB === false) $posB = count($languageSequence);
-
-            return $posA - $posB;
+            if($a->language && $b->language){
+                $posA = array_search($a->language->name, $languageSequence);
+                $posB = array_search($b->language->name, $languageSequence);
+    
+                // Languages not in the predefined sequence should be placed at the end
+                if ($posA === false) $posA = count($languageSequence);
+                if ($posB === false) $posB = count($languageSequence);
+    
+                return $posA - $posB;
+            }
         });
 
         return $sortedLanguages;
