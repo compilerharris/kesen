@@ -247,9 +247,9 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                 </div>
 
                 @if($jobRegister->estimateType=='no_estimate')
-                    <x-adminlte-button label="Update" type="submit" id="jobRegisterSubmit" class="mt-3" />
+                    <x-adminlte-button label="Update" type="submit" id="jobRegisterSubmit" class="mt-3 btn btn-info" />
                 @else
-                    <x-adminlte-button label="Update" type="submit" class="mt-3" />
+                    <x-adminlte-button label="Update" type="submit" class="mt-3 btn btn-info" />
                 @endif
             </form>
         </x-adminlte-card>
