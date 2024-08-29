@@ -92,7 +92,7 @@
                         @endphp
                         <tr>
                             <td>{{ $loop->index + 1 }}</td>
-                            <td>{{ \Carbon\Carbon::parse($bill->date)->format('j M Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($bill->created_at)->format('j M Y') }}</td>
                             <td>{{ $bill->sr_no }}</td>
                             <td>{{ $bill->client?$bill->client->name:'' }}</td>
                             <td>{{ $bill->client_person?$bill->client_person->name:'' }}</td>
