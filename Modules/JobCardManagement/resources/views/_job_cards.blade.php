@@ -86,9 +86,9 @@
                     
                     @if($row->type=='site-specific')
                         @if($row->is_excel_downloaded)
-                            <a class="btn btn-info btn-sm mb-2 disabled">Excel Already Download</a>
+                            <a class="btn btn-secondary btn-sm mb-2 disabled">Excel Already Download</a>
                         @else
-                            <a href="{{route('jobregistermanagement.excell', $row->id)}}" class="btn btn-info btn-sm mb-2">Download Excel</a>
+                            <a href="{{route('jobregistermanagement.excell', $row->id)}}" class="btn btn-secondary btn-sm mb-2"><i class="fas fa-download"> Download Excel</i></a>
                         @endif
                     @endif
                     @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
