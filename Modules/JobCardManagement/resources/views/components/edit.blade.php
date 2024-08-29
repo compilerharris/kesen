@@ -227,7 +227,7 @@
                                                     value="{{ old('bt_fqc.' . $index, $job->bt_fqc) }}" label="BT F/QC">
                                                     <option value="">BT F/QC</option>
                                                     @foreach ($qce_users as $btfc_user)
-                                                        @if ($tfc_user->code == "PAN")
+                                                        @if ($btfc_user->code == "PAN")
                                                             <option value="{{ $btfc_user->id }}" {{ $job->bt_fqc == $btfc_user->id ? 'selected' : '' }}>{{ $btfc_user->name }}</option>
                                                         @endif
                                                     @endforeach
