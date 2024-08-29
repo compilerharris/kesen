@@ -456,12 +456,12 @@ class JobCardManagementController extends Controller
             $excelFormat = collect();
             foreach($jobCard as $index => $job){
                 $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
-                $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('name')->toArray());
+                $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('code')->toArray());
                 $excelFormat->push([
                     'sr' => $index+1,
-                    'date' => $job->date?Carbon::parse($job->date)->format('j M Y'):'',
+                    'date' => $job->date?Carbon::parse($job->created_at)->format('j M Y'):'',
                     'sr_no' => $job->sr_no,
-                    'handledBy' => $job->handle_by->name??'',
+                    'handledBy' => $job->handle_by->code??'',
                     'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
                     'clientContact' => $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name??''),
                     'estimateNo' => $job->estimate?$job->estimate->estimate_no:'No Estimate',
@@ -532,12 +532,12 @@ class JobCardManagementController extends Controller
         $excelFormat = collect();
         foreach($jobCard as $index => $job){
             $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
-            $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('name')->toArray());
+            $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('code')->toArray());
             $excelFormat->push([
                 'sr' => $index+1,
-                'date' => $job->date?Carbon::parse($job->date)->format('j M Y'):'',
+                'date' => $job->date?Carbon::parse($job->created_at)->format('j M Y'):'',
                 'sr_no' => $job->sr_no,
-                'handledBy' => $job->handle_by->name??'',
+                'handledBy' => $job->handle_by->code??'',
                 'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
                 'clientContact' => $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name??''),
                 'estimateNo' => $job->estimate?$job->estimate->estimate_no:'No Estimate',
