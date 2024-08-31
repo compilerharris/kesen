@@ -324,6 +324,7 @@ class JobCardManagementController extends Controller
     }
 
     public function listEstimateDetailsLanguage($job_id,$estimate_detail_id){
+        $estimate_detail_id = str_replace('!', '/', $estimate_detail_id);
         $job_register = JobRegister::where('id',$job_id)->first();
         $estimate_detail=EstimatesDetails::where('estimate_id',$job_register->estimate_id)->where('document_name',$estimate_detail_id)->orderBy('created_at', 'desc')->get();
         $list_estimate_language=true;

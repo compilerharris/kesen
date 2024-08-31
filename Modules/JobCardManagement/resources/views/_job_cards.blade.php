@@ -68,7 +68,7 @@
                 </td>
                 <td style="width:250px;">
                     
-                    <a href="{{ route('jobcardmanagement.manage.list', ['job_id' => $row->id, 'estimate_detail_id' => $row->estimate_document_id]) }}" class="btn btn-info btn-sm mb-2">Manage
+                    <a href="{{ route('jobcardmanagement.manage.list', ['job_id' => $row->id, 'estimate_detail_id' => str_replace('/', '!', $row->estimate_document_id)]) }}" class="btn btn-info btn-sm mb-2">Manage
                     </a>
                     <a href="{{ route('jobcardmanagement.pdf', ['job_id' => $row->id]) }}"  target="_blank" class="btn btn-info btn-sm mb-2">Preview</a>
                     @if(!Auth::user()->hasRole('Accounts'))
