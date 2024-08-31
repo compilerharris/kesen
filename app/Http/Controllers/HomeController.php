@@ -198,8 +198,15 @@ class HomeController extends Controller
     }
 
     public function writerWorkload(Request $request){
-        $writerWorkload = JobCard::where('t_writer_code',$request->writer)->orWhere('bt_writer_code',$request->writer)->orderBy('created_at', 'desc')->get();
-        $writerWorkload = $writerWorkload->sortBy('job_no');
+        $writerWorkload = JobCard::where(function ($query) use ($request) {
+            $query->where('t_writer_code', $request->writer)
+                  ->whereNotNull('t_pd')
+                  ->whereNull('t_cr');
+        })->orWhere(function ($query) use ($request) {
+            $query->where('bt_writer_code', $request->writer)
+                  ->whereNotNull('bt_pd')
+                  ->whereNull('bt_cr');
+        })->orderBy('job_no')->get();
         if(is_array($request->lang) && count($request->lang)>0){
             $writerWorkload = $writerWorkload->filter(function($job) use ($request){
                 $lang = EstimatesDetails::where('id',$job->estimate_detail_id)->whereIn('lang',$request['lang'])->first();

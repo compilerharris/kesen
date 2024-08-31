@@ -82,31 +82,29 @@
                             $estimateDetail = Modules\EstimateManagement\App\Models\EstimatesDetails::where('id',$job->estimate_detail_id)->first();
                             $jobRegister = Modules\JobRegisterManagement\App\Models\JobRegister::where('sr_no',$job->job_no)->first();
                         @endphp
-                        @if (($job->t_pd && !$job->t_cr) || ($job->bt_pd && !$job->bt_cr))
-                            @php
-                                $index += 1;
-                            @endphp
-                            <tr>
-                                <td style="text-align: left;">{{$job->job_no}}</td>
-                                <td style="text-align: left;">{{$jobRegister?App\Models\User::where('id',$jobRegister->handled_by_id)->first('name')->name:''}}</td>
-                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 90px;">{{$estimateDetail?$estimateDetail->document_name:''}}</p></td>
-                                <td style="text-align: left;">{{$estimateDetail?Modules\LanguageManagement\App\Models\Language::where('id',$estimateDetail->lang)->first('name')->name:''}}</td>
-                                @if($job->t_writer_code == $writerWorkload->writerId)
-                                    <td style="text-align: left;">{{$job->t_unit}}</td>
-                                    <td style="text-align: left;">{{$job->t_pd?Carbon\Carbon::parse($job->t_pd)->format('j M Y'):''}}</td>
-                                @else
-                                    <td style="text-align: left;"></td>
-                                    <td style="text-align: left;"></td>
-                                @endif
-                                @if($job->bt_writer_code == $writerWorkload->writerId)
-                                    <td style="text-align: left;">{{$job->bt_unit?$job->bt_unit:''}}</td>
-                                    <td style="text-align: left;">{{$job->bt_pd?Carbon\Carbon::parse($job->bt_pd)->format('j M Y'):''}}</td>
-                                @else
-                                    <td style="text-align: left;">---</td>
-                                    <td style="text-align: left;">---</td>
-                                @endif
-                            </tr>
-                        @endif
+                        @php
+                            $index += 1;
+                        @endphp
+                        <tr>
+                            <td style="text-align: left;">{{$job->job_no}}</td>
+                            <td style="text-align: left;">{{$jobRegister?App\Models\User::where('id',$jobRegister->handled_by_id)->first('name')->name:''}}</td>
+                            <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 90px;">{{$estimateDetail?$estimateDetail->document_name:''}}</p></td>
+                            <td style="text-align: left;">{{$estimateDetail?Modules\LanguageManagement\App\Models\Language::where('id',$estimateDetail->lang)->first('name')->name:''}}</td>
+                            @if($job->t_writer_code == $writerWorkload->writerId)
+                                <td style="text-align: left;">{{$job->t_unit}}</td>
+                                <td style="text-align: left;">{{$job->t_pd?Carbon\Carbon::parse($job->t_pd)->format('j M Y'):''}}</td>
+                            @else
+                                <td style="text-align: left;"></td>
+                                <td style="text-align: left;"></td>
+                            @endif
+                            @if($job->bt_writer_code == $writerWorkload->writerId)
+                                <td style="text-align: left;">{{$job->bt_unit?$job->bt_unit:''}}</td>
+                                <td style="text-align: left;">{{$job->bt_pd?Carbon\Carbon::parse($job->bt_pd)->format('j M Y'):''}}</td>
+                            @else
+                                <td style="text-align: left;">---</td>
+                                <td style="text-align: left;">---</td>
+                            @endif
+                        </tr>
                     @endforeach
                     @if ($index == 0)
                         <tr>
