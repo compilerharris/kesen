@@ -46,7 +46,7 @@
                     <x-adminlte-input name="bill_no"  placeholder="Bill No" 
                     fgroup-class="col-md-2" required value="{{ old('bill_no') }}" type='text' label="Bill No" />
                     <x-adminlte-input name="bill_amount"  placeholder="Bill Amount" 
-                    fgroup-class="col-md-2" value="{{ old('bill_no') }}" type='number' label="Bill Amount" min="0"/>
+                    fgroup-class="col-md-2" value="{{ old('bill_no') }}" type='text' label="Bill Amount"/>
                     
                     <x-adminlte-input name="po_number"  placeholder="PO Number"
                     fgroup-class="col-md-2"   type='text' label="PO Number" />
