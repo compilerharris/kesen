@@ -62,55 +62,44 @@
         <table class="payment-table">
             <thead>
                 <tr>
-                    <th style="text-align: left;width:5%">Job No.</th>
-                    <th style="text-align: left;width:5%">Project Manager</th>
-                    <th style="text-align: left;width:10%">Document Name</th>
-                    <th style="text-align: left;width:5%">Language</th>
-                    <th style="text-align: left;width:5%">Translation Unit</th>
-                    <th style="text-align: left;width:20%">Job Given On</th>
-                    <th style="text-align: left;width:10%">Back Translation Unit</th>
-                    <th style="text-align: left;width:20%">Job Given On</th>
+                    <th style="text-align: left;">Job No.</th>
+                    <th style="text-align: left">Project Manager</th>
+                    <th style="text-align: left">Document Name</th>
+                    <th style="text-align: left">Lang-uage</th>
+                    <th style="text-align: left">Trans-lation Unit</th>
+                    <th style="text-align: left">Job Given On</th>
+                    <th style="text-align: left">Back Translation Unit</th>
+                    <th style="text-align: left">Job Given On</th>
                 </tr>
             </thead>
             <tbody>
                 @if(count($writerWorkload)>0)
-                    @php
-                    $index = 0;
-                    @endphp
                     @foreach ($writerWorkload as $job)
                         @php
                             $estimateDetail = Modules\EstimateManagement\App\Models\EstimatesDetails::where('id',$job->estimate_detail_id)->first();
                             $jobRegister = Modules\JobRegisterManagement\App\Models\JobRegister::where('sr_no',$job->job_no)->first();
                         @endphp
-                        @php
-                            $index += 1;
-                        @endphp
                         <tr>
-                            <td style="text-align: left;">{{$job->job_no}}</td>
-                            <td style="text-align: left;">{{$jobRegister?App\Models\User::where('id',$jobRegister->handled_by_id)->first('name')->name:''}}</td>
+                            <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 50px;">{{$job->job_no}}</p></td>
+                            <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 70px;">{{$jobRegister?App\Models\User::where('id',$jobRegister->handled_by_id)->first('name')->name:''}}</p></td>
                             <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 90px;">{{$estimateDetail?$estimateDetail->document_name:''}}</p></td>
-                            <td style="text-align: left;">{{$estimateDetail?Modules\LanguageManagement\App\Models\Language::where('id',$estimateDetail->lang)->first('name')->name:''}}</td>
+                            <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 40px;">{{$estimateDetail?Modules\LanguageManagement\App\Models\Language::where('id',$estimateDetail->lang)->first('name')->name:''}}</p></td>
                             @if($job->t_writer_code == $writerWorkload->writerId)
-                                <td style="text-align: left;">{{$job->t_unit}}</td>
-                                <td style="text-align: left;">{{$job->t_pd?Carbon\Carbon::parse($job->t_pd)->format('j M Y'):''}}</td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">{{$job->t_unit}}</p></td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 60px;">{{$job->t_pd?Carbon\Carbon::parse($job->t_pd)->format('j M Y'):''}}</p></td>
                             @else
-                                <td style="text-align: left;"></td>
-                                <td style="text-align: left;"></td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;"></p></td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 60px;"></p></td>
                             @endif
                             @if($job->bt_writer_code == $writerWorkload->writerId)
-                                <td style="text-align: left;">{{$job->bt_unit?$job->bt_unit:''}}</td>
-                                <td style="text-align: left;">{{$job->bt_pd?Carbon\Carbon::parse($job->bt_pd)->format('j M Y'):''}}</td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">{{$job->bt_unit?$job->bt_unit:''}}</p></td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 60px;">{{$job->bt_pd?Carbon\Carbon::parse($job->bt_pd)->format('j M Y'):''}}</p></td>
                             @else
-                                <td style="text-align: left;">---</td>
-                                <td style="text-align: left;">---</td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">---</p></td>
+                                <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 60px;">---</p></td>
                             @endif
                         </tr>
                     @endforeach
-                    @if ($index == 0)
-                        <tr>
-                            <td colspan="8" style="text-align:center;">No Data Found.</td>
-                        </tr>
-                    @endif
                 @else
                     <tr>
                         <td colspan="8" style="text-align:center;">No Data Found.</td>
