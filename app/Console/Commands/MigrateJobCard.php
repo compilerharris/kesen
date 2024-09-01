@@ -78,7 +78,6 @@ class MigrateJobCard extends Command
                                 $newJobCard['btv_cr'] = $data->cr;
                                 break;
                             default:
-                                // Handle unexpected $data->type values if necessary
                                 break;
                         }
                     }

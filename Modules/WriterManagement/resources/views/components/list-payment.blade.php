@@ -91,7 +91,7 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $payment->payment_method }}</td>
-                                            <td>{{ App\Models\Metrix::where('id',$payment->metrix)->first()->name }}</td>
+                                            <td>{{ $payment->metrix ? App\Models\Metrix::where('id',$payment->metrix)->first()->name : '---' }}</td>
                                             <td>{{ $payment->apply_gst ? 'Yes' : 'No' }}</td>
                                             <td>{{ $payment->apply_tds ? 'Yes' : 'No' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($payment->period_from)->format('j M Y') }}</td>

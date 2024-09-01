@@ -223,7 +223,7 @@
                                 <td style="font-size: 8pt;{{$estimate->v1?'background-color:#f5f5f5;':''}}">V</td>
                                 <td>{{ $card->v_unit }}</td>
                                 <td></td>
-                                <td>{{ App\Models\User::where('id', $card->v_employee_code)->first()->code ?? '' }}</td>
+                                <td>{{ App\Models\User::where('id', $card->v_employee_code)->first()->code ??(Modules\WriterManagement\App\Models\Writer::where('id', $card->v_employee_code)->first()->code??'') }}</td>
                                 
                                 <td>{{ $card->v_pd ? \Carbon\Carbon::parse($card->v_pd)->format('j M Y') : '' }}</td>
                                 <td>{{ $card->v_cr ? \Carbon\Carbon::parse($card->v_cr)->format('j M Y') : '' }}</td>
@@ -265,7 +265,7 @@
                                 <td style="font-size: 8pt;{{$estimate->btv?'background-color:#f5f5f5;':''}}">BTV</td>
                                 <td>{{ $card->btv_unit }}</td>
                                 <td></td>
-                                <td>{{ App\Models\User::where('id', $card->btv_employee_code)->first()->code ?? '' }}</td>
+                                <td>{{ App\Models\User::where('id', $card->btv_employee_code)->first()->code ?? (Modules\WriterManagement\App\Models\Writer::where('id', $card->btv_employee_code)->first()->code??'') }}</td>
                                 <td>{{ $card->btv_pd ? \Carbon\Carbon::parse($card->btv_pd)->format('j M Y') : '' }}</td>
                                 <td>{{ $card->btv_cr ? \Carbon\Carbon::parse($card->btv_cr)->format('j M Y') : '' }}</td>
                                 <td></td>

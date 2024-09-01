@@ -333,6 +333,6 @@ class WriterManagementController extends Controller
         //     $total=$total-($total*0.1);
         // }
         $total = $total + ($request->apply_gst?$total*0.18:0) - ($request->apply_tds?$total*0.1:0) + ($request->performance_charge??0) - ($request->deductible ?? 0);
-        return round($total);
+        return $total;
     }
 }

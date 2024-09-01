@@ -80,6 +80,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="row pt-2">
+                                                {{-- t --}}
                                                 <x-adminlte-input name="t_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
                                                 value="{{ old('t_unit[0]') }}" label="T Unit*" required />
                                                 <x-adminlte-select name="t_writer[0]" fgroup-class="col-md-2" required
@@ -108,32 +109,42 @@
                                                     @endforeach
                                                 </x-adminlte-select>
                                                 
-                                                <x-adminlte-input name="v_unit[0]" placeholder="V1 Unit" fgroup-class="col-md-2"
-                                                    value="{{ old('v_unit[0]') }}" label="V1 Unit" />
-                                                <x-adminlte-select name="v_employee_code[0]" fgroup-class="col-md-2" 
-                                                    value="{{ old('v_employee_code[0]') }}" label="V1 Employee">
-                                                    <option value="">Select Employee</option>
-                                                    @foreach ($qce_users as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                                    @endforeach
-                                                </x-adminlte-select>
-                                                <x-adminlte-input name="v_pd[0]" placeholder="V1 PD" fgroup-class="col-md-2"
-                                                    value="{{ old('v_pd[0]') }}" label="V1 PD" type='date' />
-                                                <x-adminlte-input name="v_cr[0]" placeholder="V1 CR" fgroup-class="col-md-2"
-                                                    value="{{ old('v_cr[0]') }}" label="V1 CR" type='date' />
-                                                <x-adminlte-input name="v2_unit[0]" placeholder="V2 Unit" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_unit[0]') }}" label="V2 Unit" disabled />
-                                                <x-adminlte-select name="v2_employee_code[0]" fgroup-class="col-md-2" 
-                                                    value="{{ old('v2_employee_code[0]') }}" label="V2 Employee" disabled>
-                                                    <option value="">Select Employee</option>
-                                                    @foreach ($qce_users as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                                    @endforeach
-                                                </x-adminlte-select>
-                                                <x-adminlte-input name="v2_pd[0]" placeholder="V2 PD" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_pd[0]') }}" label="V2 PD" type='date' disabled />
-                                                <x-adminlte-input name="v2_cr[0]" placeholder="V2 CR" fgroup-class="col-md-2"
-                                                    value="{{ old('v2_cr[0]') }}" label="V2 CR" type='date' disabled />
+                                                {{-- v --}}
+                                                @if($estimate_detail->v1)
+                                                    <x-adminlte-input name="v_unit[0]" placeholder="V1 Unit" fgroup-class="col-md-2"
+                                                        value="{{ old('v_unit[0]') }}" label="V1 Unit" />
+                                                    <x-adminlte-select name="v_employee_code[0]" fgroup-class="col-md-2" 
+                                                        value="{{ old('v_employee_code[0]') }}" label="V1 Employee">
+                                                        <option value="">Select Employee</option>
+                                                        @foreach ($qce_users as $user)
+                                                            <option value="{{ $user->id }}">Emp - {{ $user->name }}</option>
+                                                        @endforeach
+                                                        @foreach ($writers as $user)
+                                                            <option value="{{ $user->id }}">Writer - {{ $user->writer_name }}</option>
+                                                        @endforeach
+                                                    </x-adminlte-select>
+                                                    <x-adminlte-input name="v_pd[0]" placeholder="V1 PD" fgroup-class="col-md-2"
+                                                        value="{{ old('v_pd[0]') }}" label="V1 PD" type='date' />
+                                                    <x-adminlte-input name="v_cr[0]" placeholder="V1 CR" fgroup-class="col-md-2"
+                                                        value="{{ old('v_cr[0]') }}" label="V1 CR" type='date' />
+                                                @endif
+
+                                                {{-- v2 --}}
+                                                @if($estimate_detail->v2)
+                                                    <x-adminlte-input name="v2_unit[0]" placeholder="V2 Unit" fgroup-class="col-md-2"
+                                                        value="{{ old('v2_unit[0]') }}" label="V2 Unit" disabled />
+                                                    <x-adminlte-select name="v2_employee_code[0]" fgroup-class="col-md-2" 
+                                                        value="{{ old('v2_employee_code[0]') }}" label="V2 Employee" disabled>
+                                                        <option value="">Select Employee</option>
+                                                        @foreach ($qce_users as $user)
+                                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                        @endforeach
+                                                    </x-adminlte-select>
+                                                    <x-adminlte-input name="v2_pd[0]" placeholder="V2 PD" fgroup-class="col-md-2"
+                                                        value="{{ old('v2_pd[0]') }}" label="V2 PD" type='date' disabled />
+                                                    <x-adminlte-input name="v2_cr[0]" placeholder="V2 CR" fgroup-class="col-md-2"
+                                                        value="{{ old('v2_cr[0]') }}" label="V2 CR" type='date' disabled />
+                                                @endif
                                                 <x-adminlte-select name="t_fqc[0]" fgroup-class="col-md-2" 
                                                     value="{{ old('t_fqc[0]') }}" label="T F/QC">
                                                     <option value="">T F/QC</option>
@@ -150,66 +161,76 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="row pt-2">
-                                                <x-adminlte-input name="bt_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
-                                                    value="{{ old('bt_unit[0]') }}" label="BT Unit" />
-                                                <x-adminlte-select name="bt_writer[0]" fgroup-class="col-md-2"
-                                                    value="{{ old('bt_writer[0]') }}" label="BT Writer">
-                                                    <option value="">Select Writer</option>
-                                                    @foreach ($writers as $writer)
-                                                        <option value="{{ $writer->id }}">{{ $writer->writer_name }}
-                                                        </option>
-                                                    @endforeach
-                                                </x-adminlte-select>
-                                                <x-adminlte-input name="bt_pd[0]" placeholder="PD" fgroup-class="col-md-2"
-                                                    type='date' value="{{ old('bt_pd[0]') }}"
-                                                    label="BT PD"  />
-                                                <x-adminlte-input name="bt_cr[0]" placeholder="CR" fgroup-class="col-md-2"
-                                                    type='date' value="{{ old('bt_cr[0]') }}"
-                                                    label="BT CR"  />
-                                                
-                                                <x-adminlte-select name="bt_cnc[0]" label="BT C/NC" fgroup-class="col-md-2">
-                                                    <option value="">Select C/NC</option>
-                                                    <option value="C" selected>C</option>
-                                                    <option value="NC">NC</option>
-                                                </x-adminlte-select>
-                                                <x-adminlte-select name="bt_dv[0]" fgroup-class="col-md-2" 
-                                                    value="{{ old('bt_dv[0]') }}" label="BT DV">
-                                                    <option value="">Select BT DV</option>
-                                                    @foreach ($managers as $user)
-                                                        <option value="{{ $user->id }}" {{$user->id == $job_register->handled_by_id?'selected':''}} >{{ $user->name }}</option>
-                                                    @endforeach
-                                                </x-adminlte-select>
-                                                <x-adminlte-input name="btv_unit[0]" placeholder="BTV Unit" fgroup-class="col-md-2"
-                                                    value="{{ old('btv_unit[0]') }}" label="BTV Unit" />
-                                                <x-adminlte-select name="btv_employee_code[0]" fgroup-class="col-md-2" 
-                                                    value="{{ old('btv_employee_code[0]') }}" label="BTV Employee">
-                                                    <option value="">Select Employee</option>
-                                                    @foreach ($qce_users as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                                    @endforeach
-                                                </x-adminlte-select>
-                                                <x-adminlte-input name="btv_pd[0]" placeholder="BTV PD" fgroup-class="col-md-2"
-                                                    value="{{ old('btv_pd[0]') }}" label="BTV PD" type='date' />
-                                                <x-adminlte-input name="btv_cr[0]" placeholder="BTV CR" fgroup-class="col-md-2"
-                                                    value="{{ old('btv_cr[0]') }}" label="BTV CR" type='date' />
-                                                <x-adminlte-select name="bt_fqc[0]" fgroup-class="col-md-2" 
-                                                    value="{{ old('bt_fqc[0]') }}" label="BT F/QC">
-                                                    <option value="">BT F/QC</option>
-                                                    @foreach ($qce_users as $user)
-                                                        @if($user->code == 'PAN') <option value="{{ $user->id }}" selected>{{ $user->name }}</option> @endif
-                                                    @endforeach
-                                                    <option value="NA">NA</option>
-                                                </x-adminlte-select>
-                                                {{-- <x-adminlte-input name="bt_sentdate[0]" placeholder="Sent Date"
-                                                    fgroup-class="col-md-2" type='date'
-                                                    value="{{ old('bt_sentdate[0]') }}"
-                                                    label="BT Sent Date"  /> --}}
+                                    @if($estimate_detail->bt || $estimate_detail->btv)
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row pt-2">
+                                                    <x-adminlte-input name="bt_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
+                                                        value="{{ old('bt_unit[0]') }}" label="BT Unit" />
+                                                    <x-adminlte-select name="bt_writer[0]" fgroup-class="col-md-2"
+                                                        value="{{ old('bt_writer[0]') }}" label="BT Writer">
+                                                        <option value="">Select Writer</option>
+                                                        @foreach ($writers as $writer)
+                                                            <option value="{{ $writer->id }}">{{ $writer->writer_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </x-adminlte-select>
+                                                    <x-adminlte-input name="bt_pd[0]" placeholder="PD" fgroup-class="col-md-2"
+                                                        type='date' value="{{ old('bt_pd[0]') }}"
+                                                        label="BT PD"  />
+                                                    <x-adminlte-input name="bt_cr[0]" placeholder="CR" fgroup-class="col-md-2"
+                                                        type='date' value="{{ old('bt_cr[0]') }}"
+                                                        label="BT CR"  />
+                                                    
+                                                    <x-adminlte-select name="bt_cnc[0]" label="BT C/NC" fgroup-class="col-md-2">
+                                                        <option value="">Select C/NC</option>
+                                                        <option value="C" selected>C</option>
+                                                        <option value="NC">NC</option>
+                                                    </x-adminlte-select>
+                                                    <x-adminlte-select name="bt_dv[0]" fgroup-class="col-md-2" 
+                                                        value="{{ old('bt_dv[0]') }}" label="BT DV">
+                                                        <option value="">Select BT DV</option>
+                                                        @foreach ($managers as $user)
+                                                            <option value="{{ $user->id }}" {{$user->id == $job_register->handled_by_id?'selected':''}} >{{ $user->name }}</option>
+                                                        @endforeach
+                                                    </x-adminlte-select>
+
+                                                    {{-- btv --}}
+                                                    @if($estimate_detail->btv)
+                                                        <x-adminlte-input name="btv_unit[0]" placeholder="BTV Unit" fgroup-class="col-md-2"
+                                                            value="{{ old('btv_unit[0]') }}" label="BTV Unit" />
+                                                        <x-adminlte-select name="btv_employee_code[0]" fgroup-class="col-md-2" 
+                                                            value="{{ old('btv_employee_code[0]') }}" label="BTV Employee">
+                                                            <option value="">Select Employee</option>
+                                                            @foreach ($qce_users as $user)
+                                                                <option value="{{ $user->id }}">Emp - {{ $user->name }}</option>
+                                                            @endforeach
+                                                            @foreach ($writers as $user)
+                                                                <option value="{{ $user->id }}">Writer - {{ $user->writer_name }}</option>
+                                                            @endforeach
+                                                        </x-adminlte-select>
+                                                        <x-adminlte-input name="btv_pd[0]" placeholder="BTV PD" fgroup-class="col-md-2"
+                                                            value="{{ old('btv_pd[0]') }}" label="BTV PD" type='date' />
+                                                        <x-adminlte-input name="btv_cr[0]" placeholder="BTV CR" fgroup-class="col-md-2"
+                                                        value="{{ old('btv_cr[0]') }}" label="BTV CR" type='date' />
+                                                    @endif
+                                                    
+                                                    <x-adminlte-select name="bt_fqc[0]" fgroup-class="col-md-2" 
+                                                        value="{{ old('bt_fqc[0]') }}" label="BT F/QC">
+                                                        <option value="">BT F/QC</option>
+                                                        @foreach ($qce_users as $user)
+                                                            @if($user->code == 'PAN') <option value="{{ $user->id }}" selected>{{ $user->name }}</option> @endif
+                                                        @endforeach
+                                                        <option value="NA">NA</option>
+                                                    </x-adminlte-select>
+                                                    {{-- <x-adminlte-input name="bt_sentdate[0]" placeholder="Sent Date"
+                                                        fgroup-class="col-md-2" type='date'
+                                                        value="{{ old('bt_sentdate[0]') }}"
+                                                        label="BT Sent Date"  /> --}}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    @endif
                                    
                                     <x-adminlte-input name="job_no[0]" type="hidden" fgroup-class="col-md-3"
                                         value="{{ $job_register->sr_no }}" />
