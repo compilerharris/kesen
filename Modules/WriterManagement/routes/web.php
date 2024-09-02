@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('writer-management/{writer_id}/add-payments', [WriterManagementController::class, 'addPaymentView'])->name('writermanagement.addPaymentView');
     Route::post('writer-management/{writer_id}/add-payments', [WriterManagementController::class, 'addPayment'])->name('writermanagement.addPayment');
     Route::get('writer-management/{writer_id}/show-payments{id}', [WriterManagementController::class, 'showPayment'])->name('writermanagement.showPayment');
+    Route::get('client-management/{writer_id}/delete-payment/{paymentId}', [WriterManagementController::class, 'paymentDelete'])->name('writermanagement.paymentDelete');
     
 });
 

@@ -568,8 +568,16 @@ class JobCardManagementController extends Controller
             if( $job_register->count() == 0 ){
                 return [];  
             }
-            $job_register->complete_count = 1;
-            $job_register->cancel_count = 1;
+            if($job_register[0]->status == 1){
+                $job_register->complete_count = 1;
+                $job_register->cancel_count = 0;
+            }else if($job_register[0]->status == 2){
+                $job_register->complete_count = 0;
+                $job_register->cancel_count = 1;
+            }else{
+                $job_register->complete_count = 0;
+                $job_register->cancel_count = 0;
+            }
             return $job_register;
         }
         $endDate = Carbon::now()->format('Y-m-d');

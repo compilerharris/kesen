@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Modules\JobCardManagement\App\Models\JobCard;
+use Modules\JobRegisterManagement\App\Models\JobRegister;
 use Modules\LanguageManagement\App\Models\Language;
 use Modules\WriterManagement\App\Models\Writer;
 use Modules\WriterManagement\App\Models\WriterLanguageMap;
@@ -300,12 +301,14 @@ class WriterManagementController extends Controller
     public function calculatePayment(Request $request){
         $min = Carbon::parse($request->period_from)->startOfDay();
         $max = Carbon::parse($request->period_to)->endOfDay();
-        $job_card = JobCard::where(function ($query) use ($request) {
+
+        $jobRegisterIds = JobRegister::whereBetween('created_at',[$min,$max])->pluck('sr_no')->toArray();
+
+        $job_card = JobCard::whereIn('job_no',$jobRegisterIds)
+        ->where(function ($query) use ($request) {
             $query->where('t_writer_code', $request->id)
                   ->orWhere('bt_writer_code', $request->id);
         })
-        ->where('created_at', '>=', $min)
-        ->where('created_at', '<=', $max)
         ->get();
 
         $total = 0;
@@ -320,19 +323,16 @@ class WriterManagementController extends Controller
                 $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit;
             }
         }
-        // if($request->deductible){
-        //     $total-=intval($request->deductible);
-        // }
-        // if($request->performance_charge){
-        //     $total+=$request->performance_charge;
-        // }
-        // if($request->apply_gst){
-        //     $total+=$total*0.18;
-        // }
-        // if($request->apply_tds){
-        //     $total=$total-($total*0.1);
-        // }
         $total = $total + ($request->apply_gst?$total*0.18:0) - ($request->apply_tds?$total*0.1:0) + ($request->performance_charge??0) - ($request->deductible ?? 0);
         return $total;
+    }
+
+    public function paymentDelete($writer_id,$paymentId){
+        if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
+            return redirect()->back()->with('alert', 'You are not autherized.'); 
+        }
+        $payment = WriterPayment::where('id',$paymentId)->where('writer_id',$writer_id)->first();
+        $payment->delete();
+        return redirect(route('writermanagement.viewPayments', $writer_id));
     }
 }

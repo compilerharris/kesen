@@ -50,6 +50,9 @@
     </style>
 </head>
 <body>
+    <p>Dear $writer->writer_name</p>
+    <p>Please find the below payment advice for the month \Carbon\Carbon::parse($writer->period_to)->format('M Y')<b></b></p>
+    <br>
     <div class="container">
         <div class="header">
             @if($writer_payment->payment_metric)

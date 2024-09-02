@@ -8,12 +8,12 @@ use Modules\EstimateManagement\App\Models\EstimatesDetails;
 use Modules\JobCardManagement\App\Models\JobCard;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Modules\JobRegisterManagement\App\Models\JobRegister;
 use Modules\WriterManagement\App\Models\Writer;
 use Modules\WriterManagement\App\Models\WriterLanguageMap;
 use Modules\WriterManagement\App\Models\WriterPayment;
-use Illuminate\Support\Facades\View;
+use App\Mail\WriterPayment as WP;
+use Illuminate\Support\Facades\Mail;
 class HomeController extends Controller
 {
     /**
@@ -86,14 +86,17 @@ class HomeController extends Controller
         if($writer_payment==null){
             return redirect('/payment-report')->with('alert', 'No writer payments found');
         }
-        $job_card = JobCard::where(function ($query) use ($request) {
+
+        $jobRegisterIds = JobRegister::whereBetween('created_at',[
+            Carbon::parse($writer_payment->period_from)->startOfDay()->format('Y-m-d H:i:s'),
+            Carbon::parse($writer_payment->period_to)->endOfDay()->format('Y-m-d H:i:s')
+        ])->pluck('sr_no')->toArray();
+
+        $job_card = JobCard::whereIn('job_no',$jobRegisterIds)
+        ->where(function ($query) use ($request) {
             $query->where('t_writer_code', $request->writer)
                   ->orWhere('bt_writer_code', $request->writer);
         })
-        ->whereBetween('created_at', [
-            Carbon::parse($writer_payment->period_from)->startOfDay()->format('Y-m-d H:i:s'),
-            Carbon::parse($writer_payment->period_to)->endOfDay()->format('Y-m-d H:i:s')
-        ])
         ->get();
 
         // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
@@ -101,33 +104,46 @@ class HomeController extends Controller
         return $pdf->stream();
         
     }
-    public function generatePaymentReportPreview($writerId, $paymentId){
+    public function generatePaymentReportPreview($writerId, $paymentId, $purpose){
         $writer_payment=WriterPayment::where('id',$paymentId)->first();
         if($writer_payment==null){
             return redirect()->back()->with('alert', 'No writer payments found');
         }
-        $job_card = JobCard::where(function ($query) use ($writerId) {
+
+        $jobRegisterIds = JobRegister::whereBetween('created_at',[
+            Carbon::parse($writer_payment->period_from)->startOfDay()->format('Y-m-d H:i:s'),
+            Carbon::parse($writer_payment->period_to)->endOfDay()->format('Y-m-d H:i:s')
+        ])->pluck('sr_no')->toArray();
+        
+        $job_card = JobCard::whereIn('job_no',$jobRegisterIds)
+        ->where(function ($query) use ($writerId) {
             $query->where('t_writer_code', $writerId)
                   ->orWhere('bt_writer_code', $writerId);
         })
-        ->whereBetween('created_at', [
-            Carbon::parse($writer_payment->period_from)->startOfDay()->format('Y-m-d H:i:s'),
-            Carbon::parse($writer_payment->period_to)->endOfDay()->format('Y-m-d H:i:s')
-        ])
         ->get();
-        // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
-        $pdf = FacadePdf::loadView('reports.pdf.pdf-payment',compact('job_card','writer_payment'));
-        return $pdf->stream();
+        if($purpose == 'preview'){
+            // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
+            $pdf = FacadePdf::loadView('reports.pdf.pdf-payment',compact('job_card','writer_payment'));
+            return $pdf->stream();
+        }
+        try{
+            $wEmail = Writer::where('id',$writerId)->first();
+            if(!$wEmail){
+                return redirect()->back()->with('alert', 'Please enter writer email id from writer management to send email.');
+            }
+            Mail::to($wEmail)->send(new WP($job_card,$writer_payment,$wEmail));
+        }catch (\Exception $e) {
+            return back()->with('alert', 'Failed to send writer payment email: ' . $e->getMessage());
+        }
         
     }
     public function generateWriterReport(){
         $min = Carbon::parse(request()->get('from_date'))->startOfDay()->format('Y-m-d H:i:s');
         $max = Carbon::parse(request()->get('to_date'))->endOfDay()->format('Y-m-d H:i:s');
 
-        $job_cards = JobCard::whereBetween('created_at', [$min, $max])
-        ->orWhereBetween('updated_at', [$min, $max])
-        ->orderBy('job_no')
-        ->get();
+        $jobRegisterIds = JobRegister::whereBetween('created_at', [$min, $max])->pluck('sr_no')->toArray();
+
+        $job_cards = JobCard::whereIn('job_no',$jobRegisterIds)->orderBy('job_no')->get();
 
         $writerIds = $job_cards->flatMap(function ($job) {
             return [
@@ -137,7 +153,7 @@ class HomeController extends Controller
                 $job->btv_employee_code
             ];
         })->unique()->filter()->values();
-
+        
         $writers = Writer::whereIn('id', $writerIds)->get()->keyBy('id');
 
         $totalByWriters = [];
@@ -195,10 +211,12 @@ class HomeController extends Controller
                 }
             }
         }
+        $totalByWriters = array_filter($totalByWriters,function($writer){
+            return $writer['total'] != 0;
+        });
             
         $pdf = FacadePdf::loadView('reports.pdf.pdf-writer',compact('totalByWriters','min','max'));
         return $pdf->stream();
-        
     }
 
     function getStartAndEndOfMonth($year, $month) {

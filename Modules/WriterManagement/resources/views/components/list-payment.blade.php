@@ -105,13 +105,12 @@
                                                     <a href="{{ route('writermanagement.editPaymentView', [$id, $payment->id]) }}" class="btn btn-info btn-sm mb-2">Edit
                                                     </a>
                                                 @endif
-                                                <a href="{{ route('report.payments.preview', [$id,$payment->id]) }}" target="_blank" class="btn btn-info btn-sm mb-2">Preview</a>
-                                                {{-- <a href="{{ route('writermanagement.showPayment', [$id,$payment->id]) }}">
-                                            <button class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                               View
-                                            </button>
-                                        </a> --}}
-        
+                                                <a href="{{ route('report.payments.preview', [$id,$payment->id,'preview']) }}" target="_blank" class="btn btn-info btn-sm mb-2">Preview</a>
+                                                <a href="{{ route('report.payments.preview', [$id,$payment->id,'email']) }}" class="btn btn-info btn-sm mb-2"><i class="fas fa-envelope"> Email Payment</i></a>
+                                                <a class="btn btn-danger btn-sm mb-2" title="Delete"
+                                                    onclick="deletePayment('{{ route('writermanagement.paymentDelete', [$id,$payment->id]) }}')">
+                                                    <i class="fa fa-lg fa-fw fa-trash"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach

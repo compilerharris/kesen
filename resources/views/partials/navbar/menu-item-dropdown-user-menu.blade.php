@@ -13,72 +13,109 @@
     @php( $logout_url = $logout_url ? url($logout_url) : '' )
 @endif
 
+
+
 <li class="nav-item dropdown user-menu">
+    @if(count($job_registers_near_deadline)>0 && Auth::user()->hasRole('CEO'))
+        <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <i class="far fa-bell"></i>
+                @if(count($job_registers_near_deadline)>0)
+                    <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline)}}</span>
+                @endif 
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline) }} Notifications</span>
+                <div class="dropdown-divider"></div>
+                @foreach($job_registers_near_deadline as $notification)
+                    <p class="dropdown-item" style="display: flex; align-items: center;">
+                        <i class="fas fa-envelope mr-2" style="margin: 0; padding: 0;"></i>
+                        <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
+                        @if(Auth::user()->hasRole('Accounts'))
+                            Job no: {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is ready for billing
+                        @endif
+                        @if(Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Project Manager') || Auth::user()->hasRole('CEO'))
+                            <span style="word-spacing:3px;">Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at <b style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->format('j M Y') : "today"}}.</b></span>
+                        @endif
+                        </span>
+                        
+                        
+                    </p>
+                
+                @endforeach
+                <div class="dropdown-divider"></div>
+                
+            </div>
+        </li>
+    @else
+        @if(count($job_registers_near_deadline)>0)
+            @php ($job_registers_near_deadline = $job_registers_near_deadline->filter(function($pm){ return Auth::user()->id ==  $pm->handled_by_id; }))
+        @endif
 
-
-    {{-- User menu dropdown --}}
-    @if(isset($job_registers_near_deadline)&&(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('Developer')||Auth::user()->hasRole('Project Manager')  ))
-    <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-            <i class="far fa-bell"></i>
-            @if(count($job_registers_near_deadline)>0)
-                <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline)}}</span>
-            @endif 
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline) }} Notifications</span>
-            <div class="dropdown-divider"></div>
-            @foreach($job_registers_near_deadline as $notification)
-                <p class="dropdown-item" style="display: flex; align-items: center;">
-                    <i class="fas fa-envelope mr-2" style="margin: 0; padding: 0;"></i>
-                    <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
-                    @if(Auth::user()->hasRole('Accounts'))
-                        Job no: {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is ready for billing
-                    @endif
-                    @if(Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Project Manager'))
-                        Deadline for Job no {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is at {{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->format('j M Y') : "today"}}.
-                    @endif
-                    </span>
+        {{-- User menu dropdown --}}
+        @if(count($job_registers_near_deadline)>0&&(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('Developer')||Auth::user()->hasRole('Project Manager')||Auth::user()->hasRole('CEO')  ))
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-bell"></i>
+                    @if(count($job_registers_near_deadline)>0)
+                        <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline)}}</span>
+                    @endif 
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline) }} Notifications</span>
+                    <div class="dropdown-divider"></div>
+                    @foreach($job_registers_near_deadline as $notification)
+                        <p class="dropdown-item" style="display: flex; align-items: center;">
+                            <i class="fas fa-envelope mr-2" style="margin: 0; padding: 0;"></i>
+                            <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
+                            @if(Auth::user()->hasRole('Accounts'))
+                                Job no: {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is ready for billing
+                            @endif
+                            @if(Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Project Manager') || Auth::user()->hasRole('CEO'))
+                                <span style="word-spacing:3px;">Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at <b style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->format('j M Y') : "today"}}.</b></span>
+                            @endif
+                            </span>
+                            
+                            
+                        </p>
                     
+                    @endforeach
+                    <div class="dropdown-divider"></div>
                     
-                </p>
-              
-            @endforeach
-            <div class="dropdown-divider"></div>
-            
-        </div>
-    </li>
+                </div>
+            </li>
+        @endif
     @endif
     @if(isset($job_registers_near_deadline_for_accounts)&&(Auth::user()->hasRole('Accounts')))
-    <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-            <i class="far fa-bell"></i>
-            
-            @if(count($job_registers_near_deadline_for_accounts)>0)
-                <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline_for_accounts)}}</span>
-            @endif 
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline_for_accounts) }} Notifications</span>
-            <div class="dropdown-divider"></div>
-            @foreach($job_registers_near_deadline_for_accounts as $notification)
-                <p class="dropdown-item" style="display: flex; align-items: center;">
-                    <i class="fas fa-envelope mr-2" style="margin: 0; padding: 0;"></i>
-                    <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
-                        Job no: {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is ready for billing
-                   
-                    </span>
+        <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <i class="far fa-bell"></i>
+                
+                @if(count($job_registers_near_deadline_for_accounts)>0)
+                    <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline_for_accounts)}}</span>
+                @endif 
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline_for_accounts) }} Notifications</span>
+                <div class="dropdown-divider"></div>
+                @foreach($job_registers_near_deadline_for_accounts as $notification)
+                    <p class="dropdown-item" style="display: flex; align-items: center;">
+                        <i class="fas fa-envelope mr-2" style="margin: 0; padding: 0;"></i>
+                        <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
+                            Job no: {{ $notification->sr_no }} of {{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }} is ready for billing
                     
-                    <p style="float: right;margin-right: 10px">
-                    {{ $notification->updated_at->diffForHumans() }}
+                        </span>
+                        
+                        <p style="float: right;margin-right: 10px">
+                        {{ $notification->updated_at->diffForHumans() }}
+                        </p>
                     </p>
-                </p>
-              
-            @endforeach
-            <div class="dropdown-divider"></div>
-            
-        </div>
-    </li>
+                
+                @endforeach
+                <div class="dropdown-divider"></div>
+                
+            </div>
+        </li>
     @endif
     
 
