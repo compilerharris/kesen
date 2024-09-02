@@ -96,7 +96,7 @@
                             <td>{{ $bill->sr_no }}</td>
                             <td>{{ $bill->client?$bill->client->name:'' }}</td>
                             <td>{{ $bill->client_person?$bill->client_person->name:'' }}</td>
-                            <td>{{ isset($bill->accountant)?$bill->accountant->name:"" }}</td>
+                            <td>{{ isset($bill->client)?$bill->client->client_accountant->name:"" }}</td>
                             <td>{{ $bill->handle_by->name }}</td>
                             <td>{{ $bill->payment_status == 'Paid' ? 'Paid' : ($bill->payment_status == 'Partial' ? 'Partial' : 'Unpaid') }}</td>
                             <td>{{ $bill->bill_amount??0 }}</td>

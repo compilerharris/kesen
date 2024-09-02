@@ -3,6 +3,7 @@
 namespace Modules\ClientManagement\App\Models;
 
 use App\Models\Metrix;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,10 @@ class Client extends Model
     protected $gaurded = ['id','sr_no'];
     public function client_metric(){
         return $this->belongsTo(Metrix::class,'metrix','id');
+    }
+
+    public function client_accountant(){
+        return $this->belongsTo(User::class,'client_accountant_person_id','id');
     }
    
 }
