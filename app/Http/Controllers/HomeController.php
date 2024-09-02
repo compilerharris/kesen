@@ -147,12 +147,12 @@ class HomeController extends Controller
                 if($writerLan){
                     if (!isset($totalByWriters[$job->t_writer_code])) {
                         $totalByWriters[$job->t_writer_code] = [
-                            'total' => '0',
+                            'total' => 0,
                             'name' => $writers->get($job->t_writer_code)->writer_name ?? 'Unknown',
                             'code' => $writers->get($job->t_writer_code)->code ?? 'Unknown',
                         ];
                     }
-                    $totalByWriters[$job->t_writer_code]['total'] += $writerLan->per_unit_charges*$job->t_unit;
+                    $totalByWriters[$job->t_writer_code]['total'] += (int)$writerLan->per_unit_charges*(int)$job->t_unit;
                 }
             }
             if($job->v_unit != ''){
@@ -160,12 +160,12 @@ class HomeController extends Controller
                 if($writerLan){
                     if (!isset($totalByWriters[$job->v_employee_code])) {
                         $totalByWriters[$job->v_employee_code] = [
-                            'total' => '0',
+                            'total' => 0,
                             'name' => $writers->get($job->v_employee_code)->writer_name ?? 'Unknown',
                             'code' => $writers->get($job->v_employee_code)->code ?? 'Unknown',
                         ];
                     }
-                    $totalByWriters[$job->v_employee_code]['total'] += $writerLan->checking_charges*$job->v_unit;
+                    $totalByWriters[$job->v_employee_code]['total'] += (int)$writerLan->checking_charges*(int)$job->v_unit;
                 }
             }
             if($job->bt_unit != ''){
@@ -173,12 +173,12 @@ class HomeController extends Controller
                 if($writerLan){
                     if (!isset($totalByWriters[$job->bt_writer_code])) {
                         $totalByWriters[$job->bt_writer_code] = [
-                            'total' => '0',
+                            'total' => 0,
                             'name' => $writers->get($job->bt_writer_code)->writer_name ?? 'Unknown',
                             'code' => $writers->get($job->bt_writer_code)->code ?? 'Unknown',
                         ];
                     }
-                    $totalByWriters[$job->bt_writer_code]['total'] += $writerLan->bt_charges*$job->bt_unit;
+                    $totalByWriters[$job->bt_writer_code]['total'] += (int)$writerLan->bt_charges*(int)$job->bt_unit;
                 }
             }
             if($job->btv_unit != ''){
@@ -186,12 +186,12 @@ class HomeController extends Controller
                 if($writerLan){
                     if (!isset($totalByWriters[$job->btv_employee_code])) {
                         $totalByWriters[$job->btv_employee_code] = [
-                            'total' => '0',
+                            'total' => 0,
                             'name' => $writers->get($job->btv_employee_code)->writer_name ?? 'Unknown',
                             'code' => $writers->get($job->btv_employee_code)->code ?? 'Unknown',
                         ];
                     }
-                    $totalByWriters[$job->btv_employee_code]['total'] += $writerLan->bt_checking_charges*$job->btv_unit;
+                    $totalByWriters[$job->btv_employee_code]['total'] += (int)$writerLan->bt_checking_charges*(int)$job->btv_unit;
                 }
             }
         }
