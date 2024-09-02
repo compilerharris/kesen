@@ -127,7 +127,7 @@
                                                 </x-adminlte-select>
                                                 
                                                 {{-- v --}}
-                                                @if($estimate_detail->v1)
+                                                {{-- @if($estimate_detail->v1) --}}
                                                     <x-adminlte-input name="v_unit[{{ $index }}]" placeholder="V1 Unit" fgroup-class="col-md-2"
                                                         value="{{ old('v_unit.' . $index, $job->v_unit) }}" label="V1 Unit" />
                                                     <x-adminlte-select name="v_employee_code[{{ $index }}]" fgroup-class="col-md-2" 
@@ -143,10 +143,10 @@
                                                     <x-adminlte-input name="v_pd[{{ $index }}]" placeholder="V1 PD" fgroup-class="col-md-2"
                                                         value="{{ old('v_pd.' . $index, $job->v_pd) }}" label="V1 PD"  type='date' />
                                                     <x-adminlte-input name="v_cr[{{ $index }}]" placeholder="V1 CR" fgroup-class="col-md-2" value="{{ old('v_cr.' . $index, $job->v_cr) }}" label="V1 CR"  type='date' />
-                                                @endif
+                                                {{-- @endif --}}
 
                                                 {{-- v2 --}}
-                                                @if($estimate_detail->v2)
+                                                {{-- @if($estimate_detail->v2) --}}
                                                     <x-adminlte-input name="v2_unit[{{ $index }}]" placeholder="V2 Unit" fgroup-class="col-md-2" value="{{ old('v2_unit.' . $index, $job->v2_unit) }}" label="V2 Unit" disabled/>
                                                     <x-adminlte-select name="v2_employee_code[{{ $index }}]" fgroup-class="col-md-2" 
                                                         label="V2 Employee" disabled>
@@ -157,7 +157,7 @@
                                                     </x-adminlte-select>
                                                     <x-adminlte-input name="v2_pd[{{ $index }}]" placeholder="V2 PD" fgroup-class="col-md-2" value="{{ old('v2_pd.' . $index, $job->v2_pd) }}" label="V2 PD" type='date' disabled />
                                                     <x-adminlte-input name="v2_cr[{{ $index }}]" placeholder="V2 CR" fgroup-class="col-md-2" value="{{ old('v2_cr.' . $index, $job->v2_cr) }}" label="V2 CR" type='date' disabled />
-                                                @endif
+                                                {{-- @endif --}}
                                                 <x-adminlte-select name="t_fqc[{{ $index }}]" fgroup-class="col-md-2" 
                                                     value="{{ old('t_fqc.' . $index, $job->t_fqc) }}" label="T F/QC">
                                                     <option value="">T F/QC</option>
@@ -178,7 +178,7 @@
                                     </div>
     
                                     
-                                    @if($estimate_detail->bt || $estimate_detail->btv)
+                                    {{-- @if($estimate_detail->bt || $estimate_detail->btv) --}}
                                         <div class="card" >
                                             <div class="card-body">
                                                 <div class="row pt-2">
@@ -219,7 +219,7 @@
                                                     </x-adminlte-select>
                                                 
                                                     {{-- btv --}}
-                                                    @if($estimate_detail->btv)
+                                                    {{-- @if($estimate_detail->btv) --}}
                                                         <x-adminlte-input name="btv_unit[{{ $index }}]" placeholder="BTV Unit" fgroup-class="col-md-2"
                                                             value="{{ old('btv_unit.' . $index, $job->btv_unit) }}" label="BTV Unit" />
                                                         <x-adminlte-select name="btv_employee_code[{{ $index }}]" fgroup-class="col-md-2" 
@@ -236,7 +236,7 @@
                                                             value="{{ old('btv_pd.' . $index, $job->btv_pd) }}" label="BTV PD" type='date' />
                                                         <x-adminlte-input name="btv_cr[{{ $index }}]" placeholder="BTV CR" fgroup-class="col-md-2"
                                                             value="{{ old('btv_cr.' . $index, $job->btv_cr) }}" label="BTV CR" type='date' />
-                                                    @endif
+                                                    {{-- @endif --}}
                                                     <x-adminlte-select name="bt_fqc[{{ $index }}]" fgroup-class="col-md-2" 
                                                         value="{{ old('bt_fqc.' . $index, $job->bt_fqc) }}" label="BT F/QC">
                                                         <option value="">BT F/QC</option>
@@ -255,7 +255,7 @@
                                             </div>
                                         
                                         </div>
-                                    @endif
+                                    {{-- @endif --}}
                                     
                                     
                                     
