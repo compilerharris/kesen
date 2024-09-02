@@ -248,7 +248,7 @@
     <script>
         function openModal(btn) {
             var estimateDetailId = $(btn).data('id');
-            var actionUrl = '/job-card-management/sentDate/' + @json($job_register->id) + '/' + @json($job_register->sr_no) + '/' + estimateDetailId + '/' + @json($job_register->estimate_document_id);
+            var actionUrl = '/job-card-management/sentDate/' + @json($job_register->id) + '/' + @json($job_register->sr_no) + '/' + estimateDetailId + '/' + @json(str_replace('/', '!', $job_register->estimate_document_id));
             $('#sentDateForm').attr('action', actionUrl);
         }
         $(document).ready(function() {
