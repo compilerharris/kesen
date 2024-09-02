@@ -229,7 +229,7 @@
                                                                 <option value="{{ $user->id }}" {{ $job->btv_employee_code == $user->id ? 'selected' : '' }}>Emp - {{ $user->name }}</option>
                                                             @endforeach
                                                             @foreach ($writers as $user)
-                                                                <option value="{{ $user->id }}" {{ $job->v_employee_code == $user->id ? 'selected' : '' }}>Writer - {{ $user->writer_name }}</option>
+                                                                <option value="{{ $user->id }}" {{ $job->btv_employee_code == $user->id ? 'selected' : '' }}>Writer - {{ $user->writer_name }}</option>
                                                             @endforeach
                                                         </x-adminlte-select>
                                                         <x-adminlte-input name="btv_pd[{{ $index }}]" placeholder="BTV PD" fgroup-class="col-md-2"
