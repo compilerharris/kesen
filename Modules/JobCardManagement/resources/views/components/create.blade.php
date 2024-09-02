@@ -56,7 +56,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item "><a href="/job-card-management">Job Card </a></li>
-                <li class="breadcrumb-item "><a href="/job-card-management/manage/list/{{$job_register->id}}/{{$job_register->estimate_document_id}}">Job No {{$job_register->sr_no}}</a></li>
+                <li class="breadcrumb-item "><a href="/job-card-management/manage/list/{{$job_register->id}}/{{str_replace('/', '!', $job_register->estimate_document_id)}}">Job No {{$job_register->sr_no}}</a></li>
                 <li class="breadcrumb-item ">{{$estimate_detail->language->name}}</li>
             </ol>
         </nav>

@@ -183,6 +183,7 @@ class JobCardManagementController extends Controller
         }
         $jobId = JobRegister::where('sr_no',$request['job_no'][0])->first('id')->id;
         $docName = EstimatesDetails::where('id',$request['estimate_detail_id'][0])->first('document_name')->document_name;
+        $docName = str_replace('/', '!', $docName);
         return redirect()->route('jobcardmanagement.manage.list', ['job_id' => $jobId, 'estimate_detail_id' => $docName])->with('message', 'Job Card updated successfully.');
     }
 
@@ -262,7 +263,6 @@ class JobCardManagementController extends Controller
 
             ]);
         }
-
 
         $param = explode("|",$job_register_id_and_doc_mame);
         return redirect()->route('jobcardmanagement.manage.list', ['job_id' => $param[0], 'estimate_detail_id' => $param[1]])->with('message', 'Job Card updated successfully.');
