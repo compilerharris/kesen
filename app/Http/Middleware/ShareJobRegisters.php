@@ -31,7 +31,7 @@ class ShareJobRegisters
             ->orWhere(function($query) use ($lastMonth, $current) {
                 $query->whereBetween('date', [$lastMonth, $current])
                     ->where('date', '<', $current)
-                    ->where('status', 1);
+                    ->where('status', 0);
             })
             ->orderBy('date')
             ->get();
