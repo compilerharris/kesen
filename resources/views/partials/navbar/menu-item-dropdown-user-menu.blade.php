@@ -23,33 +23,24 @@
                 <i class="far fa-bell"></i>
                 <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline)+count($job_registers_near_deadline_for_accounts)}}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right" id="notificationDropdown" style="overflow-y: auto;">
+            <div class="dropdown-menu dropdown-menu-right" id="notificationDropdown" style="overflow-y: auto;padding: 10px;width: 50rem;">
                 <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline)+count($job_registers_near_deadline_for_accounts) }} Notifications</span>
                 <div class="dropdown-divider"></div>
                 @foreach($job_registers_near_deadline as $notification)
                     @if(\Carbon\Carbon::now()->format('Y-m-d') > $notification->date)
-                        <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" class="dropdown-item" style="display: flex; align-items: center;margin: 1px;border: 1px solid red">
-                            <i class="fas fa-ban bg-danger mr-2"></i>
-                            <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;text-decoration: none;">
-                                <span style="word-spacing:3px;">Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></span>
-                            </span>
-                        </a>
+                        <div class="callout callout-danger" style="padding: 0.5rem;margin-bottom: 5px;">
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='red';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-ban mr-2" style="color: red;"></i> Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
+                        </div>
                     @else
-                        <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" class="dropdown-item" style="display: flex; align-items: center;margin: 0;">
-                            <i class="fas fa-envelope mr-2"></i>
-                            <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;text-decoration: none;">
-                                <span style="word-spacing:3px;">Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></span>
-                            </span>
-                        </a>
+                        <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
+                        </div>
                     @endif
                 @endforeach
                 @foreach($job_registers_near_deadline_for_accounts as $notification)
-                    <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status="class="dropdown-item" style="display: flex; align-items: center; margin: 0;">
-                        <i class="fas fa-envelope mr-2" style=""></i>
-                        <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
-                            <span style="word-spacing:3px;">Job no: <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is ready for billing. (<b>{{ $notification->updated_at->diffForHumans() }}</b>)</span>
-                        </span>
-                    </a>
+                    <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
+                        <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Job no: <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is ready for billing since <b>{{ $notification->updated_at->diffForHumans() }}</b></a>
+                    </div>
                 @endforeach
             </div>
         </li>
@@ -60,24 +51,18 @@
                 <i class="far fa-bell"></i>
                 <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline)}}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right" id="notificationDropdown" style="overflow-y: auto;">
+            <div class="dropdown-menu dropdown-menu-right" id="notificationDropdown" style="overflow-y: auto;padding: 10px;width: 50rem;">
                 <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline) }} Notifications</span>
                 <div class="dropdown-divider"></div>
                 @foreach($job_registers_near_deadline as $notification)
                     @if(\Carbon\Carbon::now()->format('Y-m-d') > $notification->date)
-                        <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" class="dropdown-item" style="display: flex; align-items: center;margin: 1px;border: 1px solid red">
-                            <i class="fas fa-ban bg-danger mr-2"></i>
-                            <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;text-decoration: none;">
-                                <span style="word-spacing:3px;">Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></span>
-                            </span>
-                        </a>
+                        <div class="callout callout-danger" style="padding: 0.5rem;margin-bottom: 5px;">
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='red';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-ban mr-2" style="color: red;"></i> Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
+                        </div>
                     @else
-                        <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" class="dropdown-item" style="display: flex; align-items: center;margin: 0;">
-                            <i class="fas fa-envelope mr-2"></i>
-                            <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;text-decoration: none;">
-                                <span style="word-spacing:3px;">Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></span>
-                            </span>
-                        </a>
+                        <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
+                        </div>
                     @endif
                 @endforeach
             </div>
@@ -92,24 +77,18 @@
                     <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline)}}</span>
                 @endif 
             </a>
-            <div class="dropdown-menu dropdown-menu-right" id="notificationDropdown" style="overflow-y: auto;">
+            <div class="dropdown-menu dropdown-menu-right" id="notificationDropdown" style="overflow-y: auto;padding: 10px;width: 50rem;">
                 <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline) }} Notifications</span>
                 <div class="dropdown-divider"></div>
                 @foreach($job_registers_near_deadline as $notification)
                     @if(\Carbon\Carbon::now()->format('Y-m-d') > $notification->date)
-                        <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" class="dropdown-item" style="display: flex; align-items: center;margin: 1px;border: 1px solid red">
-                            <i class="fas fa-ban bg-danger mr-2"></i>
-                            <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;text-decoration: none;">
-                                <span style="word-spacing:3px;">Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></span>
-                            </span>
-                        </a>
+                        <div class="callout callout-danger" style="padding: 0.5rem;margin-bottom: 5px;">
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='red';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-ban mr-2" style="color: red;"></i> Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
+                        </div>
                     @else
-                        <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" class="dropdown-item" style="display: flex; align-items: center;margin: 0;">
-                            <i class="fas fa-envelope mr-2"></i>
-                            <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;text-decoration: none;">
-                                <span style="word-spacing:3px;">Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></span>
-                            </span>
-                        </a>
+                        <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at <b  style="font-size: 20px">{{ \Carbon\Carbon::now()->format('Y-m-d') != $notification->date ? \Carbon\Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
+                        </div>
                     @endif
                 @endforeach
             </div>
@@ -121,18 +100,14 @@
                 <i class="far fa-bell"></i>
                 <span class="badge badge-danger navbar-badge">{{count($job_registers_near_deadline_for_accounts)}}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right" id="notificationDropdown" style="overflow-y: auto;">
+            <div class="dropdown-menu dropdown-menu-right" id="notificationDropdown" style="overflow-y: auto;padding: 10px;width: 50rem;">
                 <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline_for_accounts) }} Notifications</span>
                 <div class="dropdown-divider"></div>
                 @foreach($job_registers_near_deadline_for_accounts as $notification)
-                    <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status="class="dropdown-item" style="display: flex; align-items: center; margin: 0;">
-                        <i class="fas fa-envelope mr-2"></i>
-                        <span class="notification-text" style="margin: 0; padding: 0; margin-left: 8px; display: flex; flex-wrap: wrap;">
-                            <span style="word-spacing:3px;">Job no: <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is ready for billing. (<b>{{ $notification->updated_at->diffForHumans() }}</b>)</span>
-                        </span>
-                    </a>
+                    <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
+                        <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Job no: <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is ready for billing since <b>{{ $notification->updated_at->diffForHumans() }}</b></a>
+                    </div>
                 @endforeach
-                <div class="dropdown-divider"></div>
             </div>
         </li>
     @endif
