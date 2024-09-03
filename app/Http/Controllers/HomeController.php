@@ -137,14 +137,19 @@ class HomeController extends Controller
         }
         
     }
-    public function generateWriterReport(){
+    public function generateWriterReport() {
+        // Parse and format date ranges
         $min = Carbon::parse(request()->get('from_date'))->startOfDay()->format('Y-m-d H:i:s');
         $max = Carbon::parse(request()->get('to_date'))->endOfDay()->format('Y-m-d H:i:s');
-
+    
+        // Fetch job register IDs based on date range
         $jobRegisterIds = JobRegister::whereBetween('created_at', [$min, $max])->pluck('sr_no')->toArray();
 
-        $job_cards = JobCard::whereIn('job_no',$jobRegisterIds)->orderBy('job_no')->get();
-
+        
+        // Fetch job cards based on job register IDs
+        $job_cards = JobCard::whereIn('job_no', $jobRegisterIds)->with('estimateDetail.language')->orderBy('job_no')->get();
+    
+        // Collect unique writer IDs from job cards
         $writerIds = $job_cards->flatMap(function ($job) {
             return [
                 $job->t_writer_code,
@@ -153,71 +158,143 @@ class HomeController extends Controller
                 $job->btv_employee_code
             ];
         })->unique()->filter()->values();
-        
-        $writers = Writer::whereIn('id', $writerIds)->get()->keyBy('id');
-
+    
+        // Fetch writers with their language maps in one go
+        $writers = Writer::with(['writer_language_map' => function ($query) {
+            $query->with('language'); // Eager load language for filtering in-memory
+        }])->whereIn('id', $writerIds)->where('code', '!=', 'INT')->get()->keyBy('id');
+    
+        // Prepare total by writers
         $totalByWriters = [];
+    
         foreach ($job_cards as $job) {
-            if($job->t_unit != ''){
-                $writerLan = WriterLanguageMap::where('writer_id',$job->t_writer_code)->where('language_id',$job->estimateDetail->language->id)->first();
-                if($writerLan){
-                    if (!isset($totalByWriters[$job->t_writer_code])) {
-                        $totalByWriters[$job->t_writer_code] = [
+            // Check and calculate for each type of unit
+            $this->calculateWriterTotal($job, 't', $totalByWriters, $writers);
+            $this->calculateWriterTotal($job, 'v', $totalByWriters, $writers, 'checking_charges');
+            $this->calculateWriterTotal($job, 'bt', $totalByWriters, $writers, 'bt_charges');
+            $this->calculateWriterTotal($job, 'btv', $totalByWriters, $writers, 'bt_checking_charges');
+        }
+    
+        // Filter out writers with total of zero
+        $totalByWriters = array_filter($totalByWriters, function ($writer) {
+            return $writer['total'] != 0;
+        });
+    
+        // Generate PDF and return the response
+        $pdf = FacadePdf::loadView('reports.pdf.pdf-writer', compact('totalByWriters', 'min', 'max'));
+        return $pdf->stream();
+    }
+    private function calculateWriterTotal($job, $type, &$totalByWriters, $writers, $chargeType = 'per_unit_charges') {
+        $writerCodeField = $type . '_writer_code';
+        $unitField = $type . '_unit';
+        
+        if (!empty($job->$unitField)) {
+            $writer = $writers->get($job->$writerCodeField);
+    
+            if ($writer) {
+                // Get the language name from the job's estimate detail
+                $languageName = $job->estimateDetail?$job->estimateDetail->language->name:'';
+    
+                // Filter the language map by language name
+                $languageMap = $writer->writer_language_map->first(function ($map) use ($languageName) {
+                    return $map->language_id === $languageName;
+                });
+                
+                if ($languageMap) {
+                    if (!isset($totalByWriters[$job->$writerCodeField])) {
+                        $totalByWriters[$job->$writerCodeField] = [
                             'total' => 0,
-                            'name' => $writers->get($job->t_writer_code)->writer_name ?? 'Unknown',
-                            'code' => $writers->get($job->t_writer_code)->code ?? 'Unknown',
+                            'name' => $writer->writer_name ?? 'Unknown',
+                            'code' => $writer->code ?? 'Unknown',
                         ];
                     }
-                    $totalByWriters[$job->t_writer_code]['total'] += (int)$writerLan->per_unit_charges*(int)$job->t_unit;
-                }
-            }
-            if($job->v_unit != ''){
-                $writerLan = WriterLanguageMap::where('writer_id',$job->v_employee_code)->where('language_id',$job->estimateDetail->language->id)->first();
-                if($writerLan){
-                    if (!isset($totalByWriters[$job->v_employee_code])) {
-                        $totalByWriters[$job->v_employee_code] = [
-                            'total' => 0,
-                            'name' => $writers->get($job->v_employee_code)->writer_name ?? 'Unknown',
-                            'code' => $writers->get($job->v_employee_code)->code ?? 'Unknown',
-                        ];
-                    }
-                    $totalByWriters[$job->v_employee_code]['total'] += (int)$writerLan->checking_charges*(int)$job->v_unit;
-                }
-            }
-            if($job->bt_unit != ''){
-                $writerLan = WriterLanguageMap::where('writer_id',$job->bt_writer_code)->where('language_id',$job->estimateDetail->language->id)->first();
-                if($writerLan){
-                    if (!isset($totalByWriters[$job->bt_writer_code])) {
-                        $totalByWriters[$job->bt_writer_code] = [
-                            'total' => 0,
-                            'name' => $writers->get($job->bt_writer_code)->writer_name ?? 'Unknown',
-                            'code' => $writers->get($job->bt_writer_code)->code ?? 'Unknown',
-                        ];
-                    }
-                    $totalByWriters[$job->bt_writer_code]['total'] += (int)$writerLan->bt_charges*(int)$job->bt_unit;
-                }
-            }
-            if($job->btv_unit != ''){
-                $writerLan = WriterLanguageMap::where('writer_id',$job->btv_employee_code)->where('language_id',$job->estimateDetail->language->id)->first();
-                if($writerLan){
-                    if (!isset($totalByWriters[$job->btv_employee_code])) {
-                        $totalByWriters[$job->btv_employee_code] = [
-                            'total' => 0,
-                            'name' => $writers->get($job->btv_employee_code)->writer_name ?? 'Unknown',
-                            'code' => $writers->get($job->btv_employee_code)->code ?? 'Unknown',
-                        ];
-                    }
-                    $totalByWriters[$job->btv_employee_code]['total'] += (int)$writerLan->bt_checking_charges*(int)$job->btv_unit;
+                    
+                    $totalByWriters[$job->$writerCodeField]['total'] += (int)$languageMap->$chargeType * (int)$job->$unitField;
                 }
             }
         }
-        $totalByWriters = array_filter($totalByWriters,function($writer){
-            return $writer['total'] != 0;
-        });
-            
-        $pdf = FacadePdf::loadView('reports.pdf.pdf-writer',compact('totalByWriters','min','max'));
-        return $pdf->stream();
     }
+    // public function generateWriterReport(){
+    //     $min = Carbon::parse(request()->get('from_date'))->startOfDay()->format('Y-m-d H:i:s');
+    //     $max = Carbon::parse(request()->get('to_date'))->endOfDay()->format('Y-m-d H:i:s');
+
+    //     $jobRegisterIds = JobRegister::whereBetween('created_at', [$min, $max])->pluck('sr_no')->toArray();
+
+    //     $job_cards = JobCard::whereIn('job_no',$jobRegisterIds)->orderBy('job_no')->get();
+
+    //     $writerIds = $job_cards->flatMap(function ($job) {
+    //         return [
+    //             $job->t_writer_code,
+    //             $job->v_employee_code,
+    //             $job->bt_writer_code,
+    //             $job->btv_employee_code
+    //         ];
+    //     })->unique()->filter()->values();
+        
+    //     $writers = Writer::with('writer_language_map')->whereIn('id', $writerIds)->where('code','!=','INT')->get()->keyBy('id');
+
+    //     $totalByWriters = [];
+    //     foreach ($job_cards as $job) {
+    //         if($job->t_unit != ''){
+    //             $writerLan = WriterLanguageMap::where('writer_id',$job->t_writer_code)->where('language_id',$job->estimateDetail->language->id)->first();
+    //             if($writerLan){
+    //                 if (!isset($totalByWriters[$job->t_writer_code])) {
+    //                     $totalByWriters[$job->t_writer_code] = [
+    //                         'total' => 0,
+    //                         'name' => $writers->get($job->t_writer_code)->writer_name ?? 'Unknown',
+    //                         'code' => $writers->get($job->t_writer_code)->code ?? 'Unknown',
+    //                     ];
+    //                 }
+    //                 $totalByWriters[$job->t_writer_code]['total'] += (int)$writerLan->per_unit_charges*(int)$job->t_unit;
+    //             }
+    //         }
+    //         if($job->v_unit != ''){
+    //             $writerLan = WriterLanguageMap::where('writer_id',$job->v_employee_code)->where('language_id',$job->estimateDetail->language->id)->first();
+    //             if($writerLan){
+    //                 if (!isset($totalByWriters[$job->v_employee_code])) {
+    //                     $totalByWriters[$job->v_employee_code] = [
+    //                         'total' => 0,
+    //                         'name' => $writers->get($job->v_employee_code)->writer_name ?? 'Unknown',
+    //                         'code' => $writers->get($job->v_employee_code)->code ?? 'Unknown',
+    //                     ];
+    //                 }
+    //                 $totalByWriters[$job->v_employee_code]['total'] += (int)$writerLan->checking_charges*(int)$job->v_unit;
+    //             }
+    //         }
+    //         if($job->bt_unit != ''){
+    //             $writerLan = WriterLanguageMap::where('writer_id',$job->bt_writer_code)->where('language_id',$job->estimateDetail->language->id)->first();
+    //             if($writerLan){
+    //                 if (!isset($totalByWriters[$job->bt_writer_code])) {
+    //                     $totalByWriters[$job->bt_writer_code] = [
+    //                         'total' => 0,
+    //                         'name' => $writers->get($job->bt_writer_code)->writer_name ?? 'Unknown',
+    //                         'code' => $writers->get($job->bt_writer_code)->code ?? 'Unknown',
+    //                     ];
+    //                 }
+    //                 $totalByWriters[$job->bt_writer_code]['total'] += (int)$writerLan->bt_charges*(int)$job->bt_unit;
+    //             }
+    //         }
+    //         if($job->btv_unit != ''){
+    //             $writerLan = WriterLanguageMap::where('writer_id',$job->btv_employee_code)->where('language_id',$job->estimateDetail->language->id)->first();
+    //             if($writerLan){
+    //                 if (!isset($totalByWriters[$job->btv_employee_code])) {
+    //                     $totalByWriters[$job->btv_employee_code] = [
+    //                         'total' => 0,
+    //                         'name' => $writers->get($job->btv_employee_code)->writer_name ?? 'Unknown',
+    //                         'code' => $writers->get($job->btv_employee_code)->code ?? 'Unknown',
+    //                     ];
+    //                 }
+    //                 $totalByWriters[$job->btv_employee_code]['total'] += (int)$writerLan->bt_checking_charges*(int)$job->btv_unit;
+    //             }
+    //         }
+    //     }
+    //     $totalByWriters = array_filter($totalByWriters,function($writer){
+    //         return $writer['total'] != 0;
+    //     });
+            
+    //     $pdf = FacadePdf::loadView('reports.pdf.pdf-writer',compact('totalByWriters','min','max'));
+    //     return $pdf->stream();
+    // }
 
     function getStartAndEndOfMonth($year, $month) {
         // Parse the month name to get the month number

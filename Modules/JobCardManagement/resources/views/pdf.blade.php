@@ -257,7 +257,7 @@
                                 <td>{{ $card->bt_cr ? \Carbon\Carbon::parse($card->bt_cr)->format('j M Y') : '' }}</td>
                                 <td>{{ $card->estimateDetail->bt?$card->bt_cnc:'' }}</td>
                                 <td>{{ $card->estimateDetail->bt?($card->bt_dv!=null? App\Models\User::where('id', $card->bt_dv)->first()->code??'':''):'' }}</td>
-                                <td>{{ $card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->code??$card->bt_fqc:''  }}</td>
+                                <td>{{ $estimate->bt&&$card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->code??$card->bt_fqc:''  }}</td>
                                 <td>{{ $card->bt_writer_code ? ($card->bt_sentdate ? \Carbon\Carbon::parse($card->bt_sentdate)->format('j M Y') : ''):'' }}</td>
                             </tr>
                             {{-- btv --}}
@@ -295,7 +295,7 @@
                                             </tr>
                                         </thead>
                                     <tbody>
-                                @elseif($pageBreakIndex % 70 == 0 && $pageBreakIndex == 70 )
+                                @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex == 75 )
                                         </tbody>
                                     </table>
                                     <div class="page-break"></div>
@@ -315,7 +315,7 @@
                                             </tr>
                                         </thead>
                                     <tbody>
-                                @elseif($pageBreakIndex % 70 == 0 && $pageBreakIndex > 70 )
+                                @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex > 75 )
                                         </tbody>
                                     </table>
                                     <div class="page-break"></div>
@@ -462,7 +462,7 @@
                                         </thead>
                                     <tbody>
                                 @endif 
-                            @elseif($pageBreakIndex % 70 == 0 && $pageBreakIndex == 70  )
+                            @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex == 75  )
                                     </tbody>
                                 </table>
                                 <br>
@@ -484,7 +484,7 @@
                                     </thead>
                                 <tbody>
 
-                            @elseif($pageBreakIndex % 70 == 0 && $pageBreakIndex > 70 )
+                            @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex > 75 )
                                     </tbody>
                                 </table>
                                 <div class="page-break"></div>
@@ -537,10 +537,10 @@
             <tr>
                 <!-- <td>Checked with Operator</td>
                 <td style="border-left-style: hidden;font-weight: bold;">{{ $job->operator ?? '' }}</td> -->
-                <td>Remark</td>
-                <td style="border-left-style: hidden;font-weight: bold;">{{ $job->remark ?? '' }}</td>
-                <td>Informed To</td>
-                <td style="border-left-style: hidden;font-weight: bold;font-size:15px;">{{ $job->client_person->name ?? '' }}</td>
+                <td style="vertical-align: top;">Remark</td>
+                <td style="border-left-style: hidden;font-weight: bold;width: 30%">{{ $job->remark ?? '' }}</td>
+                <td style="vertical-align: top;">Informed To</td>
+                <td style="border-left-style: hidden;font-weight: bold;font-size:15px;vertical-align: top;">{{ $job->client_person->name ?? '' }}</td>
             </tr>
             <!-- <tr>
                 <td>Remark</td>

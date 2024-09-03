@@ -19,4 +19,8 @@ class WriterLanguageMap extends Model
         return Language::where('id',$value)->first()->name??'';
     }
 
+    public function language(){
+        return $this->belongsTo(Language::class, 'language_id');
+    }
+
 }
