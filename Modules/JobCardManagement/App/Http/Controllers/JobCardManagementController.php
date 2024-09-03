@@ -591,14 +591,14 @@ class JobCardManagementController extends Controller
         $this->to = $request->get('to', null);
         $this->status =  $request->get('status', null);
 
-        $clientIds = Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray();
-        $userIds = User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray();
-        $clientContactIds = ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray();
+        $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
+        $userIds = $this->pm?User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray():[];
+        $clientContactIds = $this->contactPerson?ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray():[];
         $job_register_query = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
         ->when(count($clientIds)>0, function ($query) use ($clientIds) {
             $query->whereIn('client_id', $clientIds);
         })
-        ->when(count($clientIds)==0, function ($query){
+        ->when(count($clientIds)==0 && $this->cp, function ($query){
             $query->where('protocol_no','like',"%{$this->cp}%");
         })
         ->when($this->document, function ($query){
@@ -611,7 +611,10 @@ class JobCardManagementController extends Controller
             $query->whereIn('client_contact_person_id',$clientContactIds);
         })
         ->when($this->from && $this->to, function ($query){
-            $query->whereBetween('created_at', [$this->from,$this->to]);
+            $query->whereBetween('created_at', [
+                Carbon::parse($this->from)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($this->to)->endOfDay()->format('Y-m-d H:i:s')
+            ]);
         })
         ->when($this->from, function ($query) use ($endDate){
             $query->whereBetween('created_at', [$this->from,$endDate]);
