@@ -504,7 +504,7 @@ class JobCardManagementController extends Controller
         ->when(count($clientIds)>0, function ($query) use ($clientIds) {
             $query->whereIn('client_id', $clientIds);
         })
-        ->when(count($clientIds)==0, function ($query){
+        ->when(count($clientIds)==0 && $this->cp, function ($query){
             $query->where('protocol_no','like',"%{$this->cp}%");
         })
         ->when($this->document, function ($query){
