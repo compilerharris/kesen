@@ -29,10 +29,9 @@ class ShareJobRegisters
         $job_registers_near_deadline = JobRegister::
             whereBetween('date', [$deadline_date_end, $deadline_3_days_date_start])
             ->orWhere(function($query) use ($lastMonth, $current) {
-                $query->whereBetween('date', [$lastMonth, $current])
-                    ->where('date', '<', $current)
-                    ->where('status', 0);
+                $query->whereBetween('date', [$lastMonth, $current])->where('date', '<', $current);
             })
+            ->where('status', 0)
             ->orderBy('date')
             ->get();
 

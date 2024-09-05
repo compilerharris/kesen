@@ -159,29 +159,35 @@ class JobCardManagementController extends Controller
             $jobCard->v2_cr = $request['v2_cr'][$index]?? null;
             $jobCard->v2_employee_code = $request['v2_employee_code'][$index]?? null;
 
-            $jobCard->btv_unit = $request['btv_unit'][$index]?? null;
-            $jobCard->btv_pd = $request['btv_pd'][$index]?? null;
-            $jobCard->btv_cr = $request['btv_cr'][$index]?? null;
-            $jobCard->btv_employee_code = $request['btv_employee_code'][$index]?? null;
             $jobCard->t_cnc = $request['t_cnc'][$index]?? null;
             $jobCard->t_dv = $request['t_dv'][$index]?? null;
             $jobCard->t_fqc = $request['t_fqc'][$index]??null;
-            $jobCard->t_sentdate = $request['t_sentdate'][0]??null;
-            $jobCard->bt_writer_code = $request['bt_writer'][$index] ?? null;
+            // $jobCard->t_sentdate = $request['t_sentdate'][0]??null;
+
             $jobCard->bt_unit = $request['bt_unit'][$index] ?? null;
+            $jobCard->bt_writer_code = $request['bt_writer'][$index] ?? null;
             $jobCard->bt_pd = $request['bt_pd'][$index] ?? null;
             $jobCard->bt_cr = $request['bt_cr'][$index] ?? null;
+
+            $jobCard->btv_unit = $request['btv_unit'][$index]?? null;
+            $jobCard->btv_employee_code = $request['btv_employee_code'][$index]?? null;
+            $jobCard->btv_pd = $request['btv_pd'][$index]?? null;
+            $jobCard->btv_cr = $request['btv_cr'][$index]?? null;
+
             $jobCard->bt_cnc = $request['bt_cnc'][$index] ?? null;
             $jobCard->bt_dv = $request['bt_dv'][$index] ?? null;
             $jobCard->bt_fqc = $request['bt_fqc'][$index] ?? null;
-            $jobCard->bt_sentdate = $request['t_sentdate'][0] ?? null;
+            // $jobCard->bt_sentdate = $request['t_sentdate'][0] ?? null;
             $jobCard->job_no = $request['job_no'][0];
             $jobCard->estimate_detail_id = $request['estimate_detail_id'][0];
             $jobCard->sync_no = $carbon;
             $jobCard->save();
 
         }
-        $jobId = JobRegister::where('sr_no',$request['job_no'][0])->first('id')->id;
+        $jobRegister = JobRegister::where('sr_no',$request['job_no'][0])->first();
+        $jobRegister->status = 0;
+        $jobRegister->save();
+        $jobId = $jobRegister->id;
         $docName = EstimatesDetails::where('id',$request['estimate_detail_id'][0])->first('document_name')->document_name;
         $docName = str_replace('/', '!', $docName);
         return redirect()->route('jobcardmanagement.manage.list', ['job_id' => $jobId, 'estimate_detail_id' => $docName])->with('message', 'Job Card updated successfully.');
@@ -229,35 +235,41 @@ class JobCardManagementController extends Controller
             JobCard::updateOrCreate([
                 'id' => $request['id'][$index],
             ],[
+            't_unit' => $request['t_unit'][$index]?? null,
             't_writer_code' => $t_writer,
             't_pd' => $request['t_pd'][$index],
             't_cr' => $request['t_cr'][$index],
+
             'v_unit' => $request['v_unit'][$index]?? null,
             'v_employee_code' => $request['v_employee_code'][$index]?? null,
             'v_pd' => $request['v_pd'][$index]?? null,
             'v_cr' => $request['v_cr'][$index]?? null,
+
             'v2_unit' => $request['v2_unit'][$index]?? null,
             'v2_employee_code' => $request['v2_employee_code'][$index]?? null,
             'v2_pd' => $request['v2_pd'][$index]?? null,
             'v2_cr' => $request['v2_cr'][$index]?? null,
+
             't_cnc' => $request['t_cnc'][$index]?? null,
             't_dv' => $request['t_dv'][$index]?? null,
             't_fqc' => $request['t_fqc'][$index]?? null,
-            't_sentdate' => $request['t_sentdate'][0]?? null,
-            't_unit' => $request['t_unit'][$index]?? null,
+            // 't_sentdate' => $request['t_sentdate'][0]?? null,
+
             'bt_unit' => $request['bt_unit'][$index] ?? null,
             'bt_writer_code' => $request['bt_writer'][$index] ?? null,
             'bt_pd' => $request['bt_pd'][$index] ?? null,
             'bt_cr' => $request['bt_cr'][$index] ?? null,
-            'bt_cnc' => $request['bt_cnc'][$index] ?? null,
-            'bt_dv' => $request['bt_dv'][$index] ?? null,
-            'bt_fqc' => $request['bt_fqc'][$index] ?? null,
-            'bt_sentdate' => $request['t_sentdate'][0] ?? null,
-            'job_no' => $request['job_no'][0],
+
             'btv_unit' => $request['btv_unit'][$index]??null,
             'btv_employee_code' => $request['btv_employee_code'][$index]??null,
             'btv_pd' => $request['btv_pd'][$index]??null,
             'btv_cr' => $request['btv_cr'][$index]??null,
+            
+            'bt_cnc' => $request['bt_cnc'][$index] ?? null,
+            'bt_dv' => $request['bt_dv'][$index] ?? null,
+            'bt_fqc' => $request['bt_fqc'][$index] ?? null,
+            // 'bt_sentdate' => $request['t_sentdate'][0] ?? null,
+            'job_no' => $request['job_no'][0],
             'estimate_detail_id' => $request['estimate_detail_id'][0],
             'sync_no' => $carbon,
 
@@ -265,6 +277,9 @@ class JobCardManagementController extends Controller
         }
 
         $param = explode("|",$job_register_id_and_doc_mame);
+        $jobRegister = JobRegister::where('id',$param[0])->first();
+        $jobRegister->status = 0;
+        $jobRegister->save();
         return redirect()->route('jobcardmanagement.manage.list', ['job_id' => $param[0], 'estimate_detail_id' => $param[1]])->with('message', 'Job Card updated successfully.');
     }
 

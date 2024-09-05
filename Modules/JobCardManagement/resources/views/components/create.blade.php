@@ -61,7 +61,6 @@
             </ol>
         </nav>
         <x-adminlte-card style="background-color: #eaecef;" title="Add Part Copy for {{$estimate_detail->document_name}}" theme="info" icon="fas fa-lg fa-person">
-           
             <form action="{{ route('jobcardmanagement.store') }}" method="POST">
                 @csrf
 
@@ -82,12 +81,12 @@
                                             <div class="row pt-2">
                                                 {{-- t --}}
                                                 <x-adminlte-input name="t_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
-                                                value="{{ old('t_unit[0]') }}" label="T Unit*" required />
+                                                value="{{ $job_register->type == 'site-specific'?'0':old('t_unit[0]') }}" label="T Unit*" required />
                                                 <x-adminlte-select name="t_writer[0]" fgroup-class="col-md-2" required
                                                     value="{{ old('t_writer[0]') }}" label="T Writer*">
                                                     <option value="">Select Writer</option>
                                                     @foreach ($writers as $writer)
-                                                        <option value="{{ $writer->id }}">{{ $writer->writer_name }}</option>
+                                                        <option value="{{ $writer->id }}" {{ $job_register->type == 'site-specific'&&$writer->code=='INT'?'selected':''}}>{{ $writer->writer_name }}</option>
                                                     @endforeach
                                                 </x-adminlte-select>
                                                 <x-adminlte-input name="t_pd[0]" placeholder="PD" fgroup-class="col-md-2"

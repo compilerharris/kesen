@@ -234,7 +234,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="date">Select Sent Date</label>
-                            <input class="form-control" type="date" id="date" name="date" required></input>
+                            <input class="form-control" type="date" id="date" name="date" value="{{\Carbon\Carbon::now()->format('Y-m-d')}}" required></input>
                         </div>
                     </div>
                     <div class="modal-footer">

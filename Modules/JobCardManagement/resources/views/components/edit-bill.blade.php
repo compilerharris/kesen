@@ -29,7 +29,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item "><a href="/job-card-management">Job Card </a></li>
-                <li class="breadcrumb-item ">Job {{$bill_data->sr_no}}</li>
+                <li class="breadcrumb-item "><a href="/job-card-management?jobNo={{$bill_data->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=">Job {{$bill_data->sr_no}}</a></li>
                 <li class="breadcrumb-item ">Edit Bill</li>
             </ol>
         </nav>
