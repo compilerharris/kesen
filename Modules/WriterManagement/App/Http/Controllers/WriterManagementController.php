@@ -313,18 +313,21 @@ class WriterManagementController extends Controller
 
         $total = 0;
         foreach ($job_card as $job) {
-            if($job->t_unit != ''){
+            if($job->t_unit != '' && $job->t_unit != 0){
                 $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit;
             }
-            if($job->bt_unit != ''){
+            if($job->bt_unit != '' && $job->bt_unit != 0){
                 $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit;
             }
-            if($job->v_unit != ''){
+            if($job->v_unit != '' && $job->v_unit != 0){
                 $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit;
+            }
+            if($job->btv_unit != '' && $job->btv_unit != 0){
+                $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit;
             }
         }
         $total = $total + ($request->apply_gst?$total*0.18:0) - ($request->apply_tds?$total*0.1:0) + ($request->performance_charge??0) - ($request->deductible ?? 0);
-        return $total;
+        return $total??0;
     }
 
     public function paymentDelete($writer_id,$paymentId){

@@ -35,7 +35,7 @@ class JobCardManagementController extends Controller
     public function index(Request $request)
     {
         if(empty($request->query()) || (array_key_exists('page', $request->query()) && count($request->query()) === 1)){
-            $job_register = JobRegister::orderBy('sr_no','desc')->paginate(10);
+            $job_register = JobRegister::orderBy('sr_no','desc')->paginate(20);
 
             $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
@@ -462,7 +462,7 @@ class JobCardManagementController extends Controller
             $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
             ->where('sr_no',$this->jobNo)
             ->orderBy('sr_no','desc')
-            ->paginate(10);
+            ->paginate(20);
             if( $job_register->count() == 0 ){
                 return redirect()->back()->with('alert',"No job found.");
             }
@@ -590,7 +590,7 @@ class JobCardManagementController extends Controller
             $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
             ->where('sr_no',$this->jobNo)
             ->orderBy('sr_no','desc')
-            ->paginate(10);
+            ->paginate(20);
             if( $job_register->count() == 0 ){
                 return [];  
             }
@@ -649,7 +649,7 @@ class JobCardManagementController extends Controller
             $query->where('status',$this->status);
         });
         $statusCountsQuery = clone $job_register_query;
-        $job_register = $job_register_query->orderBy('sr_no', 'desc')->paginate(10);
+        $job_register = $job_register_query->orderBy('sr_no', 'desc')->paginate(20);
         if( $job_register->count() == 0 ){
             return [];  
         }
@@ -668,6 +668,11 @@ class JobCardManagementController extends Controller
         $job_register->remark = $request->remark??null;
         $job_register->save();
         return redirect()->back()->with('message', 'Remark updated successfully.');
+    }
+
+    public function getRemark($id){
+        $job_register = JobRegister::where('id', $id)->first();
+        return $job_register?$job_register->remark:'';
     }
 
     public function wUText(Request $request,$id){

@@ -15,6 +15,7 @@
 @php
     $aHeads = [
         ['label' => '#'],
+        ['label' => 'Date'],
         ['label' => 'Job No'],
         ['label' => 'Client Name'],
         ['label' => 'Document Name'],
@@ -50,17 +51,20 @@
         @foreach ($job_register as $index => $row)
             <tr>
                 <td>{{ $index + 1 }}</td>
+                @if (Auth::user()->hasRole('Accounts'))
+                    <td>{{ $row->created_at?\Carbon\Carbon::parse($row->created_at)->format('j M Y'):'---' }}</td>
+                @endif
                 <td>{{ $row->sr_no }}</td>
                 <td>{{ $row->estimate?$row->estimate->client->name:($row->no_estimate?$row->no_estimate->client->name:'') }}</td>
-                <td>{{ $row->estimate_document_id??'' }}</td>
+                <td><p style="width: 100px;">{{ $row->estimate_document_id??'' }}</p></td>
                 <td><p style="width: 70px;">{{ $row->protocol_no??'' }}</p></td>
                 <td>{{ $row->handle_by?$row->handle_by->code:'' }}</td>
-                <td>{{ $row->estimate?$row->estimate->client_person->name:($row->no_estimate->client_person->name??'') }}</td>
+                <td><p style="width: 70px;">{{ $row->estimate?$row->estimate->client_person->name:($row->no_estimate->client_person->name??'') }}</p></td>
                 <td>{{ $row->date?\Carbon\Carbon::parse($row->date)->format('j M Y'):'---' }}</td>
                 @if (Auth::user()->hasRole('Accounts'))
                     <td class="{{empty($row->bill_no)&&$row->status==1?'bg-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'bg-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'bg-success':''))}}">{{$row->status==0||$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'unbilled':$row->bill_no)}}</td>
                     {{-- <td class="{{($row->bill_no==null || $row->bill_no=='') && $row->status==1 ? 'bg-warning':''}}">{{ $row->bill_no!=null || $row->bill_no!='' ? "billed-".$row->bill_no:"unbilled" }}</td> --}}
-                    <td>{{ $row->bill_date&&$row->bill_date!='0000-00-00'? \Carbon\Carbon::parse($row->bill_date)->format('j M Y'):'---' }}</td>
+                    <td>{{ $row->status==0||$row->status==2?'---':($row->bill_date&&$row->bill_date!='0000-00-00'? \Carbon\Carbon::parse($row->bill_date)->format('j M Y'):'---') }}</td>
                     <td>{{ $row->sent_date&&$row->sent_date!='0000-00-00'?\Carbon\Carbon::parse($row->sent_date)->format('j M Y'):'---' }}</td>
                 @endif
                 <td
@@ -166,6 +170,12 @@
     <script>
         function openModal(btn) {
             var jobId = $(btn).data('id');
+            $.ajax({
+                url: 'job-card-management/getRemark/' + jobId,
+                success: function(data) {
+                    $('#remark').html(data);
+                }
+            });
             var actionUrl = 'job-card-management/remark/' + jobId;
             $('#cancelForm').attr('action', actionUrl);
         }

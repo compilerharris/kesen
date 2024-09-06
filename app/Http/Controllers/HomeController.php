@@ -118,7 +118,9 @@ class HomeController extends Controller
         $job_card = JobCard::whereIn('job_no',$jobRegisterIds)
         ->where(function ($query) use ($writerId) {
             $query->where('t_writer_code', $writerId)
-                  ->orWhere('bt_writer_code', $writerId);
+                  ->orWhere('v_employee_code', $writerId)
+                  ->orWhere('bt_writer_code', $writerId)
+                  ->orWhere('btv_employee_code', $writerId);
         })
         ->get();
         if($purpose == 'preview'){

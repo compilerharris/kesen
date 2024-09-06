@@ -139,14 +139,14 @@
                 <td><b>{{ $job->date ? \Carbon\Carbon::parse($job->created_at)->format('j M Y') : '' }}</b></td>
             </tr>
             <tr>
-                <th>Version no</th>
-                <td><b>{{ $job->version_no?? '' }}</b></td>
+                <th>Job Type</th>
+                <td>{{isset($job->type)?ucwords(str_replace("-"," ",$job->type)):'---'}}</td>
                 <th>Protocol No.</th>
                 <td>{{ $job->protocol_no ?? '' }}</td>
             </tr>
             <tr>
-                <th>Verion Date.</th>
-                <td>{{ $job->version_date&&$job->version_date!='0000-00-00' ? \Carbon\Carbon::parse($job->version_date)->format('j M Y') : '' }}</td>
+                <th>Version no. / Date</th>
+                <td><b>{{ $job->version_no?? '' }} {{$job->version_no&&$job->version_date?' / ':''}} {{ $job->version_date&&$job->version_date!='0000-00-00' ? \Carbon\Carbon::parse($job->version_date)->format('j M Y') : '' }}</b></td>
                 <th>Contact Name</th>
                 <td><b>{{ $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name?? '') }}</b></td>
             </tr>

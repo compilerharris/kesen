@@ -37,7 +37,7 @@ class JobRegisterManagementController extends Controller
     public function index(Request $request)
     { 
         if(empty($request->query()) || (array_key_exists('page', $request->query()) && count($request->query()) === 1)){
-            $job_registers = JobRegister::orderBy('sr_no','desc')->paginate(10);
+            $job_registers = JobRegister::orderBy('sr_no','desc')->paginate(20);
 
             $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
