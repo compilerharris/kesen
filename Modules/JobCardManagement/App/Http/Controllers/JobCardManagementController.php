@@ -120,9 +120,9 @@ class JobCardManagementController extends Controller
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $request->validate([
-            't_unit.*'=> 'required|string|max:255',
-            't_writer.*' => 'required|string|max:255',
-            't_pd.*' => 'required|string|max:255',
+            't_unit.*'=> 'nullable|string|max:255',
+            't_writer.*' => 'nullable|string|max:255',
+            't_pd.*' => 'nullable|string|max:255',
             't_cr.*' => 'nullable|string|max:255',
             't_cnc.*' => 'nullable|string|max:255',
             't_dv.*' => 'nullable|max:255',
@@ -144,10 +144,10 @@ class JobCardManagementController extends Controller
         foreach ($request['t_writer'] as $index => $t_writer) {
 
             $jobCard = new JobCard();
-            $jobCard->t_unit = $request['t_unit'][$index];
-            $jobCard->t_writer_code = $t_writer;
-            $jobCard->t_pd = $request['t_pd'][$index];
-            $jobCard->t_cr = $request['t_cr'][$index];
+            $jobCard->t_unit = $request['t_unit'][$index]?? null;
+            $jobCard->t_writer_code = $t_writer?? null;
+            $jobCard->t_pd = $request['t_pd'][$index]?? null;
+            $jobCard->t_cr = $request['t_cr'][$index]?? null;
 
             $jobCard->v_unit = $request['v_unit'][$index]?? null;
             $jobCard->v_pd = $request['v_pd'][$index]?? null;
@@ -210,9 +210,9 @@ class JobCardManagementController extends Controller
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $request->validate([
-            't_writer.*' => 'required|string|max:255',
-            't_unit.*'=> 'required|string|max:255',
-            't_pd.*' => 'required|string|max:255',
+            't_writer.*' => 'nullable|string|max:255',
+            't_unit.*'=> 'nullable|string|max:255',
+            't_pd.*' => 'nullable|string|max:255',
             't_cr.*' => 'nullable|string|max:255',
             't_cnc.*' => 'nullable|string|max:255',
             't_dv.*' => 'nullable|max:255',
@@ -236,9 +236,9 @@ class JobCardManagementController extends Controller
                 'id' => $request['id'][$index],
             ],[
             't_unit' => $request['t_unit'][$index]?? null,
-            't_writer_code' => $t_writer,
-            't_pd' => $request['t_pd'][$index],
-            't_cr' => $request['t_cr'][$index],
+            't_writer_code' => $t_writer?? null,
+            't_pd' => $request['t_pd'][$index]?? null,
+            't_cr' => $request['t_cr'][$index]?? null,
 
             'v_unit' => $request['v_unit'][$index]?? null,
             'v_employee_code' => $request['v_employee_code'][$index]?? null,
@@ -416,9 +416,11 @@ class JobCardManagementController extends Controller
                         return back()->with('alert', 'Please enter all language part copy of '.$langName.' in Job No: '.$job_register->sr_no);
                     }
                     foreach($allPartCopy as $partCopy){
-                        if( is_null($partCopy->t_unit) || is_null($partCopy->t_writer_code) || is_null($partCopy->t_pd) || is_null($partCopy->t_cr) ){
-                            $langName = Language::where('id',$estimate->lang)->first('name')->name;
-                            return back()->with('alert', 'Please enter Translation details of '.$langName.' in Job No: '.$job_register->sr_no);
+                        if($estimate->t){
+                            if( is_null($partCopy->t_unit) || is_null($partCopy->t_writer_code) || is_null($partCopy->t_pd) || is_null($partCopy->t_cr) ){
+                                $langName = Language::where('id',$estimate->lang)->first('name')->name;
+                                return back()->with('alert', 'Please enter Translation details of '.$langName.' in Job No: '.$job_register->sr_no);
+                            }
                         }else if( !is_null($partCopy->v_employee_code) && ( is_null($partCopy->v_pd) || is_null($partCopy->v_cr) ) ){
                             $langName = Language::where('id',$estimate->lang)->first('name')->name;
                             return back()->with('alert', 'Please enter Verification PD and CR Date of '.$langName.' in Job No: '.$job_register->sr_no);
@@ -443,10 +445,12 @@ class JobCardManagementController extends Controller
             $job_register->updated_at = Carbon::now();
             $job_register->save();
             if($status==1){
-                $recipients=config('app.recipients');
-                foreach ($recipients as $recipient) {
-                    Mail::to($recipient)->send(new JobCompletedBilling($job_register));
-                }
+                $recipient = $job_register->client->client_accountant->email;
+                Mail::to($recipient)->send(new JobCompletedBilling($job_register));
+                // $recipients=config('app.recipients');
+                // foreach ($recipients as $recipient) {
+                    // Mail::to($recipient)->send(new JobCompletedBilling($job_register));
+                // }
                 return redirect('/job-card-management')->with('message', 'Job completed and email has been sent.');
             }
             return redirect()->back()->with('message', 'Status changed successfully.');

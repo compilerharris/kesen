@@ -281,6 +281,16 @@
                 }
             });
         });
+
+        // enable disable T
+        $('#bt').click(function() {
+            if ($(this).is(':checked')) {
+                $('#t').prop('disabled', false);
+            } else {
+                $('#t').prop('disabled', true);
+                $('#t').prop('checked', true);
+            }
+        });
     })
     document.getElementById('status').addEventListener('change', function() {
         if (this.value == 2 || this.value == '2') {

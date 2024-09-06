@@ -80,18 +80,32 @@
                                         <div class="card-body">
                                             <div class="row pt-2">
                                                 {{-- t --}}
-                                                <x-adminlte-input name="t_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
-                                                value="{{ $job_register->type == 'site-specific'?'0':old('t_unit[0]') }}" label="T Unit*" required />
-                                                <x-adminlte-select name="t_writer[0]" fgroup-class="col-md-2" required
-                                                    value="{{ old('t_writer[0]') }}" label="T Writer*">
-                                                    <option value="">Select Writer</option>
-                                                    @foreach ($writers as $writer)
-                                                        <option value="{{ $writer->id }}" {{ $job_register->type == 'site-specific'&&$writer->code=='INT'?'selected':''}}>{{ $writer->writer_name }}</option>
-                                                    @endforeach
-                                                </x-adminlte-select>
-                                                <x-adminlte-input name="t_pd[0]" placeholder="PD" fgroup-class="col-md-2"
-                                                    type='date' value="{{ old('t_pd[0]') }}"
-                                                    label="T PD*"  required/>
+                                                @if($estimate_detail->t)
+                                                    <x-adminlte-input name="t_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
+                                                    value="{{ $job_register->type == 'site-specific'?'0':old('t_unit[0]') }}" label="T Unit*" required/>
+                                                    <x-adminlte-select name="t_writer[0]" fgroup-class="col-md-2"
+                                                        value="{{ old('t_writer[0]') }}" label="T Writer*" required>
+                                                        <option value="">Select Writer</option>
+                                                        @foreach ($writers as $writer)
+                                                            <option value="{{ $writer->id }}" {{ $job_register->type == 'site-specific'&&$writer->code=='INT'?'selected':''}}>{{ $writer->writer_name }}</option>
+                                                        @endforeach
+                                                    </x-adminlte-select>
+                                                    <x-adminlte-input name="t_pd[0]" placeholder="PD" fgroup-class="col-md-2" type='date' value="{{ old('t_pd[0]') }}" label="T PD*" required />
+                                                @else
+                                                    <x-adminlte-input name="t_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
+                                                    value="{{ $job_register->type == 'site-specific'?'0':old('t_unit[0]') }}" label="T Unit"/>
+                                                    <x-adminlte-select name="t_writer[0]" fgroup-class="col-md-2"
+                                                        value="{{ old('t_writer[0]') }}" label="T Writer">
+                                                        <option value="">Select Writer</option>
+                                                        @foreach ($writers as $writer)
+                                                            <option value="{{ $writer->id }}" {{ $job_register->type == 'site-specific'&&$writer->code=='INT'?'selected':''}}>{{ $writer->writer_name }}</option>
+                                                        @endforeach
+                                                    </x-adminlte-select>
+                                                    <x-adminlte-input name="t_pd[0]" placeholder="PD" fgroup-class="col-md-2"
+                                                            type='date' value="{{ old('t_pd[0]') }}"
+                                                            label="T PD" />
+                                                @endif
+                                                    
                                                 <x-adminlte-input name="t_cr[0]" placeholder="CR" fgroup-class="col-md-2"
                                                     type='date' value="{{ old('t_cr[0]') }}"
                                                     label="T CR"/>
@@ -119,7 +133,7 @@
                                                             <option value="{{ $user->id }}">Emp - {{ $user->name }}</option>
                                                         @endforeach
                                                         @foreach ($writers as $user)
-                                                            <option value="{{ $user->id }}">Writer - {{ $user->writer_name }}</option>
+                                                            <option value="{{ $user->id }}">W - {{ $user->writer_name }}</option>
                                                         @endforeach
                                                     </x-adminlte-select>
                                                     <x-adminlte-input name="v_pd[0]" placeholder="V1 PD" fgroup-class="col-md-2"
@@ -164,19 +178,34 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="row pt-2">
-                                                    <x-adminlte-input name="bt_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
-                                                        value="{{ old('bt_unit[0]') }}" label="BT Unit" />
-                                                    <x-adminlte-select name="bt_writer[0]" fgroup-class="col-md-2"
-                                                        value="{{ old('bt_writer[0]') }}" label="BT Writer">
-                                                        <option value="">Select Writer</option>
-                                                        @foreach ($writers as $writer)
-                                                            <option value="{{ $writer->id }}">{{ $writer->writer_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </x-adminlte-select>
-                                                    <x-adminlte-input name="bt_pd[0]" placeholder="PD" fgroup-class="col-md-2"
-                                                        type='date' value="{{ old('bt_pd[0]') }}"
-                                                        label="BT PD"  />
+
+                                                    @if(!$estimate_detail->t && $estimate_detail->bt)
+                                                        <x-adminlte-input name="bt_unit[0]" placeholder="Unit"  fgroup-class="col-md-2" value="{{ old('bt_unit[0]') }}" label="BT Unit*" required/>
+                                                        <x-adminlte-select name="bt_writer[0]" fgroup-class="col-md-2"
+                                                            value="{{ old('bt_writer[0]') }}" label="BT Writer*" required>
+                                                            <option value="">Select Writer</option>
+                                                            @foreach ($writers as $writer)
+                                                                <option value="{{ $writer->id }}">{{ $writer->writer_name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </x-adminlte-select>
+                                                        <x-adminlte-input name="bt_pd[0]" placeholder="PD" fgroup-class="col-md-2" type='date' value="{{ old('bt_pd[0]') }}" label="BT PD*" required/>
+                                                    @else
+                                                        <x-adminlte-input name="bt_unit[0]" placeholder="Unit" fgroup-class="col-md-2"
+                                                            value="{{ old('bt_unit[0]') }}" label="BT Unit"/>
+                                                        <x-adminlte-select name="bt_writer[0]" fgroup-class="col-md-2"
+                                                            value="{{ old('bt_writer[0]') }}" label="BT Writer">
+                                                            <option value="">Select Writer</option>
+                                                            @foreach ($writers as $writer)
+                                                                <option value="{{ $writer->id }}">{{ $writer->writer_name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </x-adminlte-select>
+                                                        <x-adminlte-input name="bt_pd[0]" placeholder="PD" fgroup-class="col-md-2"
+                                                            type='date' value="{{ old('bt_pd[0]') }}"
+                                                            label="BT PD"/>
+                                                    @endif
+                                                    
                                                     <x-adminlte-input name="bt_cr[0]" placeholder="CR" fgroup-class="col-md-2"
                                                         type='date' value="{{ old('bt_cr[0]') }}"
                                                         label="BT CR"  />
@@ -205,7 +234,7 @@
                                                                 <option value="{{ $user->id }}">Emp - {{ $user->name }}</option>
                                                             @endforeach
                                                             @foreach ($writers as $user)
-                                                                <option value="{{ $user->id }}">Writer - {{ $user->writer_name }}</option>
+                                                                <option value="{{ $user->id }}">W - {{ $user->writer_name }}</option>
                                                             @endforeach
                                                         </x-adminlte-select>
                                                         <x-adminlte-input name="btv_pd[0]" placeholder="BTV PD" fgroup-class="col-md-2"

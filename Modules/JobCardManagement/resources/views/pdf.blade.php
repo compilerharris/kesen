@@ -140,12 +140,12 @@
             </tr>
             <tr>
                 <th>Job Type</th>
-                <td>{{isset($job->type)?ucwords(str_replace("-"," ",$job->type)):'---'}}</td>
+                <td>{{isset($job->type)?ucwords(str_replace("-"," ",$job->type)):''}}</td>
                 <th>Protocol No.</th>
                 <td>{{ $job->protocol_no ?? '' }}</td>
             </tr>
             <tr>
-                <th>Version no. / Date</th>
+                <th>Ver. no. / Date</th>
                 <td><b>{{ $job->version_no?? '' }} {{$job->version_no&&$job->version_date?' / ':''}} {{ $job->version_date&&$job->version_date!='0000-00-00' ? \Carbon\Carbon::parse($job->version_date)->format('j M Y') : '' }}</b></td>
                 <th>Contact Name</th>
                 <td><b>{{ $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name?? '') }}</b></td>
@@ -206,7 +206,7 @@
                                 @endif
                                 @php $lanRowCount--; @endphp
                                 <td rowspan="5">PC {{$partCopyIndex==1?'':$cardIndex + 1}}</td>
-                                <td style="font-size: 8pt;background-color:grey;">T</td>
+                                <td style="font-size: 8pt;{{$estimate->t?'background-color:grey;':''}}">T</td>
                                 <td>{{ $card->t_unit }}</td>
                                 <td>{{ Modules\WriterManagement\App\Models\Writer::where('id', $card->t_writer_code)->first()->code??'' }}</td>
                                 <td></td>
@@ -214,9 +214,9 @@
                                 <td>{{ $card->t_pd ? \Carbon\Carbon::parse($card->t_pd)->format('j M Y') : '' }}</td>
                                 <td>{{ $card->t_cr ? \Carbon\Carbon::parse($card->t_cr)->format('j M Y') : '' }}</td>
                                 <td>{{ $card->t_writer_code?$card->t_cnc:'' }}</td>
-                                <td>{{ $card->t_dv!=null? (App\Models\User::where('id', $card->t_dv)->first()->code??''):''  }}</td>
-                                <td>{{ $card->t_fqc!=null? App\Models\User::where('id', $card->t_fqc)->first()->code??$card->t_fqc:''  }}</td>
-                                <td>{{ $card->t_sentdate ? \Carbon\Carbon::parse($card->t_sentdate)->format('j M Y') : '' }}</td>
+                                <td>{{ $estimate->t && $card->t_dv!=null? (App\Models\User::where('id', $card->t_dv)->first()->code??''):''  }}</td>
+                                <td>{{ $estimate->t && $card->t_fqc!=null? App\Models\User::where('id', $card->t_fqc)->first()->code??$card->t_fqc:''  }}</td>
+                                <td>{{ $estimate->t && $card->t_sentdate ? \Carbon\Carbon::parse($card->t_sentdate)->format('j M Y') : '' }}</td>
                             </tr>
                             {{-- v1 --}}
                             <tr>
@@ -256,9 +256,9 @@
                                 <td>{{ $card->bt_pd ? \Carbon\Carbon::parse($card->bt_pd)->format('j M Y') : '' }}</td>
                                 <td>{{ $card->bt_cr ? \Carbon\Carbon::parse($card->bt_cr)->format('j M Y') : '' }}</td>
                                 <td>{{ $card->estimateDetail->bt?$card->bt_cnc:'' }}</td>
-                                <td>{{ $card->estimateDetail->bt?($card->bt_dv!=null? App\Models\User::where('id', $card->bt_dv)->first()->code??'':''):'' }}</td>
-                                <td>{{ $estimate->bt&&$card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->code??$card->bt_fqc:''  }}</td>
-                                <td>{{ $card->bt_writer_code ? ($card->bt_sentdate ? \Carbon\Carbon::parse($card->bt_sentdate)->format('j M Y') : ''):'' }}</td>
+                                <td>{{ $estimate->bt && $card->bt_dv!=null? App\Models\User::where('id', $card->bt_dv)->first()->code??'':'' }}</td>
+                                <td>{{ $estimate->bt && $card->bt_fqc!=null? App\Models\User::where('id', $card->bt_fqc)->first()->code??$card->bt_fqc:''  }}</td>
+                                <td>{{ $estimate->bt && $card->bt_writer_code ? ($card->bt_sentdate ? \Carbon\Carbon::parse($card->bt_sentdate)->format('j M Y') : ''):'' }}</td>
                             </tr>
                             {{-- btv --}}
                             <tr>
@@ -344,7 +344,7 @@
                             @php $lanIndex = $lanIndex==0?1:0;@endphp
                             <td rowspan="5" style={{$lanIndex == 0?"background-color:#fff;width:50px":"background-color:lightgrey;width:50px;border-top:2px"}}><b>{{ $estimate->language->name }}</b></td>
                             <td rowspan="5">PC</td>
-                            <td style="font-size: 8pt;background-color:grey;">T</td>
+                            <td style="font-size: 8pt;{{$estimate->t?'background-color:grey;':''}}">T</td>
                             
                             <td style="font-size: 8pt"></td>
                             <td style="font-size: 8pt">

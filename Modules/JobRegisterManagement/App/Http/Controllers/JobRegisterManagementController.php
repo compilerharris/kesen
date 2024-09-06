@@ -133,13 +133,13 @@ class JobRegisterManagementController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
         if($request->estimate_id == 'no_estimate'){
-            $estimate = new NoEstimates();
-            $estimate->client_id = $request->client_id;
-            $estimate->client_contact_person_id = $request->client_contact_person_id;
-            $estimate->created_by = Auth()->user()->id;
-            $estimate->updated_by = Auth()->user()->id;
-            $estimate->save();
             if ($request->document_name != null) {
+                $estimate = new NoEstimates();
+                $estimate->client_id = $request->client_id;
+                $estimate->client_contact_person_id = $request->client_contact_person_id;
+                $estimate->created_by = Auth()->user()->id;
+                $estimate->updated_by = Auth()->user()->id;
+                $estimate->save();
                 foreach($request->lang as $language) {
                     if(isset($language)&&$language!=null&&$language!='')
                        {
@@ -155,6 +155,7 @@ class JobRegisterManagementController extends Controller
                             'unit' => "0",
                             'rate' => 0,
                             'v1' => isset($request['v1']) && $request['v1'] === 'on' ? true : false,
+                            't' => isset($request['t']) && $request['t'] === 'on' ? true : false,
                             'v2' => isset($request['v2']) && $request['v2'] === 'on' ? true : false,
                             'bt' => isset($request['bt']) && $request['bt'] === 'on' ? true : false,
                             'btv' => isset($request['btv']) && $request['btv'] === 'on' ? true : false,
@@ -310,6 +311,7 @@ class JobRegisterManagementController extends Controller
                         'type' => "NA",
                         'unit' => "0",
                         'rate' => 0,
+                        't' => isset($request['t']) && $request['t'] === 'on' ? true : false,
                         'v1' => isset($request['v1']) && $request['v1'] === 'on' ? true : false,
                         'v2' => isset($request['v2']) && $request['v2'] === 'on' ? true : false,
                         'bt' => isset($request['bt']) && $request['bt'] === 'on' ? true : false,

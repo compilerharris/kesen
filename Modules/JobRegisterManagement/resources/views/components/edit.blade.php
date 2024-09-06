@@ -129,7 +129,7 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                         <div class="form-group col-md-1 no_estimate">
                             <label>Translation</label>
                             <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" name="t" id="t" checked disabled>
+                                <input type="checkbox" class="custom-control-input" name="t" id="t" {{$jobRegister->estimate_details[0]->t?'checked disabled':'' }}>
                                 <label class="custom-control-label" for="t"></label>
                             </div>
                         </div>
@@ -316,6 +316,16 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                     $('#client_contact_person_id').html(data.html);
                 }
             });
+        });
+
+        // enable disable T
+        $('#bt').click(function() {
+            if ($(this).is(':checked')) {
+                $('#t').prop('disabled', false);
+            } else {
+                $('#t').prop('disabled', true);
+                $('#t').prop('checked', true);
+            }
         });
     })
 
