@@ -106,7 +106,7 @@
                     <div class="form-group col-md-1 no_estimate">
                         <label>Translation</label>
                         <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" name="t" id="t" checked disabled>
+                            <input type="checkbox" class="custom-control-input" name="t" id="t" checked>
                             <label class="custom-control-label" for="t"></label>
                         </div>
                     </div>

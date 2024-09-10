@@ -20,20 +20,22 @@ class ShareJobRegisters
     public function handle($request, Closure $next)
     {
         
-        $current = Carbon::now('Asia/Kolkata')->format('Y-m-d');
-        $lastMonth = Carbon::now('Asia/Kolkata')->subMonthNoOverflow()->startOfMonth()->format('Y-m-d');
+        // $current = Carbon::now('Asia/Kolkata')->format('Y-m-d');
+        // $lastMonth = Carbon::now('Asia/Kolkata')->subMonthNoOverflow()->startOfMonth()->format('Y-m-d');
 
-        $dayAfterTomorrow = Carbon::now()->addDays(2)->startOfDay()->format('Y-m-d');
-        $deadline_date_end = Carbon::now()->format('Y-m-d');
+        // $dayAfterTomorrow = Carbon::now()->addDays(2)->startOfDay()->format('Y-m-d');
+        // $deadline_date_end = Carbon::now()->format('Y-m-d');
 
-        $job_registers_near_deadline = JobRegister::
-            whereBetween('date', [$lastMonth, $dayAfterTomorrow])
-            ->where('status', 0)
-            ->where('type','!=', 'site-specific')
-            ->orderBy('date')
-            ->get();
+        // $jobRegister = JobRegister::
+        //     whereBetween('date', [$lastMonth, $dayAfterTomorrow])
+        //     ->orderBy('date')
+        //     ->get();
+        // $job_registers_near_deadline = $jobRegister->where('status', 0)->whereIn('type', ['new','amendment']);
 
-        View::share('job_registers_near_deadline', $job_registers_near_deadline);
+        // $job_registers_near_deadline_for_accounts = $jobRegister->where('status',1)->whereNull('bill_no');
+
+        // View::share('job_registers_near_deadline', $job_registers_near_deadline);
+        // View::share('job_registers_near_deadline_for_accounts', $job_registers_near_deadline_for_accounts);
 
         return $next($request);
     }

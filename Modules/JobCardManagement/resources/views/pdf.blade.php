@@ -140,7 +140,7 @@
             </tr>
             <tr>
                 <th>Job Type</th>
-                <td>{{isset($job->type)?ucwords(str_replace("-"," ",$job->type)):''}}</td>
+                <td><b>{{isset($job->type)?ucwords(str_replace("-"," ",$job->type)):''}}</b></td>
                 <th>Protocol No.</th>
                 <td>{{ $job->protocol_no ?? '' }}</td>
             </tr>
@@ -220,7 +220,7 @@
                             </tr>
                             {{-- v1 --}}
                             <tr>
-                                <td style="font-size: 8pt;{{$estimate->v1?'background-color:#f5f5f5;':''}}">V</td>
+                                <td style="font-size: 8pt;{{$card->v_employee_code?'background-color:#f5f5f5;':''}}">V</td>
                                 <td>{{ $card->v_unit }}</td>
                                 <td></td>
                                 <td>{{ App\Models\User::where('id', $card->v_employee_code)->first()->code ??(Modules\WriterManagement\App\Models\Writer::where('id', $card->v_employee_code)->first()->code??'') }}</td>
@@ -234,7 +234,7 @@
                             </tr>
                             {{-- v2 --}}
                             <tr>
-                                <td style="font-size: 8pt;{{$estimate->v2?'background-color:#f5f5f5;':''}}">V2</td>
+                                <td style="font-size: 8pt;{{$card->v2_employee_code?'background-color:#f5f5f5;':''}}">V2</td>
                                 <td>{{ $card->v2_unit }}</td>
                                 <td></td>
                                 <td>{{ App\Models\User::where('id', $card->v2_employee_code)->first()->code ?? '' }}</td>

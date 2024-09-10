@@ -14,6 +14,12 @@
 @endif
 
 @use('\Carbon\Carbon','Carbon')
+@use('Modules\JobRegisterManagement\App\Models\JobRegister','JobRegister')
+@php($lastMonth = Carbon::now('Asia/Kolkata')->subMonthNoOverflow()->startOfMonth()->format('Y-m-d'))
+@php($dayAfterTomorrow = Carbon::now()->addDays(2)->startOfDay()->format('Y-m-d'))
+@php($jobRegister = JobRegister::whereBetween('date', [$lastMonth, $dayAfterTomorrow])->orderBy('date')->get())
+@php($job_registers_near_deadline = $jobRegister->where('status', 0)->whereIn('type', ['new','amendment']))
+@php($job_registers_near_deadline_for_accounts = $jobRegister->where('status',1)->whereNull('bill_no'))
 
 <li class="nav-item dropdown user-menu">
     @php ($tDate = Carbon::now()->format('Y-m-d'))
@@ -45,7 +51,7 @@
                         <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
                             <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';">
                                 <i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no
-                                <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at
+                                <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is
                                 <b  style="font-size: 20px">
                                     {{$dValue}}
                                     {{-- {{ $tDate != $notification->date ? ($tDate->diffInDays(Carbon::parse($notification->date)->format('Y-m-d'))==2?'day after tomorrow':'tomorrow') : "today" }}. --}}
@@ -87,7 +93,7 @@
                             @php($dValue = 'today.')
                         @endif
                         <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
-                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at 
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is 
                                 <b  style="font-size: 20px">{{$dValue}}
                                 {{-- {{ $tDate != $notification->date ? Carbon::parse($notification->date)->diffForHumans() : "today" }}. --}}
                                 </b>
@@ -126,7 +132,7 @@
                             @php($dValue = 'today.')
                         @endif
                         <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
-                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is at 
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is 
                                 <b style="font-size: 20px">{{$dValue}}
                                     {{-- {{ $tDate != $notification->date ? Carbon::parse($notification->date)->diffForHumans() : "today" }}. --}}
                                 </b>

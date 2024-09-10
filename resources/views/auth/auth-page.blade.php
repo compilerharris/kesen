@@ -84,7 +84,8 @@
                     <a href="{{ $dashboard_url }}">
         
                         {{-- Logo Image --}}
-                        @if (config('adminlte.auth_logo.enabled', false))
+                        <h1>LOGIN</h1>
+                        {{-- @if (config('adminlte.auth_logo.enabled', false))
                             <img src="{{ asset(config('adminlte.auth_logo.img.path')) }}"
                                 alt="{{ config('adminlte.auth_logo.img.alt') }}"
                                 @if (config('adminlte.auth_logo.img.class', null))
@@ -99,7 +100,7 @@
                         @else
                             <img src="{{ asset(config('adminlte.logo_img')) }}"
                                 alt="{{ config('adminlte.logo_img_alt') }}" height="50">
-                        @endif
+                        @endif --}}
         
                         {{-- Logo Label --}}
                         {!! config('adminlte.logo', '<b>Admin</b>LTE') !!}
@@ -110,13 +111,13 @@
                 <div class="card {{ config('adminlte.classes_auth_card', 'card-outline card-primary') }}">
         
                     {{-- Card Header --}}
-                    @hasSection('auth_header')
+                    {{-- @hasSection('auth_header')
                         <div class="card-header {{ config('adminlte.classes_auth_header', '') }}">
                             <h3 class="card-title float-none text-center">
                                 @yield('auth_header')
                             </h3>
                         </div>
-                    @endif
+                    @endif --}}
         
                     {{-- Card Body --}}
                     <div class="card-body {{ $auth_type ?? 'login' }}-card-body {{ config('adminlte.classes_auth_body', '') }}">
