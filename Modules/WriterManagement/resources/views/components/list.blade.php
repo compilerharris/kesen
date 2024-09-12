@@ -116,19 +116,15 @@
                                             <td>{{ $row->code }}</td>
         
                                             <td>{{ $row->phone_no }}</td>
-                                            {{-- <td>{{ $row->landline }}</td> --}}
                                             <td>{{ $row->address }}</td>
                                             
-                                            <td>{{ $row->writer_language_map->pluck('language_id')->implode(', ') }}</td>
+                                            <td>{{ $row->writer_language_map->pluck('language.name')->implode(', ') }}</td>
                                             <td>{{ $row->created_by }}</td>
                                             <td width="250px">
                                                 <a
                                                 {{-- @if(!Auth::user()->hasRole('Accounts')) --}}
                                                     @if ($row->status == 1) href="{{ route('writermanagement.edit', $row->id) }}" @else href="javascript:function() { return false; }" @endif class="btn btn-info btn-sm mb-2">Edit</a>
                                                 {{-- @endif --}}
-                                                {{-- <a href="{{route('writermanagement.show', $row->id)}}"><button class="btn btn-xs btn-default text-primary mx-1 shadow" title="View Language">
-                                            View 
-                                        </button> --}}
                                                 <a href="{{ route('writermanagement.viewLanguageMaps', $row->id) }}" class="btn btn-info btn-sm mb-2">View Language</a>
                                                 <a href="{{ route('writermanagement.addPaymentView', $row->id) }}" class="btn btn-success btn-sm mb-2">Add Payment</a>
                                                 <a href="{{ route('writermanagement.viewPayments', $row->id) }}" class="btn btn-info btn-sm mb-2">View Payment</a>

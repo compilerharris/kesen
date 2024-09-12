@@ -105,15 +105,11 @@
                                         </td>
                                         <td>{{ $row->email }}</td>
                                         <td>{{ $row->phone_no }}</td>
-                                        {{-- <td>{{ $row->landline }}</td> --}}
-                                        <td>{{ App\Models\User::where('id', $row->client_accountant_person_id)->first()->name ?? '---' }}
+                                        <td>{{ $row->client_accountant->name ?? '---' }}
                                         </td>
                                         <td>{{ $row->address }}</td>
                                         <td width="250px">
                                             <a href="{{ route('clientmanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">Edit</a>
-                                            {{-- <a href="{{route('clientmanagement.show', $row->id)}}"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="Edit">
-                                        View
-                                    </button></a> --}}
                                             <a href="{{ route('clientmanagement.viewContacts', $row->id) }}" class="btn btn-info btn-sm mb-2">View Contacts</a>
                                             <a href="{{ route('clientmanagement.redirectToRatecardList', $row->id) }}" class="btn btn-info btn-sm mb-2">View Rate Cards</a>
                                             @if(!Auth::user()->hasRole('Accounts'))

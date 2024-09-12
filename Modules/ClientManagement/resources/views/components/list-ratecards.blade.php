@@ -100,17 +100,17 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item "><a href="/client-management">Client </a></li>     
-                <li class="breadcrumb-item "><a href="/client-management/{{$id}}/edit">{{Modules\ClientManagement\App\Models\Client::where('id',$id)->first()->name}}</a></li>
+                <li class="breadcrumb-item "><a href="/client-management/{{$client->id}}/edit">{{$client->name}}</a></li>
                 <li class="breadcrumb-item ">Rate Cards</li> 
             </ol>
         </nav>
         @include('components.notification')
         <div class="card card-info" style="margin:10px">
             <div class="card-header">
-                <h3 style="margin:0">All Rate Cards of "{{Modules\ClientManagement\App\Models\Client::where('id',$id)->first()->name}}"</h3>
+                <h3 style="margin:0">All Rate Cards of "{{$client->name}}"</h3>
             </div>
             <div style="background-color: #eaecef;">
-                <a href="{{ route('clientmanagement.redirectToRatecardAdd', $id) }}"><button class="btn btn-md btn-success "
+                <a href="{{ route('clientmanagement.redirectToRatecardAdd', $client->id) }}"><button class="btn btn-md btn-success "
                     style="float:right;margin:10px">Add Rate Card</button></a>
             </div>
             <div class="card-body" style="background-color: #eaecef;padding-top:0">
@@ -119,11 +119,11 @@
                         <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
                             <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config"
                                 with-buttons>
-                                @foreach ($ratecards as $index => $row)
+                                @foreach ($client->ratecards as $index => $row)
                                     <tr>
         
                                         <td>{{ $loop->index + 1 }}</td>
-                                        <td>{{ \Modules\LanguageManagement\App\Models\Language::where('id',$row->lang)->first()->name }}</td>
+                                        <td>{{ $row->language->name }}</td>
                                         <td>{{ $row->type=='rush'?"Rush":"Normal" }}</td>
                                         <td>{{ $row->t_rate }}</td>
                                         <td>{{ $row->v1_rate }}</td>
@@ -137,9 +137,9 @@
                                         <td>{{ $row->btv_minimum_rate }}</td>
                                         <td>{{ $row->customize_rate }}</td>
                                         <td width="250px">
-                                            <a href="{{ route('clientmanagement.redirectToRatecardEdit', [$id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
+                                            <a href="{{ route('clientmanagement.redirectToRatecardEdit', [$client->id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
                                             <a class="btn btn-danger btn-sm mb-2" title="Delete"
-                                                onclick="disableEnable('{{ route('clientmanagement.ratecardDelete', [$id, $row->id]) }}')">
+                                                onclick="disableEnable('{{ route('clientmanagement.ratecardDelete', [$client->id, $row->id]) }}')">
                                                 <i class="fa fa-lg fa-fw fa-trash"></i>
                                             </a>
                                         </td>

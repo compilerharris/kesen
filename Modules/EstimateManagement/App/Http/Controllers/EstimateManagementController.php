@@ -30,7 +30,7 @@ class EstimateManagementController extends Controller
         $max = request()->get('max') ? Carbon::parse(request()->get('max'))->endOfDay() : null;
     
         // Initialize query
-        $query = Estimates::query();
+        $query = Estimates::query()->with(['client.client_metric','client_person','employee']);
     
         // Apply date filters if present
         if ($min && $max) {

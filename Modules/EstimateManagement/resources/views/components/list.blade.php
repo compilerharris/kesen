@@ -154,11 +154,11 @@
 
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $row->estimate_no }}</td>
-                                        <td>{{ App\Models\Metrix::where('id', $row->client->metrix)->first()->code }}</td>
+                                        <td>{{ $row->client->client_metric->code }}</td>
 
-                                        <td>{{ Modules\ClientManagement\App\Models\Client::where('id', $row->client_id)->first()->name ?? '---' }}
+                                        <td>{{ $row->client->name ?? '---' }}
                                         </td>
-                                        <td>{{ Modules\ClientManagement\App\Models\ContactPerson::where('id', $row->client_contact_person_id)->first()->name ?? '---' }}
+                                        <td>{{ $row->client_person->name ?? '---' }}
                                         </td>
                                         <td>{{ $row->headline }}</td>
                                         {{-- <td>{{ $row->amount }}</td> --}}
@@ -167,7 +167,7 @@
                                             class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
                                             {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected - '.$row->reject_reason) }}
                                         </td>
-                                        <td>{{ App\Models\User::where('id', $row->created_by)->first()->name }}</td>
+                                        <td>{{ $row->employee->name }}</td>
                                         <td width="300px">
 
                                             @if(!Auth::user()->hasRole('Accounts'))

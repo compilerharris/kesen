@@ -25,5 +25,13 @@ class Client extends Model
     public function client_accountant(){
         return $this->belongsTo(User::class,'client_accountant_person_id','id');
     }
+
+    public function contact_person(){
+        return $this->hasMany(ContactPerson::class,'client_id','id');
+    }
+
+    public function ratecards(){
+        return $this->hasMany(Ratecard::class,'client_id','id');
+    }
    
 }

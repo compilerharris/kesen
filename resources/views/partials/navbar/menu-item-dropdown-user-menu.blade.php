@@ -17,7 +17,7 @@
 @use('Modules\JobRegisterManagement\App\Models\JobRegister','JobRegister')
 @php($lastMonth = Carbon::now('Asia/Kolkata')->subMonthNoOverflow()->startOfMonth()->format('Y-m-d'))
 @php($dayAfterTomorrow = Carbon::now()->addDays(2)->startOfDay()->format('Y-m-d'))
-@php($jobRegister = JobRegister::whereBetween('date', [$lastMonth, $dayAfterTomorrow])->orderBy('date')->get())
+@php($jobRegister = JobRegister::with(['estimate.client','no_estimate.client'])->whereBetween('date', [$lastMonth, $dayAfterTomorrow])->orderBy('date')->get())
 @php($job_registers_near_deadline = $jobRegister->where('status', 0)->whereIn('type', ['new','amendment']))
 @php($job_registers_near_deadline_for_accounts = $jobRegister->where('status',1)->whereNull('bill_no'))
 

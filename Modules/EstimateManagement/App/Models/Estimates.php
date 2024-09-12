@@ -3,6 +3,7 @@
 namespace Modules\EstimateManagement\App\Models;
 
 use App\Models\Metrix;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,6 +33,9 @@ class Estimates extends Model
    }
    public function metrics(){   
       return $this->belongsTo(Metrix::class,'metrix','id');
+   }
+   public function employee(){   
+      return $this->belongsTo(User::class,'created_by');
    }
    
 

@@ -15,10 +15,6 @@ class WriterLanguageMap extends Model
     
     protected $guarded=['id'];
 
-    protected function getLanguageIdAttribute($value){
-        return Language::where('id',$value)->first()->name??'';
-    }
-
     public function language(){
         return $this->belongsTo(Language::class, 'language_id');
     }

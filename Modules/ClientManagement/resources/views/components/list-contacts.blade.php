@@ -77,17 +77,17 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item "><a href="/client-management">Client </a></li>     
-                <li class="breadcrumb-item "><a href="/client-management/{{$id}}/edit">{{Modules\ClientManagement\App\Models\Client::where('id',$id)->first()->name}}</a></li>
+                <li class="breadcrumb-item "><a href="/client-management/{{$client->id}}/edit">{{$client->name}}</a></li>
                 <li class="breadcrumb-item ">Contacts</li> 
             </ol>
         </nav>
         @include('components.notification')
         <div class="card card-info" style="margin:10px">
             <div class="card-header">
-                <h3 style="margin:0">All Contacts of "{{Modules\ClientManagement\App\Models\Client::where('id',$id)->first()->name}}"</h3>
+                <h3 style="margin:0">All Contacts of "{{$client->name}}"</h3>
             </div>
             <div style="background-color: #eaecef;">
-                <a href="{{ route('clientmanagement.addContact', $id) }}"><button class="btn btn-md btn-success "
+                <a href="{{ route('clientmanagement.addContact', $client->id) }}"><button class="btn btn-md btn-success "
                     style="float:right;margin:10px">Add Contact</button></a>
             </div>
             <div class="card-body" style="background-color: #eaecef;padding-top:0">
@@ -96,7 +96,7 @@
                         <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
                             <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config"
                                 with-buttons>
-                                @foreach ($contact_persons as $index => $row)
+                                @foreach ($client->contact_person as $index => $row)
                                     <tr>
         
                                         <td>{{ $index + 1 }}</td>
@@ -106,16 +106,16 @@
                                         {{-- <td>{{ $row->landline }}</td> --}}
                                         <td>{{ $row->designation }}</td>
                                         <td width="250px">
-                                            <a href="{{ route('clientmanagement.editContactForm', [$id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
+                                            <a href="{{ route('clientmanagement.editContactForm', [$client->id, $row->id]) }}" class="btn btn-info btn-sm mb-2">Edit</a>
                                             @if ($row->status == 1)
                                                 <a
-                                                    href="{{ route('clientmanagement.disableEnableContact', [$id, $row->id]) }}" class="btn btn-danger btn-sm mb-2">Disable</a>
+                                                    href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}" class="btn btn-danger btn-sm mb-2">Disable</a>
                                             @else
                                                 <a
-                                                    href="{{ route('clientmanagement.disableEnableContact', [$id, $row->id]) }}" class="btn btn-success btn-sm mb-2">Enable</a>
+                                                    href="{{ route('clientmanagement.disableEnableContact', [$client->id, $row->id]) }}" class="btn btn-success btn-sm mb-2">Enable</a>
                                             @endif
                                             <a class="btn btn-danger btn-sm mb-2" title="Delete"
-                                                onclick="disableEnable('{{ route('clientmanagement.deleteContact', [$id, $row->id]) }}')">
+                                                onclick="disableEnable('{{ route('clientmanagement.deleteContact', [$client->id, $row->id]) }}')">
                                                 <i class="fa fa-lg fa-fw fa-trash"></i>
                                             </a>
                                         </td>

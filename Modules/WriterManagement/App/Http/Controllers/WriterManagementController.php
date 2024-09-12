@@ -25,7 +25,7 @@ class WriterManagementController extends Controller
      */
     public function index()
     {
-        $writers=Writer::orderBy('created_at', 'desc')->get();
+        $writers = Writer::with('writer_language_map.language')->orderBy('created_at', 'desc')->get();
         return view('writermanagement::index')->with('writers',$writers);
     }
 

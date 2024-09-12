@@ -18,7 +18,7 @@ class ClientManagementController extends Controller
      */
     public function index()
     {
-        $client=Client::orderBy('created_at','desc')->get();
+        $client = Client::with(['client_accountant'])->orderBy('created_at','desc')->get();
         return view('clientmanagement::index')->with('client',$client->values());
     }
 
@@ -84,10 +84,16 @@ class ClientManagementController extends Controller
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO')||Auth::user()->hasRole('Accounts'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
-        $client=Client::find($id);
-        $contact_persons=ContactPerson::where('client_id',$id)->orderBy('created_at','desc')->get();
-        $ratecards=Ratecard::where('client_id',$id)->orderBy('created_at','desc')->get();
-        return view('clientmanagement::edit',compact('client','contact_persons','ratecards'));
+        $client = Client::with([
+            'contact_person' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'ratecards' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'ratecards.language'
+        ])->find($id);
+        return view('clientmanagement::edit',compact('client'));
     }
 
     /**
@@ -143,8 +149,12 @@ class ClientManagementController extends Controller
     }
 
     public function viewContacts($id){
-        $contact_persons=ContactPerson::where('client_id',$id)->orderBy('created_at','desc')->get();
-        return view('clientmanagement::list_contacts')->with('id',$id)->with('contact_persons',$contact_persons);
+        $client = Client::with([
+            'contact_person' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }
+        ])->find($id);
+        return view('clientmanagement::list_contacts')->with('client',$client);
     }
 
     public function addContactForm($id){
@@ -228,9 +238,9 @@ class ClientManagementController extends Controller
     // rate card
 
     public function redirectToRatecardList($id){
-        $ratecards = Ratecard::where('client_id',$id)->orderBy('created_at','desc')->get();
-        $ratecards = sort_languages_job_card_lang_list($ratecards);
-        return view('clientmanagement::list_ratecards')->with('id',$id)->with('ratecards',$ratecards);
+        $client = Client::with(['ratecards.language'])->find($id);
+        $client->ratecards = sort_languages_job_card_lang_list($client->ratecards);
+        return view('clientmanagement::list_ratecards')->with('client',$client);
     }
 
     public function redirectToRatecardAdd($id){

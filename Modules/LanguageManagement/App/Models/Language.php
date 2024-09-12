@@ -17,12 +17,6 @@ class Language extends Model
      *
      * @return void
      */
-    protected static function booted()
-    {
-        static::addGlobalScope('created_at', function (Builder $builder) {
-            $builder->orderBy('created_at');
-        });
-    }
 
     /**
      * The attributes that are mass assignable.
