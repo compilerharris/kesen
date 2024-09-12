@@ -188,21 +188,21 @@ class EstimateManagementController extends Controller
             'two_way_qc_t.*'=>'nullable|numeric',
             'two_way_qc_bt.*'=>'nullable|numeric',
         ]);
-        $estimate = new Estimates();
-        $estimate->estimate_no = generateEstimateNumber($request->client_id);
-        $estimate->client_id = $request->client_id;
-        $estimate->client_contact_person_id = $request->client_contact_person_id;
-        $estimate->headline = $request->headline;
-        $estimate->type = $request->type;
-        $estimate->date = $request->date;
-        $estimate->currency = $request->currency;
-        $estimate->status = 0;
-        $estimate->discount = $request->discount ?? 0;
-        $estimate->rorn = $request->rorn;
-        $estimate->created_by = Auth()->user()->id;
-        $estimate->updated_by = Auth()->user()->id;
-        $estimate->save();
         if ($request['document_name'] != null) {
+            $estimate = new Estimates();
+            $estimate->estimate_no = generateEstimateNumber($request->client_id);
+            $estimate->client_id = $request->client_id;
+            $estimate->client_contact_person_id = $request->client_contact_person_id;
+            $estimate->headline = $request->headline;
+            $estimate->type = $request->type;
+            $estimate->date = $request->date;
+            $estimate->currency = $request->currency;
+            $estimate->status = 0;
+            $estimate->discount = $request->discount ?? 0;
+            $estimate->rorn = $request->rorn;
+            $estimate->created_by = Auth()->user()->id;
+            $estimate->updated_by = Auth()->user()->id;
+            $estimate->save();
             foreach ($request['document_name'] as $index => $document_name) {
                 $languages=$request['lang_' . $index];
                 for ($i = 0; $i < count($languages); $i++) {
@@ -214,8 +214,8 @@ class EstimateManagementController extends Controller
                                 'estimate_id' => $estimate->id,
                                 'document_name' => $document_name,
                                 'lang' => $languages[$i],
-                                'unit' => $request->type == "customize" ? 1 : ($request->type == "minimum"?1:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$request['unit'][$index])),
-                                'rate' => $request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->t_minimum_rate:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?$rateCard->t_minimum_rate:$rateCard->t_rate)),
+                                // 'unit' => $request->type == "customize" ? 1 : ($request->type == "minimum"?1:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$request['unit'][$index])),
+                                // 'rate' => $request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->t_minimum_rate:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?$rateCard->t_minimum_rate:$rateCard->t_rate)),
                             ], [
                                 'estimate_id' => $estimate->id,
                                 'document_name' => $document_name,
@@ -244,6 +244,8 @@ class EstimateManagementController extends Controller
                     }
                 }
             }
+        }else{
+            return redirect()->back()->with('message', 'Please select at least one document.'); 
         }
         Session::flash('message', 'Estimate created successfully');
         return redirect('/estimate-management');
@@ -367,8 +369,8 @@ class EstimateManagementController extends Controller
                             'estimate_id' => $estimate->id,
                             'document_name' => $document_name,
                             'lang' => $languages[$i],
-                            'unit' => $request->type == "customize" ? 1 : ($request->type == "minimum"?1:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$request['unit'][$index])),
-                            'rate' => $request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->t_minimum_rate:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?$rateCard->t_minimum_rate:$rateCard->t_rate)),
+                            // 'unit' => $request->type == "customize" ? 1 : ($request->type == "minimum"?1:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$request['unit'][$index])),
+                            // 'rate' => $request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->t_minimum_rate:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?$rateCard->t_minimum_rate:$rateCard->t_rate)),
                         ], [
                             'estimate_id' => $estimate->id,
                             'document_name' => $document_name,

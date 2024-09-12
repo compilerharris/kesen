@@ -85,7 +85,7 @@ $config = [
                         <option value="words">Words</option>
                         <option value="unit">Unit</option>
                         <option value="minimum">Minimum</option>
-                        <option value="customize">Customize</option>
+                        <option value="customize">Site Specific</option>
                     </x-adminlte-select2>
                     {{-- <x-adminlte-select2 name="status" fgroup-class="col-md-2" required value="{{ old('status') }}"
                         label="Status">

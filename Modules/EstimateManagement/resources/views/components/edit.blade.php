@@ -408,7 +408,7 @@
                             </option>
                             <option value="minimum" {{ old('type', $estimate->type) == 'minimum' ? 'selected' : '' }}>
                                 Minimum</option>
-                            <option value="customize" {{ old('type', $estimate->type) == 'customize' ? 'selected' : '' }}> Customize</option>
+                            <option value="customize" {{ old('type', $estimate->type) == 'customize' ? 'selected' : '' }}> Site Specific</option>
                     </x-adminlte-select2>
                     {{-- <x-adminlte-select2 name="status" fgroup-class="col-md-2" required label="Status">
                         <option value="">Select Status</option>
