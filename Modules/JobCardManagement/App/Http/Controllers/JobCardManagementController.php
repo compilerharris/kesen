@@ -35,7 +35,12 @@ class JobCardManagementController extends Controller
     public function index(Request $request)
     {
         if(empty($request->query()) || (array_key_exists('page', $request->query()) && count($request->query()) === 1)){
-            $job_register = JobRegister::orderBy('sr_no','desc')->paginate(20);
+            
+            $job_register = JobRegister::with(['estimate.client','estimate.client_person','no_estimate.client','no_estimate.client_person','handle_by','client','employee',
+                'jobCard' => function ($query) {
+                    $query->select('job_no');
+                }])
+            ->orderBy('sr_no','desc')->paginate(20);
 
             $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
@@ -43,8 +48,8 @@ class JobCardManagementController extends Controller
             $job_register->complete_count = $statusCounts['1'] ?? 0;
             $job_register->cancel_count = $statusCounts['2'] ?? 0;
     
-            foreach($job_register as $job_reg){
-                $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
+            foreach ($job_register as $job_reg) {
+                $job_reg->isJobCard = $job_reg->jobCard ? true : false;
             }
     
             $jobNo = $this->jobNo;
@@ -67,8 +72,8 @@ class JobCardManagementController extends Controller
             return redirect()->back()->with('alert',"No job found.");
         }
 
-        foreach($job_register as $job_reg){
-            $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
+        foreach ($job_register as $job_reg) {
+            $job_reg->isJobCard = $job_reg->jobCard ? true : false;
         }
 
         $jobNo = $this->jobNo;
@@ -624,7 +629,10 @@ class JobCardManagementController extends Controller
         $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
         $userIds = $this->pm?User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray():[];
         $clientContactIds = $this->contactPerson?ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray():[];
-        $job_register_query = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+        $job_register_query = JobRegister::with(['estimate.client','estimate.client_person','no_estimate.client','no_estimate.client_person','handle_by','client','employee',
+        'jobCard' => function ($query) {
+            $query->select('job_no');
+        }])
         ->when(count($clientIds)>0, function ($query) use ($clientIds) {
             $query->whereIn('client_id', $clientIds);
         })

@@ -62,6 +62,8 @@
     </div>
 @endif
 
+@use('\Carbon\Carbon','Carbon')
+
 <div class="card-body">
     <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
         <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config">
@@ -71,22 +73,20 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $row->sr_no }}</td>
                     <td>{{ $row->estimate?$row->estimate->estimate_no:"No Estimate" }}</td>
-                    <td>{{ \Carbon\Carbon::parse($row->created_at)->format('j M Y') }}</td>
+                    <td>{{ Carbon::parse($row->created_at)->format('j M Y') }}</td>
                     <td>{{ $row->handle_by->name }}</td>
                     <td>{{ $row->client->name }}</td>
-                    <td>{{ $row->created_by_id?app\Models\User::where('id',$row->created_by_id)->first()->name:'---' }}</td>
+                    <td>{{ $row->employee->name??'---' }}</td>
                     <td class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
                             {{ $row->status == 0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' :  'Canceled - '.$row->cancel_reason) }}
                     </td>
                     <td width="500px">
                         @if(!Auth::user()->hasRole('Accounts'))
-                        <a href="{{ route('jobregistermanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">Edit
-                            </a>
+                            <a href="{{ route('jobregistermanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">Edit</a>
                         @endif
                         <a href="{{ route('jobcardmanagement.pdf', ['job_id' => $row->id]) }}"  target="_blank" class="btn btn-info btn-sm mb-2">Preview</a>
                         @if(!Auth::user()->hasRole('Accounts'))
-                        <a href="{{ route('jobregistermanagement.complete', $row->id) }}" class="btn btn-info btn-sm mb-2">Job Confirmation Letter
-                            </a>
+                            <a href="{{ route('jobregistermanagement.complete', $row->id) }}" class="btn btn-info btn-sm mb-2">Job  Confirmation Letter</a>
                         @endif
                         @if(!Auth::user()->hasRole('Accounts'))
                             @if ($row->status == 1 || $row->status == "1")

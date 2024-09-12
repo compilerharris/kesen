@@ -74,4 +74,8 @@ class JobRegister extends Model
     public function informedTo(){
         return $this->belongsTo(ContactPerson::class,'informed_to');
     }
+
+    public function employee(){
+        return $this->belongsTo(User::class,'created_by_id');
+    }
 }

@@ -37,7 +37,11 @@ class JobRegisterManagementController extends Controller
     public function index(Request $request)
     { 
         if(empty($request->query()) || (array_key_exists('page', $request->query()) && count($request->query()) === 1)){
-            $job_registers = JobRegister::orderBy('sr_no','desc')->paginate(20);
+            $job_registers = JobRegister::with(['estimate','handle_by','client','employee',
+                'jobCard' => function ($query) {
+                    $query->select('job_no');
+                }])
+            ->orderBy('sr_no','desc')->paginate(20);
 
             $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
@@ -45,8 +49,8 @@ class JobRegisterManagementController extends Controller
             $job_registers->complete_count = $statusCounts['1'] ?? 0;
             $job_registers->cancel_count = $statusCounts['2'] ?? 0;
     
-            foreach($job_registers as $job_reg){
-                $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
+            foreach ($job_registers as $job_reg) {
+                $job_reg->isJobCard = $job_reg->jobCard ? true : false;
             }
     
             $jobNo = $this->jobCardService->jobNo;
@@ -69,8 +73,8 @@ class JobRegisterManagementController extends Controller
             return redirect()->back()->with('alert',"No job found.");
         }
 
-        foreach($job_registers as $job_reg){
-            $job_reg->isJobCard = JobCard::where('job_no',$job_reg->sr_no)->first()??false;
+        foreach ($job_registers as $job_reg) {
+            $job_reg->isJobCard = $job_reg->jobCard ? true : false;
         }
 
         $jobNo = $this->jobCardService->jobNo;
