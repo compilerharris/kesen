@@ -21,3 +21,5 @@ package-lock.json
 
 /bootstrap/cache/*
 !/bootstrap/cache/.gitignore
+
+composer.lock
