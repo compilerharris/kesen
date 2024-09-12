@@ -90,7 +90,7 @@ class EstimateManagementController extends Controller
 
     public function viewPdf($id)
     {
-        $estimate = Estimates::where('id', $id)->first();
+        $estimate = Estimates::with(['client.client_metric','client_person','details.language','employee'])->where('id', $id)->first();
         $pdf = FacadePdf::loadView('estimatemanagement::pdf.estimate', ['estimate' => $estimate]);
         return $pdf->stream();
     }

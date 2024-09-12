@@ -142,12 +142,13 @@
             @endif
             <tr>
                 <td style="line-height: 1.5" colspan="2"><strong>Languages Required:</strong>
-                    @php $languages_list=collect(); @endphp
-                    @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
+                    @php $languages_list = $estimate->details->pluck('language'); @endphp
+                    {{-- @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
                         @php 
-                            $languages_list->push(Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()??'');
+                            $languages_list->push($details->language??'');
+                            // $languages_list->push(Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()??'');
                         @endphp
-                    @endforeach
+                    @endforeach --}}
                     @php 
                         $languages_list = sort_languages($languages_list)->pluck('name')->toArray();
                     @endphp
@@ -155,30 +156,6 @@
                     {{ implode(', ',array_filter(array_unique($languages_list), function($value) {return !is_null($value) && $value !== '';})) }}</td>
             </tr>
         </table>
-        {{-- <p style="font-size: 12px"><strong>{{ $estimate->client_person->name }}</strong>
-            <span style="font-size: 12px;float:right;width:300px;line-height: 1;"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</span>
-        </p> --}}
-        {{-- <p style="font-size: 12px"><strong>{{ $estimate->client->name }}</strong>
-        </p>
-        <p>
-            <span style="font-size: 12px;float: left;">{{ $estimate->client->address }}</span>
-            <span style="font-size: 12px;float:right;width:300px;height: auto;"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</span>
-        </p> --}}
-        {{-- <p style="font-size: 12px"><strong>Ref:</strong> Quotation for {{ $estimate->headline }}</p>
-        <p style="font-size: 12px"><strong>Mail Received on:</strong> {{ $estimate->date?\Carbon\Carbon::parse($estimate->date)->format('j M Y'):'' }}</p> --}}
-        {{-- <p style="font-size:12px;line-height:0.5"><strong>Languages Required:</strong>
-            @php $languages_list=collect(); @endphp
-            @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
-                @php 
-                    $languages_list->push(Modules\LanguageManagement\App\Models\Language::where('id',$details->lang)->first()??'');
-                @endphp
-            @endforeach
-            @php 
-                $languages_list = sort_languages($languages_list)->pluck('name')->toArray();
-            @endphp
-            
-            {{ implode(', ',array_filter(array_unique($languages_list), function($value) {return !is_null($value) && $value !== '';})) }}
-        </p> --}}
         @php 
             $counter=6;
             $filteredV1 = array_filter($estimate->details->pluck('v1')->toArray(), function($value) {
@@ -298,14 +275,18 @@
                             {{-- <td>{{$detail->layout_charges_2? "Rs. ".$detail->layout_charges_2."x".$detail->bt_layout_pages."pgs = Rs. ".($detail->bt_layout_pages*$detail->layout_charges_2)."/-" : "---"}}</td> --}}
                         @endif
                         @php 
-                            $languages_ids=Modules\EstimateManagement\App\Models\EstimatesDetails::where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->get('lang')->pluck('lang')
+                            $languages_ids = $estimate->details->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)
+                            // $languages_ids=Modules\EstimateManagement\App\Models\EstimatesDetails::where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->get('lang')->pluck('lang')
                         @endphp
-                        <td>{{ Modules\LanguageManagement\App\Models\Language::whereIn('id', $languages_ids)->pluck('code')->implode('/') }}</td>
+                        <td>{{ $languages_ids->pluck('language.code')->implode('/') }}</td>
+                        {{-- <td>{{ Modules\LanguageManagement\App\Models\Language::whereIn('id', $languages_ids)->pluck('code')->implode('/') }}</td> --}}
                         <td style="width: 20%" class="nowrap">
-                            {{ number_format( (($detail->unit * $detail->rate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()),2) }}
+                            {{ number_format( (($detail->unit * $detail->rate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * ($languages_ids->count()),2) }}
+                            {{-- (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()),2) }} --}}
                         </td>
                         @php
-                            $sub_total = ($sub_total + (($detail->unit * $detail->rate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()));
+                            $sub_total = ($sub_total + (($detail->unit * $detail->rate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * $languages_ids->count()); 
+                            // (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()));
                         @endphp
                     </tr>
                 @endif
@@ -352,8 +333,8 @@
                 <p style="display: inline">For </p>
                 <p style="font-weight: bold;display: inline">{{ $estimate->client->client_metric->name }}</p>
             </div>
-            @if (file_exists(public_path('img/'.\App\Models\User::where('id',$estimate->created_by)->first()->code.'.png')))
-                <img src="{{ public_path('img/'.\App\Models\User::where('id',$estimate->created_by)->first()->code.'.png') }}" alt="{{Auth::user()->name}}" width="120px" style="margin-left:20px;margin-bottom:-10px;">
+            @if (file_exists(public_path('img/'.$estimate->employee->code.'.png')))
+                <img src="{{ public_path('img/'.$estimate->employee->code.'.png') }}" alt="{{Auth::user()->name}}" width="120px" style="margin-left:20px;margin-bottom:-10px;">
             @else
                 <div style="height: 50px;"></div>
             @endif
