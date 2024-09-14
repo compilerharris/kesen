@@ -282,36 +282,49 @@ class EstimateManagementController extends Controller
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
-        $estimate = Estimates::find($id);
-        $contact_persons = ContactPerson::where('client_id', $estimate->client_id)->orderBy('created_at', 'desc')->get();
-        $distinctDetails = $estimate->details()
-        ->select('document_name', 'unit')
-        ->distinct()
-        ->get();
+        $estimate = Estimates::with(['client',
+        'client.contact_person' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        },
+        'details'=> function ($query) {
+            $query->select('estimate_id', 'document_name', 'unit')->groupBy('estimate_id', 'document_name', 'unit');
+        }])
+        ->find($id);
+        
+        $estimate->details = $estimate->details->map(function ($detail) {
+            $languages = EstimatesDetails::where('document_name', $detail->document_name)
+                        ->where('unit', $detail->unit)
+                        ->pluck('lang')->toArray();
+            $detail->languages = $languages;
+            $languagesNames = Language::whereIn('id', $languages)->pluck('name')->toArray();
+            $detail->languagesNames = $languagesNames;
+            return $detail;
+        });
+
+        // dd($estimate->toArray());
         // $distinctDetails = $estimate->details()
-        // ->select('document_name', 'unit', 'rate')
+        // ->select('document_name', 'unit')
         // ->distinct()
         // ->get();
-        $estimate_details = $distinctDetails->map(function ($detail) use ($estimate) {
-            $detail=$estimate->details()
-                ->where('document_name', $detail->document_name)
-                ->where('unit', $detail->unit)
-                // ->where('rate', $detail->rate)
-                ->first();
-            $languages=EstimatesDetails::where('document_name', $detail->document_name)
-                                                ->where('unit', $detail->unit)
-                                                // ->where('rate', $detail->rate)
-                                                ->get('lang')
-                                                ->pluck('lang')->toArray();
-            $detail->languages=$languages;
-            $languagesNames=Language::whereIn('id', $languages)
-                                                ->get('name')
-                                                ->pluck('name')->toArray();
-            $detail->languagesNames=$languagesNames;
-            return $detail;
-
-        });
-        return view('estimatemanagement::edit', compact('estimate', 'contact_persons', 'estimate_details'));
+        // $estimate_details = $distinctDetails->map(function ($detail) use ($estimate) {
+        //     $detail = $estimate->details()
+        //         ->where('document_name', $detail->document_name)
+        //         ->where('unit', $detail->unit)
+        //         // ->where('rate', $detail->rate)
+        //         ->first();
+        //     $languages=EstimatesDetails::where('document_name', $detail->document_name)
+        //                                         ->where('unit', $detail->unit)
+        //                                         // ->where('rate', $detail->rate)
+        //                                         ->get('lang')
+        //                                         ->pluck('lang')->toArray();
+        //     $detail->languages=$languages;
+        //     $languagesNames=Language::whereIn('id', $languages)
+        //                                         ->get('name')
+        //                                         ->pluck('name')->toArray();
+        //     $detail->languagesNames=$languagesNames;
+        //     return $detail;
+        // });
+        return view('estimatemanagement::edit', compact('estimate'));
     }
 
     /**

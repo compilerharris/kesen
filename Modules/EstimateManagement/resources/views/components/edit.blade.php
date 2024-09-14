@@ -63,7 +63,7 @@
                     <x-adminlte-select2 name="client_contact_person_id" id="client_contact_person_id"
                         fgroup-class="col-md-2" required label="Contact Person">
                         <option value="">Select Contact Person</option>
-                        @foreach ($contact_persons as $contactPerson)
+                        @foreach ($estimate->client->contact_person as $contactPerson)
                             <option value="{{ $contactPerson->id }}"
                                 {{ $estimate->client_contact_person_id == $contactPerson->id ? 'selected' : '' }}>
                                 {{ $contactPerson->name }}</option>
@@ -420,7 +420,7 @@
 
                    
                     <div id="repeater">
-                        @foreach ($estimate_details as $index => $detail)
+                        @foreach ($estimate->details as $index => $detail)
                             <div class="repeater-item mt-3">
                                 <div class="card">
                                     <div class="card-header">
@@ -559,8 +559,8 @@
     $(document).ready(function() {  
         addLangScripts();  
         checkTypeValue();
-        let tempIndex = {{ count($estimate_details) }};
-        let itemIndex = {{ count($estimate_details) }};
+        let tempIndex = {{ count($estimate->details) }};
+        let itemIndex = {{ count($estimate->details) }};
 
         $('#add-item').click(function() {
             let newItem = $('.repeater-item.mt-3:first').clone();

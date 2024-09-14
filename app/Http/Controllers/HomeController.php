@@ -203,7 +203,7 @@ class HomeController extends Controller
     
                 // Filter the language map by language name
                 $languageMap = $writer->writer_language_map->first(function ($map) use ($languageName) {
-                    return $map->language_id === $languageName;
+                    return $map->language->name === $languageName;
                 });
                 
                 if ($languageMap) {
