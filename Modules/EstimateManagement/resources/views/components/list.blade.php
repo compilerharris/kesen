@@ -167,7 +167,7 @@
                                             class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
                                             {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected - '.$row->reject_reason) }}
                                         </td>
-                                        <td>{{ $row->employee->name }}</td>
+                                        <td>{{ $row->employee->name??'' }}</td>
                                         <td width="300px">
 
                                             @if(!Auth::user()->hasRole('Accounts'))
