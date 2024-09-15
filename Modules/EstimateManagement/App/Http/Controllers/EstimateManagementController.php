@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Modules\ClientManagement\App\Models\Client;
 use Modules\ClientManagement\App\Models\ContactPerson;
@@ -285,45 +284,36 @@ class EstimateManagementController extends Controller
         $estimate = Estimates::with(['client',
         'client.contact_person' => function ($query) {
             $query->orderBy('created_at', 'desc');
-        },
-        'details'=> function ($query) {
-            $query->select('estimate_id', 'document_name', 'unit')->groupBy('estimate_id', 'document_name', 'unit');
-        }])
-        ->find($id);
-        
-        $estimate->details = $estimate->details->map(function ($detail) {
-            $languages = EstimatesDetails::where('document_name', $detail->document_name)
-                        ->where('unit', $detail->unit)
-                        ->pluck('lang')->toArray();
-            $detail->languages = $languages;
-            $languagesNames = Language::whereIn('id', $languages)->pluck('name')->toArray();
-            $detail->languagesNames = $languagesNames;
-            return $detail;
+        },'details.language'])->find($id);
+        $detailHolder = collect();
+
+        $estimate->details->map(function ($detail) use ($detailHolder) {
+            $key = implode('!', [$detail->document_name, $detail->unit]);
+            $existingDetail = $detailHolder->first(function ($item) use ($key) {
+                return implode('!', [$item->document_name, $item->unit]) === $key;
+            });
+            
+            if ($existingDetail) {
+                $index = $detailHolder->search(function ($item) use ($existingDetail) {
+                    return $item === $existingDetail;
+                });
+                $languages = $existingDetail->languages;
+                array_push($languages,$detail->language->id);
+                $existingDetail->languages = $languages;
+
+                $languagesNames = $existingDetail->languagesNames;
+                array_push($languagesNames,$detail->language->name);
+                $existingDetail->languagesNames = $languagesNames;
+
+                $detailHolder->put($index, $existingDetail);
+            } else {
+                $detail->languages = [$detail->language->id];
+                $detail->languagesNames = [$detail->language->name];
+                $detailHolder->push($detail);
+            }
         });
 
-        // dd($estimate->toArray());
-        // $distinctDetails = $estimate->details()
-        // ->select('document_name', 'unit')
-        // ->distinct()
-        // ->get();
-        // $estimate_details = $distinctDetails->map(function ($detail) use ($estimate) {
-        //     $detail = $estimate->details()
-        //         ->where('document_name', $detail->document_name)
-        //         ->where('unit', $detail->unit)
-        //         // ->where('rate', $detail->rate)
-        //         ->first();
-        //     $languages=EstimatesDetails::where('document_name', $detail->document_name)
-        //                                         ->where('unit', $detail->unit)
-        //                                         // ->where('rate', $detail->rate)
-        //                                         ->get('lang')
-        //                                         ->pluck('lang')->toArray();
-        //     $detail->languages=$languages;
-        //     $languagesNames=Language::whereIn('id', $languages)
-        //                                         ->get('name')
-        //                                         ->pluck('name')->toArray();
-        //     $detail->languagesNames=$languagesNames;
-        //     return $detail;
-        // });
+        $estimate->eDetails = $detailHolder;
         return view('estimatemanagement::edit', compact('estimate'));
     }
 

@@ -420,7 +420,7 @@
 
                    
                     <div id="repeater">
-                        @foreach ($estimate->details as $index => $detail)
+                        @foreach ($estimate->eDetails as $index => $detail)
                             <div class="repeater-item mt-3">
                                 <div class="card">
                                     <div class="card-header">
