@@ -72,7 +72,7 @@
                         value="{{ old('customize_rate',$ratecard->customize_rate) }}" label="Customize Rate" />
                 </div>
 
-                <button type="submit" class="mt-3 btn btn-info" id="ratecardSubmit">Submit</button>
+                <button type="submit" class="mt-3 btn btn-info" id="ratecardSubmit" onClick="this.form.submit(); this.disabled=true; this.innerText='Updating…'; ">Submit</button>
                 {{-- <x-adminlte-button label="Submit" type="submit" id="ratecardSubmit" class="mt-3" /> --}}
 
             </form>

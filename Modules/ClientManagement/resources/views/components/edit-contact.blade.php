@@ -54,7 +54,7 @@
                         type="hidden" value="{{ $contact_person->id }}" />
                 </div>
 
-                <button type="submit" class="mt-3 btn btn-info" >Submit</button>
+                <button type="submit" class="mt-3 btn btn-info" onClick="this.form.submit(); this.disabled=true; this.innerText='Updating…'; ">Submit</button>
                 {{-- <x-adminlte-button label="Submit" type="submit" class="mt-3" /> --}}
 
             </form>

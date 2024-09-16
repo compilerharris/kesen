@@ -93,7 +93,7 @@
                     <x-adminlte-input id="amount" name="total_amount" placeholder="Amount" fgroup-class="col-md-3" type="number"
                         value="{{ old('total_amount', $payment->total_amount) }}" label="Amount" min=0 required readonly/>
                 </div>
-                <button type="submit" class="mt-3 btn btn-info" >Update</button>
+                <button type="submit" class="mt-3 btn btn-info" onClick="this.form.submit(); this.disabled=true; this.innerText='Updating…'; ">Update</button>
                 {{-- <x-adminlte-button label="Update" type="submit" class="mt-3" /> --}}
             </form>
         </x-adminlte-card>

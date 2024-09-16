@@ -278,7 +278,7 @@
                 
                 <button type="button" class="btn btn-primary mt-2" id="add-item">Add Part Copy</button>
                 <br>
-                <button type="submit" class="mt-3 btn btn-success" style="padding: 5px 15px; font-size: 1.5rem;">Submit</button>
+                <button type="submit" class="mt-3 btn btn-success" style="padding: 5px 15px; font-size: 1.5rem;" onClick="this.form.submit(); this.disabled=true; this.innerText='Creating…'; ">Submit</button>
 
             </form>
         </x-adminlte-card>

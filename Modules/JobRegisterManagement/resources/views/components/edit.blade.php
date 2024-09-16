@@ -247,7 +247,7 @@ $accountants = App\Models\User::where('email', '!=', 'developer@kesen.com')
                 </div>
 
                 @if($jobRegister->estimateType=='no_estimate')
-                <button type="submit" id="jobRegisterSubmit" class="mt-3 btn btn-info">Update</button>
+                <button type="submit" id="jobRegisterSubmit" class="mt-3 btn btn-info" onClick="this.form.submit(); this.disabled=true; this.innerText='Updating…'; ">Update</button>
                 @else
                     <button type="submit" class="mt-3 btn btn-info">Update</button>
                 @endif

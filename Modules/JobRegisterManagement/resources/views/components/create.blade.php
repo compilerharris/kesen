@@ -193,7 +193,7 @@
                     <span id="cancel" class="col-md-3"></span>
                 </div>
 
-                <button type="submit" id="jobRegisterSubmit" class="mt-3 btn btn-info">Submit</button>
+                <button type="submit" id="jobRegisterSubmit" class="mt-3 btn btn-info" onClick="this.form.submit(); this.disabled=true; this.innerText='Creating…'; ">Submit</button>
 
             </form>
         </x-adminlte-card>
