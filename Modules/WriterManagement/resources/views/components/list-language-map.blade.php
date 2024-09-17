@@ -110,7 +110,7 @@
                                 <tr>
 
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $row->language_id }}</td>
+                                    <td>{{ $row->language->name }}</td>
                                     <td>{{ $row->per_unit_charges }}</td>
                                     <td>{{ $row->checking_charges }}</td>
                                     <td>{{ $row->bt_charges }}</td>

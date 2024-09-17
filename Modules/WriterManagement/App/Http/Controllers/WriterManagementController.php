@@ -122,7 +122,7 @@ class WriterManagementController extends Controller
     }
 
     public function viewLanguageMaps($writer_id){
-        $language_map=WriterLanguageMap::where('writer_id',$writer_id)->orderBy('created_at', 'desc')->get();
+        $language_map=WriterLanguageMap::with('language')->where('writer_id',$writer_id)->orderBy('created_at', 'desc')->get();
         return view('writermanagement::language-maps')->with('language_map',$language_map)->with('id',$writer_id);
     }
 
