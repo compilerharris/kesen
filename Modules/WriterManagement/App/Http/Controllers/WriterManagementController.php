@@ -84,7 +84,7 @@ class WriterManagementController extends Controller
             return redirect()->back()->with('alert', 'You are not autherized.'); 
         }
         $writer=Writer::find($id);
-        $language_map=WriterLanguageMap::where('writer_id',$id)->orderBy('created_at', 'desc')->get();
+        $language_map=WriterLanguageMap::with('language')->where('writer_id',$id)->orderBy('created_at', 'desc')->get();
         $payments= WriterPayment::where('writer_id',$id)->orderBy('created_at', 'desc')->get();
         return view('writermanagement::edit',compact('writer','language_map','payments'))->with('id',$id);
     }
