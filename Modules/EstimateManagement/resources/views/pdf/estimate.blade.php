@@ -196,6 +196,10 @@
                         @php $counter=$counter+1; @endphp
                         <th class="nowrap">Layout<br>Charges</th>
                     @endif
+                    @if (isset($estimate->details[0]->back_translation) && ($estimate->details[0]->back_translation!=$estimate->details[0]->rate))
+                        @php $counter=$counter+1; @endphp
+                        <th>BT Rate</th>
+                    @endif
                     @if (count($filteredBt)>0)
                         @php $counter=$counter+1; @endphp
                         <th>Back Translation</th>
@@ -252,6 +256,9 @@
                                 @endif
                             </td>
                             {{-- <td>{{$detail->layout_charges? "Rs. ".$detail->layout_charges."x".$detail->layout_pages."pgs = Rs. ".($detail->layout_pages*$detail->layout_charges)."/-" : "---" }}</td> --}}
+                        @endif
+                        @if (isset($estimate->details[0]->back_translation) && ($estimate->details[0]->back_translation!=$estimate->details[0]->rate))
+                            <td>{{ $detail->back_translation??'---' }}</td>
                         @endif
                         @if (count($filteredBt)>0)
                             <td>{{ $detail->back_translation?$detail->back_translation*$detail->unit:'---' }}</td>
