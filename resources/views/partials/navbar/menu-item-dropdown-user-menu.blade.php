@@ -49,8 +49,8 @@
                             @php($dValue = 'today.')
                         @endif
                         <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
-                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';">
-                                <i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='#d39e00';" onmouseout="this.style.color='#4a5058';">
+                                <i class="fas fa-exclamation-triangle mr-2" style="color: #d39e00;"></i> Deadline for Job no
                                 <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is
                                 <b  style="font-size: 20px">
                                     {{$dValue}}
@@ -61,7 +61,7 @@
                     @endif
                 @endforeach
                 @foreach($job_registers_near_deadline_for_accounts as $notification)
-                    <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
+                    <div class="callout callout-success" style="padding: 0.5rem;margin-bottom: 5px;">
                         <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-check mr-2" style="color: green;"></i> Job no: <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is ready for billing since <b>{{ $notification->updated_at->diffForHumans() }}</b></a>
                     </div>
                 @endforeach
@@ -93,7 +93,7 @@
                             @php($dValue = 'today.')
                         @endif
                         <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
-                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is 
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='#d39e00';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: #d39e00;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is 
                                 <b  style="font-size: 20px">{{$dValue}}
                                 {{-- {{ $tDate != $notification->date ? Carbon::parse($notification->date)->diffForHumans() : "today" }}. --}}
                                 </b>
@@ -132,7 +132,7 @@
                             @php($dValue = 'today.')
                         @endif
                         <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
-                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: green;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is 
+                            <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='#d39e00';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-exclamation-triangle mr-2" style="color: #d39e00;"></i> Deadline for Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is 
                                 <b style="font-size: 20px">{{$dValue}}
                                     {{-- {{ $tDate != $notification->date ? Carbon::parse($notification->date)->diffForHumans() : "today" }}. --}}
                                 </b>
@@ -153,7 +153,7 @@
                 <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline_for_accounts) }} Notifications</span>
                 <div class="dropdown-divider"></div>
                 @foreach($job_registers_near_deadline_for_accounts as $notification)
-                    <div class="callout callout-warning" style="padding: 0.5rem;margin-bottom: 5px;">
+                    <div class="callout callout-success" style="padding: 0.5rem;margin-bottom: 5px;">
                         <a href="/job-card-management?jobNo={{$notification->sr_no}}&cp=&document=&pm=&contactPerson=&from=&to=&status=" style="text-decoration: none;" onmouseover="this.style.color='green';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-check mr-2" style="color: green;"></i> Job no: <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate?$notification->estimate->client->name:$notification->no_estimate->client->name }}</b> is ready for billing since <b>{{ $notification->updated_at->diffForHumans() }}</b></a>
                     </div>
                 @endforeach
