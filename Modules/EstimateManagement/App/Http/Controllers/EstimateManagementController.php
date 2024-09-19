@@ -354,6 +354,7 @@ class EstimateManagementController extends Controller
         $estimate->currency = $request->currency;
         $estimate->status = 0;
         $estimate->updated_by = Auth()->user()->id;
+        $estimate->updated_at = Carbon::now()->format('Y-m-d H:i:s');
         $estimate->save();
         foreach ($request['document_name'] as $index => $document_name) {
             $languages=$request['lang_' . $index];

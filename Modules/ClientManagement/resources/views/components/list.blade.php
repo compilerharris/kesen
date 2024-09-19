@@ -94,8 +94,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
-                            <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config"
-                                with-buttons>
+                            <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config">
                                 @foreach ($client as $index => $row)
                                     <tr>
         
