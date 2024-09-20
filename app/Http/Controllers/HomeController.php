@@ -273,7 +273,7 @@ class HomeController extends Controller
                 $query->whereIn('bt_writer_code', $writers)
                       ->whereNotNull('bt_pd')
                       ->whereNull('bt_cr');
-            })->orderBy('job_no')->get();
+            })->orderBy('t_writer_code')->get();
             $writerIds = [];
             $writerWorkload = $writerWorkload->filter(function($job) use ($request, &$writerIds,$writers) {
                 $estimateDetail = EstimatesDetails::with('language')->where('id', $job->estimate_detail_id)->where('lang', $request['lang'])->first();
