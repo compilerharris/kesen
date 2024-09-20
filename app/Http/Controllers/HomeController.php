@@ -9,6 +9,7 @@ use Modules\JobCardManagement\App\Models\JobCard;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Facades\Auth;
 use Modules\JobRegisterManagement\App\Models\JobRegister;
+use Modules\LanguageManagement\App\Models\Language;
 use Modules\WriterManagement\App\Models\Writer;
 use Modules\WriterManagement\App\Models\WriterLanguageMap;
 use Modules\WriterManagement\App\Models\WriterPayment;
@@ -243,27 +244,58 @@ class HomeController extends Controller
         }
         return view('reports.writer-workload-report');
     }
-
+    
     public function writerWorkload(Request $request){
-        $writerWorkload = JobCard::where(function ($query) use ($request) {
-            $query->where('t_writer_code', $request->writer)
-                  ->whereNotNull('t_pd')
-                  ->whereNull('t_cr');
-        })->orWhere(function ($query) use ($request) {
-            $query->where('bt_writer_code', $request->writer)
-                  ->whereNotNull('bt_pd')
-                  ->whereNull('bt_cr');
-        })->orderBy('job_no')->get();
-        if(is_array($request->lang) && count($request->lang)>0){
-            $writerWorkload = $writerWorkload->filter(function($job) use ($request){
-                $lang = EstimatesDetails::where('id',$job->estimate_detail_id)->whereIn('lang',$request['lang'])->first();
-                return $lang?true:false;
+        if(isset($request->writer) || isset($request->lang)){
+            if(isset($request->writer) && !isset($request->lang)){
+                $writerWorkload = JobCard::where(function ($query) use ($request) {
+                    $query->where('t_writer_code', $request->writer)
+                          ->whereNotNull('t_pd')
+                          ->whereNull('t_cr');
+                })->orWhere(function ($query) use ($request) {
+                    $query->where('bt_writer_code', $request->writer)
+                          ->whereNotNull('bt_pd')
+                          ->whereNull('bt_cr');
+                })->orderBy('job_no')->get();
+                $writerWorkload->writerId = $request->writer;
+                $writerWorkload->writerIds = [$request->writer];
+                $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload'));
+                return $pdf->stream();
+            }
+            $writers = WriterLanguageMap::where('language_id',$request->lang)->pluck('writer_id')->toArray();
+            $writerWorkload = JobCard::with([
+                'estimateDetail','jobRegister.handle_by','tWriter.writer_language_map.language','btWriter.writer_language_map.language'])
+            ->where(function ($query) use ($writers) {
+                $query->whereIn('t_writer_code', $writers)
+                      ->whereNotNull('t_pd')
+                      ->whereNull('t_cr');
+            })->orWhere(function ($query) use ($writers) {
+                $query->whereIn('bt_writer_code', $writers)
+                      ->whereNotNull('bt_pd')
+                      ->whereNull('bt_cr');
+            })->orderBy('job_no')->get();
+            $writerIds = [];
+            $writerWorkload = $writerWorkload->filter(function($job) use ($request, &$writerIds,$writers) {
+                $estimateDetail = EstimatesDetails::with('language')->where('id', $job->estimate_detail_id)->where('lang', $request['lang'])->first();
+                if ($estimateDetail) {
+                    if(in_array($job->t_writer_code,$writers)){
+                        array_push($writerIds, $job->t_writer_code);
+                    }
+                    if(in_array($job->bt_writer_code,$writers)){   
+                        array_push($writerIds, $job->bt_writer_code);
+                    }
+                    return true;
+                }
+                return false;
             });
+            $writerWorkload->writerId = $request->writer;
+            $writerWorkload->language = Language::find($request->lang)->first()->name;
+            $writerWorkload->writerIds = array_unique($writerIds);
+            // return view('reports.pdf.pdf-writer-workload', compact('writerWorkload'));
+            $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload'));
+            return $pdf->stream();
         }
-        $writerWorkload->writerId = $request->writer;
-        // return view('reports.pdf.pdf-writer-workload', compact('writerWorkload'));
-        $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload'));
-        return $pdf->stream();
+        return redirect()->back()->with('alert','Please select at least one language or writer.');
     }
 
     public function getWritersByLangIds($ids)
