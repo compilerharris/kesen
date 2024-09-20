@@ -19,6 +19,7 @@
         'placeholder' => 'Search Language...',
         'showTick' => true,
         'actionsBox' => true,
+        'allowClear' => true
     ];
 @endphp
 @if ($layoutHelper->isLayoutTopnavEnabled())

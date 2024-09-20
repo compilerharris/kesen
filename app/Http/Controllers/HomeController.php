@@ -259,12 +259,12 @@ class HomeController extends Controller
                 })->orderBy('job_no')->get();
                 $writerWorkload->writerId = $request->writer;
                 $writerWorkload->writerIds = [$request->writer];
-                $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload'));
+                $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload')) ->setPaper('a4', 'landscape');
                 return $pdf->stream();
             }
             $writers = WriterLanguageMap::where('language_id',$request->lang)->pluck('writer_id')->toArray();
             $writerWorkload = JobCard::with([
-                'estimateDetail','jobRegister.handle_by','tWriter.writer_language_map.language','btWriter.writer_language_map.language'])
+                'estimateDetail','jobRegister.handle_by','tWriter','btWriter'])
             ->where(function ($query) use ($writers) {
                 $query->whereIn('t_writer_code', $writers)
                       ->whereNotNull('t_pd')
@@ -289,10 +289,10 @@ class HomeController extends Controller
                 return false;
             });
             $writerWorkload->writerId = $request->writer;
-            $writerWorkload->language = Language::find($request->lang)->first()->name;
+            $writerWorkload->language = Language::where('id',$request->lang)->first()->name;
             $writerWorkload->writerIds = array_unique($writerIds);
             // return view('reports.pdf.pdf-writer-workload', compact('writerWorkload'));
-            $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload'));
+            $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload')) ->setPaper('a4', 'landscape');
             return $pdf->stream();
         }
         return redirect()->back()->with('alert','Please select at least one language or writer.');
