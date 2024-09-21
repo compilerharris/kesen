@@ -248,6 +248,8 @@ class HomeController extends Controller
     public function writerWorkload(Request $request){
         if(isset($request->writer) || isset($request->lang)){
             if(isset($request->writer) && !isset($request->lang)){
+                $twoMonthsAgo = Carbon::now('Asia/Kolkata')->subMonthsNoOverflow(2)->startOfMonth()->format('Y-m-d');
+                $today = Carbon::now('Asia/Kolkata')->format('Y-m-d');
                 $writerWorkload = JobCard::where(function ($query) use ($request) {
                     $query->where('t_writer_code', $request->writer)
                           ->whereNotNull('t_pd')
@@ -256,13 +258,16 @@ class HomeController extends Controller
                     $query->where('bt_writer_code', $request->writer)
                           ->whereNotNull('bt_pd')
                           ->whereNull('bt_cr');
-                })->orderBy('job_no')->get();
+                })->whereBetween('created_at', [$twoMonthsAgo, $today])->orderBy('job_no')->get();
                 $writerWorkload->writerId = $request->writer;
                 $writerWorkload->writerIds = [$request->writer];
+                // return view('reports.pdf.pdf-writer-workload', compact('writerWorkload'));
                 $pdf = FacadePdf::loadView('reports.pdf.pdf-writer-workload',compact('writerWorkload')) ->setPaper('a4', 'landscape');
                 return $pdf->stream();
             }
             $writers = WriterLanguageMap::where('language_id',$request->lang)->pluck('writer_id')->toArray();
+            $twoMonthsAgo = Carbon::now('Asia/Kolkata')->subMonthsNoOverflow(2)->startOfMonth()->format('Y-m-d');
+            $today = Carbon::now('Asia/Kolkata')->format('Y-m-d');
             $writerWorkload = JobCard::with([
                 'estimateDetail','jobRegister.handle_by','tWriter','btWriter'])
             ->where(function ($query) use ($writers) {
@@ -273,9 +278,9 @@ class HomeController extends Controller
                 $query->whereIn('bt_writer_code', $writers)
                       ->whereNotNull('bt_pd')
                       ->whereNull('bt_cr');
-            })->orderBy('t_writer_code')->get();
+            })->whereBetween('created_at', [$twoMonthsAgo, $today])->orderBy('t_writer_code')->get();
             $writerIds = [];
-            $writerWorkload = $writerWorkload->filter(function($job) use ($request, &$writerIds,$writers) {
+            $writerWorkload = $writerWorkload->filter(function($job) use ($request, &$writerIds, $writers) {
                 $estimateDetail = EstimatesDetails::with('language')->where('id', $job->estimate_detail_id)->where('lang', $request['lang'])->first();
                 if ($estimateDetail) {
                     if(in_array($job->t_writer_code,$writers)){
