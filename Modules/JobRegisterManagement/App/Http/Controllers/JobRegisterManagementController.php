@@ -60,13 +60,14 @@ class JobRegisterManagementController extends Controller
             $contactPerson = $this->jobCardService->contactPerson;
             $from = $this->jobCardService->from;
             $to = $this->jobCardService->to;
+            $billingStatus = $this->jobCardService->billingStatus;
             $status = $this->jobCardService->status;
 
             if ($request->ajax()) {
                 return view('jobregistermanagement::_job_registers', compact('job_registers','jobNo','cp','document','pm','contactPerson','from','to','status'))->render();
             }
 
-            return view('jobregistermanagement::index', compact('job_registers','jobNo','cp','document','pm','contactPerson','from','to','status'));
+            return view('jobregistermanagement::index', compact('job_registers','jobNo','cp','document','pm','contactPerson','from','to','billingStatus','status'));
         }
         $job_registers = $this->jobCardService->jobSearch($request);
         if(count($job_registers) == 0){
@@ -84,6 +85,7 @@ class JobRegisterManagementController extends Controller
         $contactPerson = $this->jobCardService->contactPerson;
         $from = $this->jobCardService->from;
         $to = $this->jobCardService->to;
+        $billingStatus = $this->jobCardService->billingStatus;
         $status = $this->jobCardService->status;
 
         // Check if the request is AJAX and return the partial view if true
@@ -91,7 +93,7 @@ class JobRegisterManagementController extends Controller
             return view('jobregistermanagement::_job_registers', compact('job_registers', 'jobNo','cp','document','pm','contactPerson','from','to','status'))->render();
         }
 
-        return view('jobregistermanagement::index', compact('job_registers', 'jobNo','cp','document','pm','contactPerson','from','to','status'));
+        return view('jobregistermanagement::index', compact('job_registers', 'jobNo','cp','document','pm','contactPerson','from','to','billingStatus','status'));
     }
 
     /**

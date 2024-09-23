@@ -30,6 +30,7 @@ class JobCardManagementController extends Controller
     public $contactPerson = null;
     public $from = null;
     public $to = null;
+    public $billingStatus = null;
     public $status = null;
 
     public function index(Request $request)
@@ -59,13 +60,14 @@ class JobCardManagementController extends Controller
             $contactPerson = $this->contactPerson;
             $from = $this->from;
             $to = $this->to;
+            $billingStatus = $this->billingStatus;
             $status = $this->status;
 
             if ($request->ajax()) {
                 return view('jobcardmanagement::_job_cards', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'))->render();
             }
 
-            return view('jobcardmanagement::manage', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'));
+            return view('jobcardmanagement::manage', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','billingStatus','status'));
         }
         $job_register = $this->jobSearch($request);
         if(count($job_register) == 0){
@@ -83,13 +85,14 @@ class JobCardManagementController extends Controller
         $contactPerson = $this->contactPerson;
         $from = $this->from;
         $to = $this->to;
+        $billingStatus = $this->billingStatus;
         $status = $this->status;
 
         if ($request->ajax()) {
             return view('jobcardmanagement::_job_cards', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'))->render();
         }
 
-        return view('jobcardmanagement::manage', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'));
+        return view('jobcardmanagement::manage', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','billingStatus','status'));
     }
 
     public function create($job_id,$estimate_detail_id){
@@ -595,7 +598,7 @@ class JobCardManagementController extends Controller
     public function jobSearch($request){
         if($request->get('jobNo') != ''){
             $this->jobNo = $request->get('jobNo');
-            $this->cp = $this->document = $this->pm = $this->contactPerson = $this->from = $this->to = $this->status = null;
+            $this->cp = $this->document = $this->pm = $this->contactPerson = $this->from = $this->to = $this->billingStatus = $this->status = null;
             $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
             ->where('sr_no',$this->jobNo)
             ->orderBy('sr_no','desc')
@@ -624,6 +627,7 @@ class JobCardManagementController extends Controller
         $this->contactPerson = $request->get('contactPerson', null);
         $this->from = $request->get('from', null);
         $this->to = $request->get('to', null);
+        $this->billingStatus = $request->get('billingStatus', null);
         $this->status =  $request->get('status', null);
 
         $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
@@ -656,6 +660,12 @@ class JobCardManagementController extends Controller
         })
         ->when($this->from, function ($query) use ($endDate){
             $query->whereBetween('created_at', [$this->from,$endDate]);
+        })
+        ->when($this->billingStatus == 0, function($query) {
+            $query->whereNull('bill_no')->where('status',1);
+        })
+        ->when($this->billingStatus == 1, function($query) {
+            $query->whereNotNull('bill_no');
         })
         ->when(in_array($this->status,['0','1','2']), function ($query){
             $query->where('status',$this->status);

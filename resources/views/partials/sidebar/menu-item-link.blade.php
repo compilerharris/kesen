@@ -1,4 +1,6 @@
-@if(Auth::user()->hasRole('Project Manager'))
+@if(Auth::user()->hasRole('CEO'))
+    @php $access_menu=['Estimate Management','Job Card Management','Reports','Client Bill Export','Writer Workload'] @endphp
+@elseif(Auth::user()->hasRole('Project Manager'))
     @php $access_menu=['Job Card Management','Reports','Writer Workload'] @endphp
 @elseif(Auth::user()->hasRole('Quality Control Executive'))
     @php $access_menu=[] @endphp

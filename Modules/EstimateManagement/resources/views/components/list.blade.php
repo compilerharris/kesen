@@ -14,41 +14,24 @@
 </style>
 @php
     $heads = [
-        [
-            'label' => 'ID',
-        ],
-        [
-            'label' => 'Estimate No',
-        ],
-        [
-            'label' => 'Metrix',
-        ],
-        [
-            'label' => 'Client Name',
-        ],
-        [
-            'label' => 'Contact Person Name',
-        ],
-
-        [
-            'label' => 'Headline',
-        ],
-        // [
-        //     'label' => 'Amount',
-        // ],
-
-        [
-            'label' => 'Currency',
-        ],
-        [
-            'label' => 'Status',
-        ],
-        [
-            'label' => 'Created By',
-        ],
-        [
-            'label' => 'Action',
-        ],
+        ['label' => '#'],
+        ['label' => 'Estimate No'],
+        ['label' => 'Metrix'],
+        ['label' => 'Client Name'],
+        ['label' => 'Contact Person Name'],
+        ['label' => 'Headline'],
+        ['label' => 'Currency'],
+        ['label' => 'Status'],
+        ['label' => 'Created By'],
+        ['label' => 'Action']
+    ];
+    $ceoHeads = [
+        ['label' => '#'],
+        ['label' => 'Estimate No'],
+        ['label' => 'Client Name'],
+        ['label' => 'Contact Person Name'],
+        ['label' => 'Headline'],
+        ['label' => 'Status']
     ];
     $config['paging'] = true;
     $config['lengthMenu'] = [10, 50, 100, 500];
@@ -126,86 +109,101 @@
                             </tr>
                         </tbody>
                     </table>
-                    <span class="right badge badge-primary p-2 fs-6 mt-2 mb-2">Total Estimate:
-                        {{ $estimates->count() }}</span>
-                    <span class="right badge badge-success p-2 fs-6">Total Approved:
-                        {{ $estimates_approved_count }}</span>
-                    <span class="right badge badge-danger p-2 fs-6">Total Rejected:
-                        {{ $estimates_rejected_count }}</span>
-                    @if (request()->input('min') || request()->input('max'))
-                        <a
-                            href="{{ route('estimatemanagement.exporteestimate') }}?min={{ request()->input('min') }}&max={{ request()->input('max') }}" target="_blank"><button
-                                class="btn btn-sm btn-info" title="Edit"
-                                style="width:132px;margin-left:5px;height:33px" > 
-                                Export
-                            </button></a>
+                    @if(Auth::user()->hasRole('CEO'))
+                        <span style="font-size: 1.5rem;" class="right badge badge-primary p-2 mt-2 mb-2">Total Estimate:
+                            {{ $estimates->count() }}</span>
+                        <span style="font-size: 1.5rem;" class="right badge badge-success p-2">Total Approved:
+                            {{ $estimates_approved_count }}</span>
+                        <span style="font-size: 1.5rem;" class="right badge badge-danger p-2">Total Rejected:
+                            {{ $estimates_rejected_count }}</span>
+                        @if (request()->input('min') || request()->input('max'))
+                            {{-- <a href="{{ route('estimatemanagement.exporteestimate') }}?min={{ request()->input('min') }}&max={{ request()->input('max') }}" target="_blank"><button class="btn btn-sm btn-info" title="Edit" style="width:132px;margin-left:5px;height:33px" >Export</button></a> --}}
+
+                            <a href="{{ route('estimatemanagement.exporteestimate') }}?min={{ request()->input('min') }}&max={{ request()->input('max') }}" target="_blank" style="font-size: 1.5rem;margin-top: -10px;margin-bottom: 0;padding: 1px 10px;" class="btn btn-info">Export</a>
+                        @else
+                            {{-- <a href="{{ route('estimatemanagement.exporteestimate') }}?max={{ \Carbon\Carbon::now()->format('Y-m-d') }}" target="_blank"><button class="btn btn-sm btn-info " title="Edit" style="width:132px; margin-left:5px;height:33px" >Export</button></a> --}}
+
+                            <a href="{{ route('estimatemanagement.exporteestimate') }}?max={{ \Carbon\Carbon::now()->format('Y-m-d') }}" target="_blank" style="font-size: 1.5rem;margin-top: -10px;margin-bottom: 0;padding: 1px 10px;" class="btn btn-info">Export</a>
+                        @endif
                     @else
-                        <a href="{{ route('estimatemanagement.exporteestimate') }}?max={{ \Carbon\Carbon::now()->format('Y-m-d') }}" target="_blank"><button
-                                class="btn btn-sm btn-info " title="Edit"
-                                style="width:132px;margin-left:5px;height:33px" >
-                                Export
-                            </button></a>
+                        <span class="right badge badge-primary p-2 fs-6 mt-2 mb-2">Total Estimate:
+                            {{ $estimates->count() }}</span>
+                        <span class="right badge badge-success p-2 fs-6">Total Approved:
+                            {{ $estimates_approved_count }}</span>
+                        <span class="right badge badge-danger p-2 fs-6">Total Rejected:
+                            {{ $estimates_rejected_count }}</span>
+                        @if (request()->input('min') || request()->input('max'))
+                            <a
+                                href="{{ route('estimatemanagement.exporteestimate') }}?min={{ request()->input('min') }}&max={{ request()->input('max') }}" target="_blank"><button
+                                    class="btn btn-sm btn-info" title="Edit"
+                                    style="width:132px;margin-left:5px;height:33px" > 
+                                    Export
+                                </button></a>
+                        @else
+                            <a href="{{ route('estimatemanagement.exporteestimate') }}?max={{ \Carbon\Carbon::now()->format('Y-m-d') }}" target="_blank"><button
+                                    class="btn btn-sm btn-info " title="Edit"
+                                    style="width:132px;margin-left:5px;height:33px" >
+                                    Export
+                                </button></a>
+                        @endif
                     @endif
                     <div class="card">
                         <div class="card-body">
-                            <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config">
-                                @foreach ($estimates as $index => $row)
-                                    <tr>
-
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $row->estimate_no }}</td>
-                                        <td>{{ $row->client->client_metric->code }}</td>
-
-                                        <td>{{ $row->client->name ?? '---' }}
-                                        </td>
-                                        <td>{{ $row->client_person->name ?? '---' }}
-                                        </td>
-                                        <td>{{ $row->headline }}</td>
-                                        {{-- <td>{{ $row->amount }}</td> --}}
-                                        <td>{{ $row->currency }}</td>
-                                        <td
-                                            class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
-                                            {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected - '.$row->reject_reason) }}
-                                        </td>
-                                        <td>{{ $row->employee->name??'' }}</td>
-                                        <td width="300px">
-
-                                            @if(!Auth::user()->hasRole('Accounts'))
-                                                <a href="{{ route('estimatemanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">
-                                                    Edit</a>
+                            <x-adminlte-datatable id="table8" :heads="Auth::user()->hasRole('CEO') ? $ceoHeads : $heads" head-theme="dark" striped :config="$config">
+                                @if(Auth::user()->hasRole('CEO'))
+                                    @foreach ($estimates as $index => $row)
+                                        <tr>
+                                            <td style="font-size: 1.5rem;">{{ $index + 1 }}</td>
+                                            <td style="font-size: 1.5rem;">{{ $row->estimate_no }}</td>
+                                            <td style="font-size: 1.5rem;">{{ $row->client->name ?? '---' }}
+                                            </td>
+                                            <td style="font-size: 1.5rem;">{{ $row->client_person->name ?? '---' }}
+                                            </td>
+                                            <td style="font-size: 1.5rem;">{{ $row->headline }}</td>
+                                            <td style="font-size: 1.5rem;"
+                                                class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
+                                                {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected - '.$row->reject_reason) }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    @foreach ($estimates as $index => $row)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $row->estimate_no }}</td>
+                                            <td>{{ $row->client->client_metric->code }}</td>
+                                            <td>{{ $row->client->name ?? '---' }}
+                                            </td>
+                                            <td>{{ $row->client_person->name ?? '---' }}
+                                            </td>
+                                            <td>{{ $row->headline }}</td>
+                                            <td>{{ $row->currency }}</td>
+                                            <td
+                                                class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
+                                                {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected - '.$row->reject_reason) }}
+                                            </td>
+                                            <td>{{ $row->employee->name??'' }}</td>
+                                            <td width="300px">
+                                                @if(!Auth::user()->hasRole('Accounts'))
+                                                    <a href="{{ route('estimatemanagement.edit', $row->id) }}" class="btn btn-info btn-sm mb-2">Edit</a>
                                                 @endif
-
-                                            {{-- <a href="{{route('estimatemanagement.show', $row->id)}}" target="_blank"><button class="btn btn-xs btn-default text-dark mx-1 shadow" title="View">
-                                            View
-                                        </button></a> --}}
-                                        
-                                            <a href="{{ route('estimatemanagement.viewPdf', $row->id) }}" target="_blank"  class="btn btn-info btn-sm mb-2">Preview</a>
-                                            <a href="{{ route('estimatemanagement.downloadPdf', $row->id) }}" class="btn btn-secondary btn-sm mb-2"><i class="fas fa-download"> Download</i></a>
-                                            @if(!Auth::user()->hasRole('Accounts'))
-                                                @if ($row->status == 0)
-                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">
-                                                            Approve
-                                                    </a>
-                                                    <button data-id="{{ $row->id }}" onclick="openModal(this)" data-toggle="modal" data-target="#cancelModal" class="btn btn-danger btn-sm mb-2">Reject</button>
-                                                @elseif($row->status == 1)
-                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}" class="btn btn-info btn-sm mb-2">Pending
-                                                        </a>
-
-                                                @else
-                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}" class="btn btn-info btn-sm mb-2">Pending
-                                                        </a>
-
-                                                    <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">Approve
-                                                        </a>
+                                                <a href="{{ route('estimatemanagement.viewPdf', $row->id) }}" target="_blank"  class="btn btn-info btn-sm mb-2">Preview</a>
+                                                <a href="{{ route('estimatemanagement.downloadPdf', $row->id) }}" class="btn btn-secondary btn-sm mb-2"><i class="fas fa-download"> Download</i></a>
+                                                @if(!Auth::user()->hasRole('Accounts'))
+                                                    @if ($row->status == 0)
+                                                        <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">Approve</a>
+                                                        <button data-id="{{ $row->id }}" onclick="openModal(this)" data-toggle="modal" data-target="#cancelModal" class="btn btn-danger btn-sm mb-2">Reject</button>
+                                                    @elseif($row->status == 1)
+                                                        <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}" class="btn btn-info btn-sm mb-2">Pending</a>
+                                                    @else
+                                                        <a href="{{ route('estimatemanagement.status', [$row->id, 0]) }}" class="btn btn-info btn-sm mb-2">Pending</a>
+                                                        <a href="{{ route('estimatemanagement.status', [$row->id, 1]) }}" class="btn btn-info btn-sm mb-2">Approve</a>
+                                                    @endif
                                                 @endif
-                                            @endif
-
-
-
-                                        </td>
-
-                                    </tr>
-                                @endforeach
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                             </x-adminlte-datatable>
                         </div>
                     </div>
