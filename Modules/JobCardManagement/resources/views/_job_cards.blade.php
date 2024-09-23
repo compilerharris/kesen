@@ -63,15 +63,15 @@
         @if(Auth::user()->hasRole('CEO'))
             @foreach ($job_register as $index => $row)
                 <tr>
-                    <td style="font-size: 1.5rem;">{{ $index + 1 }}</td>
-                    <td style="font-size: 1.5rem;">{{ $row->created_at?Carbon::parse($row->created_at)->format('j M Y'):'---' }}</td>
-                    <td style="font-size: 1.5rem;">{{ $row->sr_no }}</td>
-                    <td style="font-size: 1.5rem;">{{ $row->estimate?$row->estimate->client->name:($row->no_estimate?$row->no_estimate->client->name:'') }}</td>
-                    <td style="font-size: 1.5rem;">{{ $row->estimate_document_id??'' }}</td>
-                    <td style="font-size: 1.5rem;">{{ $row->handle_by->code??'' }}</td>
-                    <td style="font-size: 1.5rem;">{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'---' }}</td>
-                    <td style="font-size: 1.5rem;" class="{{empty($row->bill_no)&&$row->status==1?'bg-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'bg-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'bg-success':''))}}">{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'unbilled':($row->bill_no??'---'))}}</td>
-                    <td style="font-size: 1.5rem;" class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}> {{ $row->status ==  0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</td>
+                    <td style="font-size: 2rem;">{{ $index + 1 }}</td>
+                    <td style="font-size: 2rem;">{{ $row->created_at?Carbon::parse($row->created_at)->format('j M Y'):'---' }}</td>
+                    <td style="font-size: 2rem;">{{ $row->sr_no }}</td>
+                    <td style="font-size: 2rem;">{{ $row->estimate?$row->estimate->client->name:($row->no_estimate?$row->no_estimate->client->name:'') }}</td>
+                    <td style="font-size: 2rem;">{{ $row->estimate_document_id??'' }}</td>
+                    <td style="font-size: 2rem;">{{ $row->handle_by->code??'' }}</td>
+                    <td style="font-size: 2rem;">{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'---' }}</td>
+                    <td style="font-size: 2rem;" class="{{empty($row->bill_no)&&$row->status==1?'bg-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'bg-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'bg-success':''))}}">{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'unbilled':($row->bill_no??'---'))}}</td>
+                    <td style="font-size: 2rem;" class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}> {{ $row->status ==  0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</td>
                 </tr>
             @endforeach
         @else

@@ -153,14 +153,14 @@
                                 @if(Auth::user()->hasRole('CEO'))
                                     @foreach ($estimates as $index => $row)
                                         <tr>
-                                            <td style="font-size: 1.5rem;">{{ $index + 1 }}</td>
-                                            <td style="font-size: 1.5rem;">{{ $row->estimate_no }}</td>
-                                            <td style="font-size: 1.5rem;">{{ $row->client->name ?? '---' }}
+                                            <td style="font-size: 2rem;">{{ $index + 1 }}</td>
+                                            <td style="font-size: 2rem;">{{ $row->estimate_no }}</td>
+                                            <td style="font-size: 2rem;">{{ $row->client->name ?? '---' }}
                                             </td>
-                                            <td style="font-size: 1.5rem;">{{ $row->client_person->name ?? '---' }}
+                                            <td style="font-size: 2rem;">{{ $row->client_person->name ?? '---' }}
                                             </td>
-                                            <td style="font-size: 1.5rem;">{{ $row->headline }}</td>
-                                            <td style="font-size: 1.5rem;"
+                                            <td style="font-size: 2rem;">{{ $row->headline }}</td>
+                                            <td style="font-size: 2rem;"
                                                 class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
                                                 {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected - '.$row->reject_reason) }}
                                             </td>
