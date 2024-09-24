@@ -194,12 +194,12 @@
                                 {{ $job_register->complete_count }}</span>
                             <span class="right badge badge-danger p-2 fs-6">Total Canceled:
                                 {{ $job_register->cancel_count }}</span>
-                            @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$status)
+                            @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$billingStatus && !$status)
                                 <a target="_blank">
                                     <button class="btn btn-sm btn-info " title="Edit" style="width:132px;margin-left:5px;height:33px;" >Export</button>
                                 </a>
                             @else
-                                <a href="{{ route('jobcardmanagement.exportJobCard') }}?jobNo={{$jobNo??''}}&cp={{$cp??''}}&document={{$document??''}}&pm={{$pm??''}}&contactPerson={{$contactPerson??''}}&from={{$from??''}}&to={{$to??''}}&status={{$status??''}}" target="_blank">
+                                <a href="{{ route('jobcardmanagement.exportJobCard') }}?jobNo={{$jobNo??''}}&cp={{$cp??''}}&document={{$document??''}}&pm={{$pm??''}}&contactPerson={{$contactPerson??''}}&from={{$from??''}}&to={{$to??''}}&billingStatus={{$billingStatus}}&status={{$status??''}}" target="_blank">
                                     <button class="btn btn-sm btn-info" title="Edit" style="width:132px;margin-left:5px;height:33px;" >Export</button>
                                 </a>
                             @endif

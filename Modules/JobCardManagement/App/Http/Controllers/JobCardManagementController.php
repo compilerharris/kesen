@@ -470,7 +470,7 @@ class JobCardManagementController extends Controller
     {
         if($request->get('jobNo') != ''){
             $this->jobNo = $request->get('jobNo');
-            $this->cp = $this->document = $this->pm = $this->contactPerson = $this->from = $this->to = $this->status = null;
+            $this->cp = $this->document = $this->pm = $this->contactPerson = $this->from = $this->to = $this->billingStatus =  $this->status = null;
             $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
             ->where('sr_no',$this->jobNo)
             ->orderBy('sr_no','desc')
@@ -522,6 +522,7 @@ class JobCardManagementController extends Controller
         $this->contactPerson = $request->get('contactPerson', null);
         $this->from = $request->get('from', null);
         $this->to = $request->get('to', null);
+        $this->billingStatus =  $request->get('billingStatus', null);
         $this->status =  $request->get('status', null);
 
         $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
@@ -551,6 +552,12 @@ class JobCardManagementController extends Controller
         })
         ->when($this->from, function ($query) use ($endDate){
             $query->whereBetween('created_at', [$this->from,$endDate]);
+        })
+        ->when($this->billingStatus == "0", function($query) {
+            $query->whereNull('bill_no')->where('status',1);
+        })
+        ->when($this->billingStatus == "1", function($query) {
+            $query->whereNotNull('bill_no');
         })
         ->when(in_array($this->status,['0','1','2']), function ($query){
             $query->where('status',$this->status);
@@ -590,7 +597,7 @@ class JobCardManagementController extends Controller
             ]);
         }
         $todayDate = Carbon::now()->format('j-M-Y');
-        return Excel::download(new JobCardExcelExport($excelFormat), "job-card-export-sheet-{$todayDate}.xlsx");
+        return Excel::download(new JobCardExcelExport($excelFormat), "job-card-{$todayDate}.xlsx");
         // $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', ['jobCard'=> $jobCard])->setPaper('a4', 'landscape');
         // return $pdf->stream();
     }
@@ -661,10 +668,10 @@ class JobCardManagementController extends Controller
         ->when($this->from, function ($query) use ($endDate){
             $query->whereBetween('created_at', [$this->from,$endDate]);
         })
-        ->when($this->billingStatus == 0, function($query) {
+        ->when($this->billingStatus == "0", function($query) {
             $query->whereNull('bill_no')->where('status',1);
         })
-        ->when($this->billingStatus == 1, function($query) {
+        ->when($this->billingStatus == "1", function($query) {
             $query->whereNotNull('bill_no');
         })
         ->when(in_array($this->status,['0','1','2']), function ($query){
