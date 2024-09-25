@@ -50,7 +50,7 @@ class JobCardManagementController extends Controller
             $job_register->cancel_count = $statusCounts['2'] ?? 0;
     
             foreach ($job_register as $job_reg) {
-                $job_reg->isJobCard = $job_reg->jobCard ? true : false;
+                $job_reg->isJobCard = count($job_reg->jobCard) > 0 ? true : false;
             }
     
             $jobNo = $this->jobNo;
@@ -75,7 +75,7 @@ class JobCardManagementController extends Controller
         }
 
         foreach ($job_register as $job_reg) {
-            $job_reg->isJobCard = $job_reg->jobCard ? true : false;
+            $job_reg->isJobCard = count($job_reg->jobCard) > 0 ? true : false;
         }
 
         $jobNo = $this->jobNo;
@@ -507,6 +507,7 @@ class JobCardManagementController extends Controller
                     'jobType' => $job->type??'',
                     'docName' => $job->estimate_document_id,
                     'remark' => $job->remark??'',
+                    'billingStatus' => empty($job->bill_no) && $job->status == 1 ? 'Unbilled' : (isset($job->bill_no) ? 'Billed' : '---'),
                     'status' => $job->status == 0 ? 'In Progress' : ($job->status == 1 ? 'Completed' : 'Canceled')
                 ]);
             }
@@ -593,6 +594,7 @@ class JobCardManagementController extends Controller
                 'jobType' => $job->type??'',
                 'docName' => $job->estimate_document_id,
                 'remark' => $job->remark??'',
+                'billingStatus' => empty($job->bill_no) && $job->status == 1 ? 'Unbilled' : (isset($job->bill_no) ? 'Billed' : '---'),
                 'status' => $job->status == 0 ? 'In Progress' : ($job->status == 1 ? 'Completed' : 'Canceled')
             ]);
         }

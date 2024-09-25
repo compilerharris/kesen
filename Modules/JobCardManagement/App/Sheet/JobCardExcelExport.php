@@ -38,6 +38,7 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
             'Job Type',
             'Job Description',
             'Remark',
+            'Billing Status',
             'Status'
         ];
     }
@@ -66,6 +67,7 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
             $jobCard->jobType,
             $jobCard->docName,
             $jobCard->remark,
+            $jobCard->billingStatus,
             $jobCard->status
         ];
         // $jobCard->created_at ? $jobCard->created_at->format('j M Y') : '',
@@ -91,7 +93,7 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
                 $rowCount = count($this->jobCards) + 1; // +1 to account for the headings row
 
                 for ($row = 2; $row <= $rowCount + 1; $row++) {
-                    $statusCell = $sheet->getCellByColumnAndRow(14, $row); // Assuming "Status" is in the 12th column
+                    $statusCell = $sheet->getCellByColumnAndRow(15, $row); // Assuming "Status" is in the 12th column
                     $statusValue = $statusCell->getValue();
 
                     // Debugging: Output the status value (optional)

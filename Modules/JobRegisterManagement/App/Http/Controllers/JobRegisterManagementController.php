@@ -50,7 +50,7 @@ class JobRegisterManagementController extends Controller
             $job_registers->cancel_count = $statusCounts['2'] ?? 0;
     
             foreach ($job_registers as $job_reg) {
-                $job_reg->isJobCard = $job_reg->jobCard ? true : false;
+                $job_reg->isJobCard = count($job_reg->jobCard) > 0 ? true : false;
             }
     
             $jobNo = $this->jobCardService->jobNo;
@@ -75,7 +75,7 @@ class JobRegisterManagementController extends Controller
         }
 
         foreach ($job_registers as $job_reg) {
-            $job_reg->isJobCard = $job_reg->jobCard ? true : false;
+            $job_reg->isJobCard = count($job_reg->jobCard) > 0 ? true : false;
         }
 
         $jobNo = $this->jobCardService->jobNo;
