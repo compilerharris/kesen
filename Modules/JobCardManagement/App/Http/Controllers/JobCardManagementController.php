@@ -489,13 +489,19 @@ class JobCardManagementController extends Controller
                 $job_register->cancel_count = 0;
             }
             $jobCard = $job_register;
+            if(Auth::user()->hasRole('CEO')){
+                $complete_count = $jobCard->complete_count;
+                $cancel_count = $jobCard->cancel_count;
+                $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', compact(['jobCard']))->setPaper('a4', 'landscape');
+                return  $pdf->stream();
+            }
             $excelFormat = collect();
             foreach($jobCard as $index => $job){
                 $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
                 $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('code')->toArray());
                 $excelFormat->push([
                     'sr' => $index+1,
-                    'date' => $job->date?Carbon::parse($job->created_at)->format('j M Y'):'',
+                    'date' => $job->created_at?Carbon::parse($job->created_at)->format('j M Y'):'',
                     'sr_no' => $job->sr_no,
                     'handledBy' => $job->handle_by->code??'',
                     'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
@@ -507,8 +513,8 @@ class JobCardManagementController extends Controller
                     'jobType' => $job->type??'',
                     'docName' => $job->estimate_document_id,
                     'remark' => $job->remark??'',
-                    'billingStatus' => empty($job->bill_no) && $job->status == 1 ? 'Unbilled' : (isset($job->bill_no) ? 'Billed' : '---'),
-                    'status' => $job->status == 0 ? 'In Progress' : ($job->status == 1 ? 'Completed' : 'Canceled')
+                    'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
+                    'status' => $job->status ==  0 ? (count($job->jobCard)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled')
                 ]);
             }
             $todayDate = Carbon::now()->format('j-M-Y');
@@ -576,13 +582,20 @@ class JobCardManagementController extends Controller
         if($jobCard->count() == 0){
             return redirect()->back()->with('alert',"No job found.");
         }
+        if(Auth::user()->hasRole('CEO')){
+            $complete_count = $jobCard->complete_count;
+            $cancel_count = $jobCard->cancel_count;
+            // return view('jobcardmanagement::pdf.export-job-card', compact(['jobCard']));
+            $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', compact(['jobCard']))->setPaper('a4', 'landscape');
+            return  $pdf->stream();
+        }
         $excelFormat = collect();
         foreach($jobCard as $index => $job){
             $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
             $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('code')->toArray());
             $excelFormat->push([
                 'sr' => $index+1,
-                'date' => $job->date?Carbon::parse($job->created_at)->format('j M Y'):'',
+                'date' => $job->created_at?Carbon::parse($job->created_at)->format('j M Y'):'',
                 'sr_no' => $job->sr_no,
                 'handledBy' => $job->handle_by->code??'',
                 'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
@@ -594,8 +607,8 @@ class JobCardManagementController extends Controller
                 'jobType' => $job->type??'',
                 'docName' => $job->estimate_document_id,
                 'remark' => $job->remark??'',
-                'billingStatus' => empty($job->bill_no) && $job->status == 1 ? 'Unbilled' : (isset($job->bill_no) ? 'Billed' : '---'),
-                'status' => $job->status == 0 ? 'In Progress' : ($job->status == 1 ? 'Completed' : 'Canceled')
+                'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
+                'status' => $job->status ==  0 ? (count($job->jobCard)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled')
             ]);
         }
         $todayDate = Carbon::now()->format('j-M-Y');
