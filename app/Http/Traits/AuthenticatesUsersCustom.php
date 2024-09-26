@@ -61,8 +61,9 @@ trait AuthenticatesUsersCustom
                 return new JsonResponse([], 204);
             }else{
                 
-                
-                if (auth()->user()->hasRole('Admin')||auth()->user()->hasRole('CEO')||auth()->user()->hasRole('Developer')||auth()->user()->code=='Dev') {
+                if(auth()->user()->hasRole('CEO')){
+                    $redirect_path='/job-card-management';
+                }else if (auth()->user()->hasRole('Admin')||auth()->user()->hasRole('Developer')||auth()->user()->code=='Dev') {
                     $redirect_path='/estimate-management';
                 }elseif(auth()->user()->hasRole('Project Manager')){
                     $redirect_path='/job-card-management';
