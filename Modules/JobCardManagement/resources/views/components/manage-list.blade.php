@@ -134,12 +134,12 @@
                                 {{ $job_register->complete_count }}</span>
                             <span style="font-size: 1.5rem;" class="right badge badge-danger p-2">Total Canceled:
                                 {{ $job_register->cancel_count }}</span>
-                            @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$status)
+                            @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$billingStatus && !$status)
                                 <a style="font-size: 1.5rem;margin-top: -10px;margin-bottom: 0;padding: 1px 10px;" target="_blank" class="btn btn-info">Export
                                     {{-- <button class="btn btn-sm btn-info " title="Edit" style="width:132px;margin-left:5px;height:33px;font-size: 1.5rem;" ></button> --}}
                                 </a>
                             @else
-                                <a href="{{ route('jobcardmanagement.exportJobCard') }}?jobNo={{$jobNo??''}}&cp={{$cp??''}}&document={{$document??''}}&pm={{$pm??''}}&contactPerson={{$contactPerson??''}}&from={{$from??''}}&to={{$to??''}}&status={{$status??''}}" style="font-size: 1.5rem;margin-top: -10px;margin-bottom: 0;padding: 1px 10px;" target="_blank" class="btn btn-info">Export
+                                <a href="{{ route('jobcardmanagement.exportJobCard') }}?jobNo={{$jobNo??''}}&cp={{$cp??''}}&document={{$document??''}}&pm={{$pm??''}}&contactPerson={{$contactPerson??''}}&from={{$from??''}}&to={{$to??''}}&billingStatus={{$billingStatus??''}}&status={{$status??''}}" style="font-size: 1.5rem;margin-top: -10px;margin-bottom: 0;padding: 1px 10px;" target="_blank" class="btn btn-info">Export
                                     {{-- <button class="btn btn-sm btn-info" title="Edit" style="width:132px;margin-left:5px;height:33px;font-size: 1.5rem;" ></button> --}}
                                 </a>
                             @endif
