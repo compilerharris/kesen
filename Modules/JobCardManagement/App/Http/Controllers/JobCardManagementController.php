@@ -532,6 +532,9 @@ class JobCardManagementController extends Controller
         $this->billingStatus =  $request->get('billingStatus', null);
         $this->status =  $request->get('status', null);
 
+        $this->billingStatus = $this->billingStatus == 'zero'?'0':$this->billingStatus;
+        $this->status = $this->status == 'zero'?'0':$this->status;
+
         $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
         $userIds = $this->pm?User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray():[];
         $clientContactIds = $this->contactPerson?ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray():[];
@@ -570,7 +573,7 @@ class JobCardManagementController extends Controller
             $query->where('status',$this->status);
         });
         $statusCountsQuery = clone $job_register_query;
-        $job_register = $job_register_query->orderBy('sr_no', 'desc')->get();
+        $job_register = $job_register_query->orderBy('sr_no')->get();
         if( $job_register->count() == 0 ){
             return [];  
         }
@@ -578,6 +581,8 @@ class JobCardManagementController extends Controller
         
         $job_register->complete_count = $statusCounts['1'] ?? 0;
         $job_register->cancel_count = $statusCounts['2'] ?? 0;
+        $this->billingStatus = $this->billingStatus == '0'?'zero':$this->billingStatus;
+        $this->status = $this->status == '0'?'zero':$this->status;
         $jobCard = $job_register;
         if($jobCard->count() == 0){
             return redirect()->back()->with('alert',"No job found.");
@@ -652,6 +657,9 @@ class JobCardManagementController extends Controller
         $this->billingStatus = $request->get('billingStatus', null);
         $this->status =  $request->get('status', null);
 
+        $this->billingStatus = $this->billingStatus == 'zero'?'0':$this->billingStatus;
+        $this->status = $this->status == 'zero'?'0':$this->status;
+
         $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
         $userIds = $this->pm?User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray():[];
         $clientContactIds = $this->contactPerson?ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray():[];
@@ -701,6 +709,8 @@ class JobCardManagementController extends Controller
         
         $job_register->complete_count = $statusCounts['1'] ?? 0;
         $job_register->cancel_count = $statusCounts['2'] ?? 0;
+        $this->billingStatus = $this->billingStatus == '0'?'zero':$this->billingStatus;
+        $this->status = $this->status == '0'?'zero':$this->status;
         return $job_register;
     }
 

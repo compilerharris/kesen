@@ -105,7 +105,7 @@
                                     {{-- billing status --}}
                                     <x-adminlte-select2 name="billingStatus" id="billingStatus" fgroup-class="col-md-2" value="{{old('billingStatus')}}" label="Billing Status">
                                         <option value="">Select Billing Status</option>
-                                        <option value="0" {{$billingStatus=='0'?'selected':''}}>Unbilled</option>
+                                        <option value="zero" {{$billingStatus=='zero'?'selected':''}}>Unbilled</option>
                                         <option value="1" {{$billingStatus=='1'?'selected':''}}>Billed</option>
                                     </x-adminlte-select2>
                                 @else
@@ -117,7 +117,7 @@
                                 {{-- status --}}
                                 <x-adminlte-select2 name="status" fgroup-class="col-md-1" value="{{ old('status') }}" label="Status:">
                                     <option value="">Select Status</option>
-                                    <option value="0" {{$status=='0'?'selected':''}}>In Progress</option>
+                                    <option value="zero" {{$status=='zero'?'selected':''}}>In Progress</option>
                                     <option value="1" {{$status=='1'?'selected':''}}>Completed</option>
                                     <option value="2" {{$status=='2'?'selected':''}}>Cancelled</option>
                                 </x-adminlte-select2>
