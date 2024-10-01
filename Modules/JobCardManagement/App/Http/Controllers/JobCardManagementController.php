@@ -16,11 +16,11 @@ use Modules\JobCardManagement\App\Models\JobCard;
 use Modules\JobCardManagement\App\Sheet\JobCardExcelExport;
 use Modules\JobRegisterManagement\App\Models\JobRegister;
 use App\Mail\JobCompletedBilling;
-use App\Mail\JobCompleted;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Modules\LanguageManagement\App\Models\Language;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Session; 
 class JobCardManagementController extends Controller
 {
     public $jobNo = null;
@@ -62,6 +62,8 @@ class JobCardManagementController extends Controller
             $to = $this->to;
             $billingStatus = $this->billingStatus;
             $status = $this->status;
+
+            Session::put('excel_export_job_card_data', json_encode([]));
 
             if ($request->ajax()) {
                 return view('jobcardmanagement::_job_cards', compact('job_register','jobNo','cp','document','pm','contactPerson','from','to','status'))->render();
@@ -521,68 +523,67 @@ class JobCardManagementController extends Controller
             return Excel::download(new JobCardExcelExport($excelFormat), "job-card-export-sheet-{$todayDate}.xlsx");
         }
         $endDate = Carbon::now()->format('Y-m-d');
+        $job_register = collect(json_decode(Session::get('excel_export_job_card_data')));
+        // $this->jobNo = null;
+        // $this->cp = $request->get('cp', null);
+        // $this->document = $request->get('document', null);
+        // $this->pm = $request->get('pm', null);
+        // $this->contactPerson = $request->get('contactPerson', null);
+        // $this->from = $request->get('from', null);
+        // $this->to = $request->get('to', null);
+        // $this->billingStatus =  $request->get('billingStatus', null);
+        // $this->status =  $request->get('status', null);
 
-        $this->jobNo = null;
-        $this->cp = $request->get('cp', null);
-        $this->document = $request->get('document', null);
-        $this->pm = $request->get('pm', null);
-        $this->contactPerson = $request->get('contactPerson', null);
-        $this->from = $request->get('from', null);
-        $this->to = $request->get('to', null);
-        $this->billingStatus =  $request->get('billingStatus', null);
-        $this->status =  $request->get('status', null);
+        // $this->billingStatus = $this->billingStatus == 'zero'?'0':$this->billingStatus;
+        // $this->status = $this->status == 'zero'?'0':$this->status;
 
-        $this->billingStatus = $this->billingStatus == 'zero'?'0':$this->billingStatus;
-        $this->status = $this->status == 'zero'?'0':$this->status;
-
-        $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
-        $userIds = $this->pm?User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray():[];
-        $clientContactIds = $this->contactPerson?ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray():[];
-        $job_register_query = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-        ->when(count($clientIds)>0, function ($query) use ($clientIds) {
-            $query->whereIn('client_id', $clientIds);
-        })
-        ->when(count($clientIds)==0 && $this->cp, function ($query){
-            $query->where('protocol_no','like',"%{$this->cp}%");
-        })
-        ->when($this->document, function ($query){
-            $query->where('description','like',"%{$this->document}%");
-        })
-        ->when(count($userIds)>0, function ($query) use ($userIds) {
-            $query->whereIn('handled_by_id',$userIds);
-        })
-        ->when(count($clientContactIds)>0, function ($query) use ($clientContactIds) {
-            $query->whereIn('client_contact_person_id',$clientContactIds);
-        })
-        ->when($this->from && $this->to, function ($query){
-            $query->whereBetween('created_at', [
-                Carbon::parse($this->from)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::parse($this->to)->endOfDay()->format('Y-m-d H:i:s')
-            ]);
-        })
-        ->when($this->from, function ($query) use ($endDate){
-            $query->whereBetween('created_at', [$this->from,$endDate]);
-        })
-        ->when($this->billingStatus == "0", function($query) {
-            $query->whereNull('bill_no')->where('status',1);
-        })
-        ->when($this->billingStatus == "1", function($query) {
-            $query->whereNotNull('bill_no');
-        })
-        ->when(in_array($this->status,['0','1','2']), function ($query){
-            $query->where('status',$this->status);
-        });
-        $statusCountsQuery = clone $job_register_query;
-        $job_register = $job_register_query->orderBy('sr_no')->get();
+        // $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
+        // $userIds = $this->pm?User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray():[];
+        // $clientContactIds = $this->contactPerson?ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray():[];
+        // $job_register_query = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+        // ->when(count($clientIds)>0, function ($query) use ($clientIds) {
+        //     $query->whereIn('client_id', $clientIds);
+        // })
+        // ->when(count($clientIds)==0 && $this->cp, function ($query){
+        //     $query->where('protocol_no','like',"%{$this->cp}%");
+        // })
+        // ->when($this->document, function ($query){
+        //     $query->where('description','like',"%{$this->document}%");
+        // })
+        // ->when(count($userIds)>0, function ($query) use ($userIds) {
+        //     $query->whereIn('handled_by_id',$userIds);
+        // })
+        // ->when(count($clientContactIds)>0, function ($query) use ($clientContactIds) {
+        //     $query->whereIn('client_contact_person_id',$clientContactIds);
+        // })
+        // ->when($this->from && $this->to, function ($query){
+        //     $query->whereBetween('created_at', [
+        //         Carbon::parse($this->from)->startOfDay()->format('Y-m-d H:i:s'),
+        //         Carbon::parse($this->to)->endOfDay()->format('Y-m-d H:i:s')
+        //     ]);
+        // })
+        // ->when($this->from, function ($query) use ($endDate){
+        //     $query->whereBetween('created_at', [$this->from,$endDate]);
+        // })
+        // ->when($this->billingStatus == "0", function($query) {
+        //     $query->whereNull('bill_no')->where('status',1);
+        // })
+        // ->when($this->billingStatus == "1", function($query) {
+        //     $query->whereNotNull('bill_no');
+        // })
+        // ->when(in_array($this->status,['0','1','2']), function ($query){
+        //     $query->where('status',$this->status);
+        // });
+        $statusCountsQuery = clone $job_register;
         if( $job_register->count() == 0 ){
             return [];  
         }
-        $statusCounts = $statusCountsQuery->select('status', DB::raw('count(*) as total'))->groupBy('status')->pluck('total', 'status');
+        $statusCounts = $job_register->groupBy('status')->map(function ($group) {
+            return $group->count(); // Count the total for each group
+        });
         
         $job_register->complete_count = $statusCounts['1'] ?? 0;
         $job_register->cancel_count = $statusCounts['2'] ?? 0;
-        $this->billingStatus = $this->billingStatus == '0'?'zero':$this->billingStatus;
-        $this->status = $this->status == '0'?'zero':$this->status;
         $jobCard = $job_register;
         if($jobCard->count() == 0){
             return redirect()->back()->with('alert',"No job found.");
@@ -613,7 +614,7 @@ class JobCardManagementController extends Controller
                 'docName' => $job->estimate_document_id,
                 'remark' => $job->remark??'',
                 'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
-                'status' => $job->status ==  0 ? (count($job->jobCard)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled')
+                'status' => $job->status ==  0 ? (count($job->job_card)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled')
             ]);
         }
         $todayDate = Carbon::now()->format('j-M-Y');
@@ -701,6 +702,7 @@ class JobCardManagementController extends Controller
             $query->where('status',$this->status);
         });
         $statusCountsQuery = clone $job_register_query;
+        Session::put('excel_export_job_card_data', json_encode($job_register_query->orderBy('sr_no')->get()));
         $job_register = $job_register_query->orderBy('sr_no', 'desc')->paginate(20);
         if( $job_register->count() == 0 ){
             return [];  

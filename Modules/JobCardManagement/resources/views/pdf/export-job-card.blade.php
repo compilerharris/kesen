@@ -109,7 +109,7 @@
                 <th>Job No</th>
                 <th>Client Name</th>
                 <th>Job Description</th>
-                <th>Project Manager</th>
+                <th>P.M.</th>
                 <th>Delivery Date</th>
                 <th>Billing Status</th>
                 <th>Status</th>
@@ -125,15 +125,15 @@
         <tbody>
             @foreach ($jobCard as $index=>$row)
             <tr>
-                <td style="font-size: 1.2rem">{{ $loop->index+1 }}</td>
-                <td style="font-size: 1.2rem">{{ $row->created_at?Carbon::parse($row->created_at)->format('j M Y'):'' }}</td>
-                <td style="font-size: 1.2rem">{{ $row->sr_no }}</td>
-                <td style="font-size: 1.2rem">{{ $row->estimate?$row->estimate->client->name:$row->no_estimate->client->name }}</td>
-                <td style="font-size: 1.2rem">{{ $row->estimate_document_id }}</td>
-                <td style="font-size: 1.2rem">{{ $row->handle_by->code??'' }}</td>
-                <td style="font-size: 1.2rem">{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'' }}</td>
-                <td class="{{empty($row->bill_no)&&$row->status==1?'status-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'status-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'status-success':''))}}">{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'Unbilled':($row->bill_no??'---'))}}</td>
-                <td class="{{ $row->status == 0 ? '' : ($row->status == 1 ? 'status-success' : 'status-danger') }}"> {{ $row->status ==  0 ? (count($row->jobCard)>0?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</td>
+                <td style="font-size: 1.2rem;"><b>{{ $loop->index+1 }}</b></td>
+                <td style="font-size: 1.2rem;"><b>{{ $row->created_at?Carbon::parse($row->created_at)->format('j M Y'):'' }}</b></td>
+                <td style="font-size: 1.2rem;"><b>{{ $row->sr_no }}</b></td>
+                <td style="font-size: 1.2rem;"><b>{{ $row->estimate?$row->estimate->client->name:$row->no_estimate->client->name }}</b></td>
+                <td style="font-size: 1.2rem;"><b>{{ $row->estimate_document_id }}</b></td>
+                <td style="font-size: 1.2rem;"><b>{{ $row->handle_by->code??'' }}</b></td>
+                <td style="font-size: 1.2rem;"><b>{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'' }}</b></td>
+                <td style="font-size: 1.2rem;" class="{{empty($row->bill_no)&&$row->status==1?'status-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'status-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'status-success':''))}}"><b>{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'Unbilled':($row->bill_no??'---'))}}</b></td>
+                <td style="font-size: 1.2rem;" class="{{ $row->status == 0 ? '' : ($row->status == 1 ? 'status-success' : 'status-danger') }}"><b>{{ $row->status ==  0 ? (count($row->jobCard)>0?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</b></td>
                 {{-- <td>{{ $row['clientContact'] }}</td>
                 <td>{{ $row['estimateNo'] }}</td>
                 <td>{{ $row['languages'] }}</td>

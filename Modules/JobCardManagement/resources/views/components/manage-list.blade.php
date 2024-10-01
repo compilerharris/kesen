@@ -128,21 +128,25 @@
                                 <button style="font-size: 1.5rem;" type="submit" class="btn btn-info"><i class="fas fa-search"> Search</i></button>
                                 <a style="font-size: 1.5rem;" href="job-card-management" class="btn btn-danger">Reset</a>
                             </form>
-                            <span style="font-size: 1.5rem;" class="right badge badge-primary p-2 mt-2 mb-2">Total Job Card:
-                                {{ $job_register->total() }}</span>
-                            <span style="font-size: 1.5rem;" class="right badge badge-success p-2">Total Completed:
-                                {{ $job_register->complete_count }}</span>
-                            <span style="font-size: 1.5rem;" class="right badge badge-danger p-2">Total Canceled:
-                                {{ $job_register->cancel_count }}</span>
-                            @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$billingStatus && !$status)
-                                <a style="font-size: 1.5rem;margin-top: -10px;margin-bottom: 0;padding: 1px 10px;" target="_blank" class="btn btn-info">Export
-                                    {{-- <button class="btn btn-sm btn-info " title="Edit" style="width:132px;margin-left:5px;height:33px;font-size: 1.5rem;" ></button> --}}
-                                </a>
-                            @else
-                                <a href="{{ route('jobcardmanagement.exportJobCard') }}?jobNo={{$jobNo??''}}&cp={{$cp??''}}&document={{$document??''}}&pm={{$pm??''}}&contactPerson={{$contactPerson??''}}&from={{$from??''}}&to={{$to??''}}&billingStatus={{$billingStatus??''}}&status={{$status??''}}" style="font-size: 1.5rem;margin-top: -10px;margin-bottom: 0;padding: 1px 10px;" target="_blank" class="btn btn-info">Export
-                                    {{-- <button class="btn btn-sm btn-info" title="Edit" style="width:132px;margin-left:5px;height:33px;font-size: 1.5rem;" ></button> --}}
-                                </a>
-                            @endif
+                            <div style="display: flex;align-items: center;text-align: center;justify-content: start;">
+                                <span style="font-size: 1.5rem;" class="right badge badge-primary p-2 mt-2 mb-2 mr-2">Total Job Card:
+                                    {{ $job_register->total() }}</span>
+                                <span style="font-size: 1.5rem;" class="right badge badge-success p-2 mr-2">Total Completed:
+                                    {{ $job_register->complete_count }}</span>
+                                <span style="font-size: 1.5rem;" class="right badge badge-danger p-2 mr-2">Total Canceled:
+                                    {{ $job_register->cancel_count }}</span>
+                                @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$billingStatus && !$status)
+                                    <a style="font-size: 1.5rem;margin-bottom: 0;padding: 1px 10px;" target="_blank" class="btn btn-info">Export
+                                        {{-- <button class="btn btn-sm btn-info " title="Edit" style="width:132px;margin-left:5px;height:33px;font-size: 1.5rem;" ></button> --}}
+                                    </a>
+                                @else
+                                    <form action="{{ route('jobcardmanagement.exportJobCard') }}" target="_blank" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="data" value="{{ json_encode($job_register) }}">
+                                        <button class="btn btn-sm btn-info" style="font-size: 1.5rem;height:40px;padding: 1px 10px;" type="submit">Export</button>
+                                    </form>
+                                @endif
+                            </div>
                         @else
                             <form action="job-card-management">
                                 <div class="card">
@@ -188,21 +192,25 @@
                                 <button type="submit" class="btn btn-info"><i class="fas fa-search"> Search</i></button>
                                 <a href="job-card-management" class="btn btn-danger">Reset</a>
                             </form>
-                            <span class="right badge badge-primary p-2 fs-6 mt-2 mb-2">Total Job Card:
-                                {{ $job_register->total() }}</span>
-                            <span class="right badge badge-success p-2 fs-6">Total Completed:
-                                {{ $job_register->complete_count }}</span>
-                            <span class="right badge badge-danger p-2 fs-6">Total Canceled:
-                                {{ $job_register->cancel_count }}</span>
-                            @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$billingStatus && !$status)
-                                <a target="_blank">
-                                    <button class="btn btn-sm btn-info " title="Edit" style="width:132px;margin-left:5px;height:33px;" >Export</button>
-                                </a>
-                            @else
-                                <a href="{{ route('jobcardmanagement.exportJobCard') }}?jobNo={{$jobNo??''}}&cp={{$cp??''}}&document={{$document??''}}&pm={{$pm??''}}&contactPerson={{$contactPerson??''}}&from={{$from??''}}&to={{$to??''}}&billingStatus={{$billingStatus}}&status={{$status??''}}" target="_blank">
-                                    <button class="btn btn-sm btn-info" title="Edit" style="width:132px;margin-left:5px;height:33px;" >Export</button>
-                                </a>
-                            @endif
+                            <div style="display: flex;align-items: center;text-align: center;justify-content: start;">
+                                <span class="right badge badge-primary p-2 fs-6 mt-2 mb-2 mr-2">Total Job Card:
+                                    {{ $job_register->total() }}</span>
+                                <span class="right badge badge-success p-2 fs-6 mr-2">Total Completed:
+                                    {{ $job_register->complete_count }}</span>
+                                <span class="right badge badge-danger p-2 fs-6">Total Canceled:
+                                    {{ $job_register->cancel_count }}</span>
+                                @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$billingStatus && !$status)
+                                    <a target="_blank">
+                                        <button class="btn btn-sm btn-info" title="Edit" style="width:132px;margin-left:5px;height:33px;" >Export</button>
+                                    </a>
+                                @else
+                                    <form action="{{ route('jobcardmanagement.exportJobCard') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="data" value="{{ json_encode($job_register) }}">
+                                        <button class="btn btn-sm btn-info" style="width:132px;margin-left:5px;height:33px;" type="submit">Export</button>
+                                    </form>
+                                @endif
+                            </div>
                         @endif
                         <div class="card" id="job-card-data">
                             @include('jobcardmanagement::_job_cards')
