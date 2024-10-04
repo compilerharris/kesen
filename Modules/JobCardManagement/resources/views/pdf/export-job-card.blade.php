@@ -133,7 +133,7 @@
                 <td style="font-size: 1.2rem;"><b>{{ $row->handle_by->code??'' }}</b></td>
                 <td style="font-size: 1.2rem;"><b>{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'' }}</b></td>
                 <td style="font-size: 1.2rem;" class="{{empty($row->bill_no)&&$row->status==1?'status-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'status-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'status-success':''))}}"><b>{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'Unbilled':($row->bill_no??'---'))}}</b></td>
-                <td style="font-size: 1.2rem;" class="{{ $row->status == 0 ? '' : ($row->status == 1 ? 'status-success' : 'status-danger') }}"><b>{{ $row->status ==  0 ? (count($row->jobCard)>0?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</b></td>
+                <td style="font-size: 1.2rem;" class="{{ $row->status == 0 ? '' : ($row->status == 1 ? 'status-success' : 'status-danger') }}"><b>{{ $row->status ==  0 ? (count($row->job_card)>0?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</b></td>
                 {{-- <td>{{ $row['clientContact'] }}</td>
                 <td>{{ $row['estimateNo'] }}</td>
                 <td>{{ $row['languages'] }}</td>
