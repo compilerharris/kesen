@@ -574,7 +574,7 @@ class JobCardManagementController extends Controller
         // ->when(in_array($this->status,['0','1','2']), function ($query){
         //     $query->where('status',$this->status);
         // });
-        $statusCountsQuery = clone $job_register;
+        $statusCountsQuery = clone $job_register->sortByDesc('sr_no');
         if( $job_register->count() == 0 ){
             return [];  
         }
@@ -702,7 +702,7 @@ class JobCardManagementController extends Controller
             $query->where('status',$this->status);
         });
         $statusCountsQuery = clone $job_register_query;
-        Session::put('excel_export_job_card_data', json_encode($job_register_query->orderBy('sr_no')->get()));
+        Session::put('excel_export_job_card_data', json_encode($job_register_query->get()));
         $job_register = $job_register_query->orderBy('sr_no', 'desc')->paginate(20);
         if( $job_register->count() == 0 ){
             return [];  
