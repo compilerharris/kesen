@@ -34,6 +34,8 @@
                 <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline)+count($job_registers_near_deadline_for_accounts) }} Notifications</span>
                 <div class="dropdown-divider"></div>
                 @foreach($job_registers_near_deadline as $notification)
+                    @php($tDate = Carbon::parse($tDate)->format('Y-m-d'))
+                    @php($notification->date = Carbon::parse($notification->date)->format('Y-m-d'))
                     @if($tDate > $notification->date)
                         <div class="callout callout-danger" style="padding: 0.5rem;margin-bottom: 5px;">
                             <a href="/job-card-management?jobNo={{$notification->sr_no}}" style="text-decoration: none;" onmouseover="this.style.color='red';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-ban mr-2" style="color: red;"></i> Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ $tDate != $notification->date ? Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
@@ -78,6 +80,8 @@
                 <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline) }} Notifications</span>
                 <div class="dropdown-divider"></div>
                 @foreach($job_registers_near_deadline as $notification)
+                    @php($tDate = Carbon::parse($tDate)->format('Y-m-d'))
+                    @php($notification->date = Carbon::parse($notification->date)->format('Y-m-d'))
                     @if($tDate > $notification->date)
                         <div class="callout callout-danger" style="padding: 0.5rem;margin-bottom: 5px;">
                             <a href="/job-card-management?jobNo={{$notification->sr_no}}" style="text-decoration: none;" onmouseover="this.style.color='red';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-ban mr-2" style="color: red;"></i> Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ $tDate != $notification->date ? Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
@@ -117,6 +121,8 @@
                 <span class="dropdown-item dropdown-header">{{count($job_registers_near_deadline) }} Notifications</span>
                 <div class="dropdown-divider"></div>
                 @foreach($job_registers_near_deadline as $notification)
+                    @php($tDate = Carbon::parse($tDate)->format('Y-m-d'))
+                    @php($notification->date = Carbon::parse($notification->date)->format('Y-m-d'))
                     @if($tDate > $notification->date)
                         <div class="callout callout-danger" style="padding: 0.5rem;margin-bottom: 5px;">
                             <a href="/job-card-management?jobNo={{$notification->sr_no}}" style="text-decoration: none;" onmouseover="this.style.color='red';" onmouseout="this.style.color='#4a5058';"><i class="fas fa-ban mr-2" style="color: red;"></i> Job no <b style="font-size: 20px">{{ $notification->sr_no }}</b> of <b style="font-size: 20px">{{ $notification->estimate? $notification->estimate->client->name:$notification->no_estimate->client->name }}</b> has crossed the delivery date <b  style="font-size: 20px">{{ $tDate != $notification->date ? Carbon::parse($notification->date)->diffForHumans() : "today" }}.</b></a>
