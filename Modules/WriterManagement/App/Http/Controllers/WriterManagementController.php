@@ -307,7 +307,9 @@ class WriterManagementController extends Controller
         $job_card = JobCard::whereIn('job_no',$jobRegisterIds)
         ->where(function ($query) use ($request) {
             $query->where('t_writer_code', $request->id)
-                  ->orWhere('bt_writer_code', $request->id);
+                  ->orWhere('v_employee_code', $request->id)
+                  ->orWhere('bt_writer_code', $request->id)
+                  ->orWhere('v2_employee_code', $request->id);
         })
         ->get();
 
