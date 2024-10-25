@@ -299,37 +299,100 @@ class WriterManagementController extends Controller
     }
 
     public function calculatePayment(Request $request){
-        $min = Carbon::parse($request->period_from)->startOfDay();
-        $max = Carbon::parse($request->period_to)->endOfDay();
+        // Parse and format date ranges
+        $min = Carbon::parse($request->period_from)->startOfDay()->format('Y-m-d');
+        $max = Carbon::parse($request->period_to)->endOfDay()->format('Y-m-d');
+    
+        // Fetch job register IDs based on date range
+        $jobRegisterIds = JobRegister::whereBetween('created_at', [$min, $max])->pluck('sr_no')->toArray();
+        
+        // Fetch job cards based on job register IDs
+        $job_cards = JobCard::whereIn('job_no', $jobRegisterIds)->with('estimateDetail.language')->orderBy('job_no')->get();
+    
+        // Fetch writers with their language maps in one go
+        $writers = Writer::with(['writer_language_map' => function ($query) {
+            $query->with('language'); // Eager load language for filtering in-memory
+        }])->where('id', $request->id)->where('code', '!=', 'INT')->get()->keyBy('id');
 
-        $jobRegisterIds = JobRegister::whereBetween('created_at',[$min,$max])->pluck('sr_no')->toArray();
+        // Prepare total by writers
+        $totalByWriters = [];
+    
+        foreach ($job_cards as $job) {
+            // Check and calculate for each type of unit
+            $this->calculateWriterTotal($job, 't', $totalByWriters, $writers);
+            $this->calculateWriterTotal($job, 'v', $totalByWriters, $writers, 'checking_charges');
+            $this->calculateWriterTotal($job, 'bt', $totalByWriters, $writers, 'bt_charges');
+            $this->calculateWriterTotal($job, 'btv', $totalByWriters, $writers, 'bt_checking_charges');
+        }
+    
+        // Filter out writers with total of zero
+        $totalByWriters = array_filter($totalByWriters, function ($writer) {
+            return $writer['total'] != 0;
+        });
+        
+        $total = $totalByWriters[$request->id]['total'] + ($request->apply_gst?$totalByWriters[$request->id]['total']*0.18:0) - ($request->apply_tds?$totalByWriters[$request->id]['total']*0.1:0) + ($request->performance_charge??0) - ($request->deductible ?? 0);
+        return $total??0;
+        // $min = Carbon::parse($request->period_from)->startOfDay()->format('Y-m-d');
+        // $max = Carbon::parse($request->period_to)->endOfDay()->format('Y-m-d');
 
-        $job_card = JobCard::whereIn('job_no',$jobRegisterIds)
-        ->where(function ($query) use ($request) {
-            $query->where('t_writer_code', $request->id)
-                  ->orWhere('v_employee_code', $request->id)
-                  ->orWhere('bt_writer_code', $request->id)
-                  ->orWhere('v2_employee_code', $request->id);
-        })
-        ->get();
+        // $jobRegisterIds = JobRegister::whereBetween('created_at',[$min,$max])->pluck('sr_no')->toArray();
 
-        $total = 0;
-        foreach ($job_card as $job) {
-            if($job->t_unit != '' && $job->t_unit != 0 && $job->t_writer_code == $request->id){
-                $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit;
-            }
-            if($job->bt_unit != '' && $job->bt_unit != 0 && $job->bt_writer_code == $request->id){
-                $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit;
-            }
-            if($job->v_unit != '' && $job->v_unit != 0 && $job->v_employee_code == $request->id){
-                $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit;
-            }
-            if($job->btv_unit != '' && $job->btv_unit != 0 && $job->v2_employee_code == $request->id){
-                $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit;
+        // $job_card = JobCard::whereIn('job_no',$jobRegisterIds)
+        // ->where(function ($query) use ($request) {
+        //     $query->where('t_writer_code', $request->id)
+        //           ->orWhere('v_employee_code', $request->id)
+        //           ->orWhere('bt_writer_code', $request->id)
+        //           ->orWhere('v2_employee_code', $request->id);
+        // })
+        // ->get();
+
+        // $total = 0;
+        // foreach ($job_card as $job) {
+        //     if($job->t_unit != '' && $job->t_unit != 0 && is_numeric($job->t_unit) && $job->t_writer_code == $request->id && !is_null($job->estimateDetail)){
+        //         $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit;
+        //     }
+        //     if($job->bt_unit != '' && $job->bt_unit != 0 && is_numeric($job->bt_unit) && $job->bt_writer_code == $request->id){
+        //         $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit;
+        //     }
+        //     if($job->v_unit != '' && $job->v_unit != 0 && is_numeric($job->v_unit) && $job->v_employee_code == $request->id){
+        //         $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit;
+        //     }
+        //     if($job->btv_unit != '' && $job->btv_unit != 0 && is_numeric($job->btv_unit) && $job->v2_employee_code == $request->id){
+        //         $total+=WriterLanguageMap::where('writer_id',$request->id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit;
+        //     }
+        // }
+    }
+
+    private function calculateWriterTotal($job, $type, &$totalByWriters, $writers, $chargeType = 'per_unit_charges') {
+        $writerCodeField = $type . '_writer_code';
+        $unitField = $type . '_unit';
+        
+        if (!empty($job->$unitField)) {
+            $writer = $writers->get($job->$writerCodeField);
+            
+            
+            if ($writer) {
+                // Get the language name from the job's estimate detail
+                $languageName = $job->estimateDetail?$job->estimateDetail->language->name:'';
+                
+                // Filter the language map by language name
+                $languageMap = $writer->writer_language_map->first(function ($map) use ($languageName) {
+                    return $map->language->name === $languageName;
+                });
+                
+                if ($languageMap) {
+                    if (!isset($totalByWriters[$job->$writerCodeField])) {
+                        $totalByWriters[$job->$writerCodeField] = [
+                            'total' => 0,
+                            'name' => $writer->writer_name ?? 'Unknown',
+                            'code' => $writer->code ?? 'Unknown',
+                        ];
+                    }
+                    
+                    $totalByWriters[$job->$writerCodeField]['total'] += (int)$languageMap->$chargeType * (int)$job->$unitField;
+                }
             }
         }
-        $total = $total + ($request->apply_gst?$total*0.18:0) - ($request->apply_tds?$total*0.1:0) + ($request->performance_charge??0) - ($request->deductible ?? 0);
-        return $total??0;
     }
 
     public function paymentDelete($writer_id,$paymentId){
