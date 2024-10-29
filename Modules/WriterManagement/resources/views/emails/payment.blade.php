@@ -104,7 +104,7 @@
             </tr>
             @php $total = 0; @endphp
             @foreach ($job_card as $job)
-                @if($job->t_unit != '')
+                @if($job->t_unit != '' && $job->t_unit != 0)
                     <tr>
                         <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('j M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
@@ -116,7 +116,7 @@
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit @endphp
                     </tr>
                     @endif
-                @if($job->v_unit != '')
+                @if($job->v_unit != '' && $job->v_unit != 0)
                     <tr>
                         <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('j M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
@@ -128,7 +128,7 @@
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit @endphp
                     </tr>
                 @endif
-                @if($job->bt_unit != '')
+                @if($job->bt_unit != '' && $job->bt_unit != 0)
                     <tr>
                         <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('j M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
@@ -140,7 +140,7 @@
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit @endphp
                     </tr>
                 @endif
-                @if($job->btv_unit != '')
+                @if($job->btv_unit != '' && $job->btv_unit != 0)
                     <tr>
                         <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('j M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
