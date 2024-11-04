@@ -1,66 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# KeSen Language Bureau - Process Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The **KeSen Language Bureau Process Management System** is a comprehensive tool designed to streamline and automate operations for KeSen Language Bureau. This web application simplifies complex workflows, enabling seamless tracking and management across various departments. The solution is crafted to enhance productivity, reduce manual effort, and improve communication with clients and employees, ultimately reducing the estimate generation time from 25 minutes to just 5 minutes.
 
-## About Laravel
+## Features
+The system is designed to provide robust management capabilities through multiple specialized modules:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Estimate Management:** Quickly create, modify, and track estimates with streamlined processes, reducing time and improving accuracy.
+- **Job Card Register and Management:** Manage job cards efficiently with a clear record of each project, its status, and detailed requirements.
+- **Employee Management:** Centralize employee records, assign roles, and monitor workload distribution, helping optimize workforce productivity.
+- **Writer Management:** Efficiently manage writers' information, including assignments, workloads, and performance metrics.
+- **Client Management:** Maintain a detailed client database, track communication, and ensure all client requirements are documented and addressed.
+- **Language Management:** Manage and organize data related to languages offered, allowing easy access for project assignments and client interactions.
+- **Workload Reports:** Generate reports to assess workload distribution among team members, enabling better resource allocation.
+- **Workdone Reports:** Track project progress and completion rates with detailed reports to help monitor efficiency and adherence to deadlines.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technology Stack
+The project leverages a robust stack to ensure high performance, reliability, and scalability:
+- **Backend:** Laravel, PHP
+- **Frontend:** jQuery, Ajax
+- **Database:** MySQL
+- **Hosting Server:** Windows Server 2012 R2
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Getting Started
+### Prerequisites
+- PHP (Version 7.4 or later)
+- Composer
+- MySQL
+- Windows Server (for deployment)
 
-## Learning Laravel
+### Installation
+1. **Clone the Repository**  
+   ```bash
+   git clone https://github.com/compilerharris/kesen.git
+   cd kesen
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+2. **Install Dependencies**  
+   ```bash
+   composer install
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+3. **Setup Database**  
+    - Create a MySQL database.
+    - Configure your .env file with the database connection details.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. **Run Migrations**  
+   ```bash
+   php artisan migrate
 
-## Laravel Sponsors
+5. **Start the Application**  
+   ```bash
+   php artisan serve
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Usage
+ - **Estimate Management:** Navigate to the Estimates module to create new estimates, view previous estimates, and update or delete entries.
+ - **Job Card Register and Management:** Access the Job Cards module to manage all active job cards. Track status updates and add comments for project milestones.
+ - **Employee Management:** Under Employees, add or remove team members, assign roles, and monitor assigned jobs and workloads.
+ - **Writer Management:** Access the Writers module to manage assignments, track workloads, and evaluate performance metrics.
+ - **Client Management:** Use the Clients module to manage client details, track projects associated with each client, and maintain contact records.
+ - **Language Management:** Manage supported languages and assign them to projects or clients as needed.
+ - **Workload Reports:** Access workload reports for insights into team distribution and project assignments.
+ - **Workdone Reports:** View completed projects and analyze project timelines and completion rates.
 
-### Premium Partners
+### Deployment
+The application is designed to be deployed on Windows Server 2012 R2:
+1. **Copy Files to Server:** Transfer the project files to your server.
+2. **Set Up Database Connection:** Ensure the MySQL database is accessible from your server and configure the database credentials in the ```.env``` file.
+3. **Start Laravel Application:** Use IIS or Apache configured for PHP to run the Laravel application on Windows Server.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Contributing
+We welcome contributions to improve functionality or add features:
+1. Fork the repository.
+2. Create a feature branch (```git checkout -b feature/NewFeature```).
+3. Commit changes (```git commit -m 'Add new feature'```).
+4. Push to the branch (```git push origin feature/NewFeature```).
+5. Open a pull request.
 
-## Contributing
+### License
+This project is licensed under the [MIT](https://opensource.org/licenses/MIT) License.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Contact
+For any questions or inquiries, please contact Haris Shaikh at compilerharris@gmail.com.
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Author
+Haris Shaikh – [LinkedIn](https://www.linkedin.com/in/compilerharris) – [GitHub](https://github.com/compilerharris)
