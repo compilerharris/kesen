@@ -1,6 +1,6 @@
-# KeSen Language Bureau - Process Management System
+# Process Management System
 
-The **KeSen Language Bureau Process Management System** is a comprehensive tool designed to streamline and automate operations for KeSen Language Bureau. This web application simplifies complex workflows, enabling seamless tracking and management across various departments. The solution is crafted to enhance productivity, reduce manual effort, and improve communication with clients and employees, ultimately reducing the estimate generation time from 25 minutes to just 5 minutes.
+The **Process Management System** is a comprehensive tool designed to streamline and automate operations for KeSen Language Bureau. This web application simplifies complex workflows, enabling seamless tracking and management across various departments. The solution is crafted to enhance productivity, reduce manual effort, and improve communication with clients and employees, ultimately reducing the estimate generation time from 25 minutes to just 5 minutes.
 
 ## Features
 The system is designed to provide robust management capabilities through multiple specialized modules:
