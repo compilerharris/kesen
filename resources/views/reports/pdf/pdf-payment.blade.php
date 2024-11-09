@@ -110,7 +110,7 @@
                         <td style="text-align: center;">{{ $job->estimateDetail?$job->estimateDetail->language->name:'' }}</td>
                         <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges:''}}</td>
                         <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit:''}}</td>
-                        @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit @endphp
+                        @php @if($job->estimateDetail)$total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit @endif @endphp
                     </tr>
                     @endif
                 @if($job->v_unit != '' && $job->v_unit != 0 && is_numeric($job->v_unit) && $job->v_employee_code == $writer_payment->writer_id)
@@ -122,7 +122,7 @@
                         <td style="text-align: center;">{{ $job->estimateDetail?$job->estimateDetail->language->name:'' }}</td>
                         <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges:''}}</td>
                         <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit:''}}</td>
-                        @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit @endphp
+                        @php @if($job->estimateDetail)$total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit @endif @endphp
                     </tr>
                 @endif
                 @if($job->bt_unit != '' && $job->bt_unit != 0 && is_numeric($job->bt_unit) && $job->bt_writer_code == $writer_payment->writer_id)
@@ -134,7 +134,7 @@
                         <td style="text-align: center;">{{ $job->estimateDetail?$job->estimateDetail->language->name:'' }}</td>
                         <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges:''}}</td>
                         <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit:''}}</td>
-                        @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit @endphp
+                        @php @if($job->estimateDetail)$total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit @endif @endphp
                     </tr>
                 @endif
                 @if($job->btv_unit != '' && $job->btv_unit != 0 && is_numeric($job->btv_unit) && $job->btv_employee_code == $writer_payment->writer_id)
@@ -146,7 +146,7 @@
                         <td style="text-align: center;">{{ $job->estimateDetail?$job->estimateDetail->language->name:'' }}</td>
                         <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges:''}}</td>
                         <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit:''}}</td>
-                        @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit @endphp
+                        @php @if($job->estimateDetail)$total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit @endif @endphp
                     </tr>
                 @endif
             @endforeach
