@@ -108,8 +108,8 @@
                         <td style="text-align: center;">Translation</td>
                         <td style="text-align: center;">{{$job->t_unit}}</td>
                         <td style="text-align: center;">{{ $job->estimateDetail?$job->estimateDetail->language->name:'' }}</td>
-                        <td style="text-align: center;">{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges}}</td>
-                        <td style="text-align: center;">{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit}}</td>
+                        <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges:''}}</td>
+                        <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit:''}}</td>
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit @endphp
                     </tr>
                     @endif
@@ -120,8 +120,8 @@
                         <td style="text-align: center;">Verification</td>
                         <td style="text-align: center;">{{$job->v_unit}}</td>
                         <td style="text-align: center;">{{ $job->estimateDetail?$job->estimateDetail->language->name:'' }}</td>
-                        <td style="text-align: center;">{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges}}</td>
-                        <td style="text-align: center;">{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit}}</td>
+                        <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges:''}}</td>
+                        <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit:''}}</td>
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit @endphp
                     </tr>
                 @endif
@@ -132,8 +132,8 @@
                         <td style="text-align: center;">Back Translation</td>
                         <td style="text-align: center;">{{$job->bt_unit}}</td>
                         <td style="text-align: center;">{{ $job->estimateDetail?$job->estimateDetail->language->name:'' }}</td>
-                        <td style="text-align: center;">{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges}}</td>
-                        <td style="text-align: center;">{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit}}</td>
+                        <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges:''}}</td>
+                        <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit:''}}</td>
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit @endphp
                     </tr>
                 @endif
@@ -144,8 +144,8 @@
                         <td style="text-align: center;">Back Trans Verification</td>
                         <td style="text-align: center;">{{$job->btv_unit}}</td>
                         <td style="text-align: center;">{{ $job->estimateDetail?$job->estimateDetail->language->name:'' }}</td>
-                        <td style="text-align: center;">{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges}}</td>
-                        <td style="text-align: center;">{{Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit}}</td>
+                        <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges:''}}</td>
+                        <td style="text-align: center;">{{$job->estimateDetail?Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit:''}}</td>
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_checking_charges*$job->btv_unit @endphp
                     </tr>
                 @endif
