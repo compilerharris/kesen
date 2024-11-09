@@ -101,9 +101,9 @@
             </tr>
             @php $total = 0; @endphp
             @foreach ($job_card as $job)
-                @if($job->t_unit != '' && $job->t_unit != 0)
+                @if($job->t_unit != '' && $job->t_unit != 0 && $job->t_writer_code == $writer_payment->writer_id)
                     <tr>
-                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('j M Y')}}</td>
+                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
                         <td style="text-align: center;">Translation</td>
                         <td style="text-align: center;">{{$job->t_unit}}</td>
@@ -113,9 +113,9 @@
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->per_unit_charges*$job->t_unit @endphp
                     </tr>
                     @endif
-                @if($job->v_unit != '' && $job->v_unit != 0)
+                @if($job->v_unit != '' && $job->v_unit != 0 && $job->v_employee_code == $writer_payment->writer_id)
                     <tr>
-                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('j M Y')}}</td>
+                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
                         <td style="text-align: center;">Verification</td>
                         <td style="text-align: center;">{{$job->v_unit}}</td>
@@ -125,9 +125,9 @@
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->checking_charges*$job->v_unit @endphp
                     </tr>
                 @endif
-                @if($job->bt_unit != '' && $job->bt_unit != 0)
+                @if($job->bt_unit != '' && $job->bt_unit != 0 && $job->bt_writer_code == $writer_payment->writer_id)
                     <tr>
-                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('j M Y')}}</td>
+                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
                         <td style="text-align: center;">Back Translation</td>
                         <td style="text-align: center;">{{$job->bt_unit}}</td>
@@ -137,9 +137,9 @@
                         @php $total+=Modules\WriterManagement\App\Models\WriterLanguageMap::where('writer_id',$writer_payment->writer_id)->where('language_id',$job->estimateDetail->language->id)->first()->bt_charges*$job->bt_unit @endphp
                     </tr>
                 @endif
-                @if($job->btv_unit != '' && $job->btv_unit != 0)
+                @if($job->btv_unit != '' && $job->btv_unit != 0 && $job->btv_employee_code == $writer_payment->writer_id)
                     <tr>
-                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('j M Y')}}</td>
+                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
                         <td style="text-align: center;">Back Trans Verification</td>
                         <td style="text-align: center;">{{$job->btv_unit}}</td>
