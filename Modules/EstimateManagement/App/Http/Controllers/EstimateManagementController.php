@@ -40,7 +40,7 @@ class EstimateManagementController extends Controller
             $query->where('created_at', '<=', $max);
         } else {
             if(!request()->get("reset")){
-                $query->whereBetween('created_at', [$startDate, $endDate]);
+                #$query->whereBetween('created_at', [$startDate, $endDate]);
             }else{
                 return redirect('/estimate-management');
             }
@@ -50,8 +50,11 @@ class EstimateManagementController extends Controller
         $estimates = $query->orderBy('created_at', 'desc')->get();
     
         // Set default min and max for the view
-        $min = $min ? $min->format('Y-m-d') : $startDate->format('Y-m-d');
-        $max = $max ? $max->format('Y-m-d') : $endDate->format('Y-m-d');
+        #$min = $min ? $min->format('Y-m-d') : $startDate->format('Y-m-d');
+        #$max = $max ? $max->format('Y-m-d') : $endDate->format('Y-m-d');
+
+        $min = $min ? $min->format('Y-m-d') :null;
+        $max = $max ? $max->format('Y-m-d') : null;
     
         // Count approved and rejected estimates
         $estimates_approved_count = $estimates->where('status', 1)->count();

@@ -25,7 +25,7 @@ class KesenExport implements FromCollection, WithHeadings, WithCustomStartCell, 
             ['Protocol Number', '', '',$this->jobRegister->protocol_no, ''],
             ['Document Name', '', '',$this->jobRegister->estimate_document_id, ''],
             ['', ''],
-            ['Sr No', 'Dr names', 'Site no', 'Languages', 'No of sites']
+            ['Sr No', 'Dr names', 'Site no', 'Languages', 'No of sites','Other Estimate']
         ]);
     }
 
@@ -79,6 +79,7 @@ class KesenExport implements FromCollection, WithHeadings, WithCustomStartCell, 
         $sheet->getStyle('C10')->getFont()->setBold(true);
         $sheet->getStyle('D10')->getFont()->setBold(true);
         $sheet->getStyle('E10')->getFont()->setBold(true);
+        $sheet->getStyle('F10')->getFont()->setBold(true);
         return [
             1 => ['font' => ['bold' => true]],
         ];
