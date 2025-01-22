@@ -103,7 +103,8 @@
             @foreach ($job_card as $job)
                 @if($job->t_unit != '' && $job->t_unit != 0 && is_numeric($job->t_unit) && $job->t_writer_code == $writer_payment->writer_id)
                     <tr>
-                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td>
+                        <!-- <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td> -->
+                        <td style="text-align: center;">{{Carbon\Carbon::parse($job_card[0]->created_at)->format('M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
                         <td style="text-align: center;">Translation</td>
                         <td style="text-align: center;">{{$job->t_unit}}</td>
