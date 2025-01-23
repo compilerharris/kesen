@@ -116,7 +116,8 @@
                     @endif
                 @if($job->v_unit != '' && $job->v_unit != 0 && is_numeric($job->v_unit) && $job->v_employee_code == $writer_payment->writer_id)
                     <tr>
-                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td>
+                        <!-- <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td> -->
+                        <td style="text-align: center;">{{Carbon\Carbon::parse($job_card[0]->created_at)->format('M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
                         <td style="text-align: center;">Verification</td>
                         <td style="text-align: center;">{{$job->v_unit}}</td>
@@ -128,7 +129,7 @@
                 @endif
                 @if($job->bt_unit != '' && $job->bt_unit != 0 && is_numeric($job->bt_unit) && $job->bt_writer_code == $writer_payment->writer_id)
                     <tr>
-                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td>
+                        <td style="text-align: center;">{{Carbon\Carbon::parse($job_card[0]->created_at)->format('M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
                         <td style="text-align: center;">Back Translation</td>
                         <td style="text-align: center;">{{$job->bt_unit}}</td>
@@ -140,7 +141,7 @@
                 @endif
                 @if($job->btv_unit != '' && $job->btv_unit != 0 && is_numeric($job->btv_unit) && $job->btv_employee_code == $writer_payment->writer_id)
                     <tr>
-                        <td style="text-align: center;">{{Carbon\Carbon::parse($job->created_at)->format('M Y')}}</td>
+                        <td style="text-align: center;">{{Carbon\Carbon::parse($job_card[0]->created_at)->format('M Y')}}</td>
                         <td style="text-align: center;">{{$job->job_no}}</td>
                         <td style="text-align: center;">Back Trans Verification</td>
                         <td style="text-align: center;">{{$job->btv_unit}}</td>
