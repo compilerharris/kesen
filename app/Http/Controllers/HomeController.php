@@ -81,6 +81,7 @@ class HomeController extends Controller
         $pdf = FacadePdf::loadView('reports.pdf.pdf-bill', compact('bill_data', 'max', 'min'));
         return $pdf->stream();
     }
+    
     public function generatePaymentReport(Request $request){
         $year = request()->get('year');
         $month = request()->get('month');
@@ -109,6 +110,7 @@ class HomeController extends Controller
         return $pdf->stream();
         
     }
+
     public function generatePaymentReportPreview($writerId, $paymentId, $purpose){
         $writer_payment=WriterPayment::where('id',$paymentId)->first();
         if($writer_payment==null){
@@ -144,6 +146,7 @@ class HomeController extends Controller
         }
         
     }
+
     public function generateWriterReport() {
         // Parse and format date ranges
         $min = Carbon::parse(request()->get('from_date'))->startOfDay()->format('Y-m-d H:i:s');
@@ -191,8 +194,9 @@ class HomeController extends Controller
         $pdf = FacadePdf::loadView('reports.pdf.pdf-writer', compact('totalByWriters', 'min', 'max'));
         return $pdf->stream();
     }
+
     private function calculateWriterTotal($job, $type, &$totalByWriters, $writers, $chargeType = 'per_unit_charges') {
-        $writerCodeField = $type . '_writer_code';
+        $writerCodeField = in_array($type,['t','bt']) ? $type . '_writer_code' : $type . '_employee_code';
         $unitField = $type . '_unit';
         
         if (!empty($job->$unitField)) {

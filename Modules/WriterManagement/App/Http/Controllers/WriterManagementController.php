@@ -364,7 +364,7 @@ class WriterManagementController extends Controller
     }
 
     private function calculateWriterTotal($job, $type, &$totalByWriters, $writers, $chargeType = 'per_unit_charges') {
-        $writerCodeField = $type . '_writer_code';
+        $writerCodeField = in_array($type,['t','bt']) ? $type . '_writer_code' : $type . '_employee_code';
         $unitField = $type . '_unit';
         
         if (!empty($job->$unitField)) {
