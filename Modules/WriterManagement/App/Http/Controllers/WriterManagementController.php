@@ -300,14 +300,15 @@ class WriterManagementController extends Controller
 
     public function calculatePayment(Request $request){
         // Parse and format date ranges
-        $min = Carbon::parse($request->period_from)->startOfDay()->format('Y-m-d');
-        $max = Carbon::parse($request->period_to)->endOfDay()->format('Y-m-d');
-    
+        $min = Carbon::parse($request->period_from)->startOfDay()->format('Y-m-d H:i:s');
+        $max = Carbon::parse($request->period_to)->endOfDay()->format('Y-m-d H:i:s');
+        
         // Fetch job register IDs based on date range
         $jobRegisterIds = JobRegister::whereBetween('created_at', [$min, $max])->pluck('sr_no')->toArray();
         
         // Fetch job cards based on job register IDs
         $job_cards = JobCard::whereIn('job_no', $jobRegisterIds)->with('estimateDetail.language')->orderBy('job_no')->get();
+
     
         // Fetch writers with their language maps in one go
         $writers = Writer::with(['writer_language_map' => function ($query) {
