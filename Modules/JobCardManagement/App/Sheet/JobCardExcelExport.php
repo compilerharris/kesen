@@ -39,7 +39,8 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
             'Job Description',
             'Remark',
             'Billing Status',
-            'Status'
+            'Status',
+            'Other Estimate'
         ];
     }
 
@@ -68,7 +69,8 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
             $jobCard->docName,
             $jobCard->remark,
             $jobCard->billingStatus,
-            $jobCard->status
+            $jobCard->status,
+            $jobCard->otherEstimate
         ];
         // $jobCard->created_at ? $jobCard->created_at->format('j M Y') : '',
         // $jobCard->sr_no,

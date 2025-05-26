@@ -516,7 +516,8 @@ class JobCardManagementController extends Controller
                     'docName' => $job->estimate_document_id,
                     'remark' => $job->remark??'',
                     'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
-                    'status' => $job->status ==  0 ? (count($job->jobCard)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled')
+                    'status' => $job->status ==  0 ? (count($job->jobCard)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled'),
+                    'otherEstimate' => $job->other_details!=null?Estimates::whereIn('id', explode(',', $job->other_details))->get()->pluck('estimate_no')->implode(', ') ?? '':"" 
                 ]);
             }
             $todayDate = Carbon::now()->format('j-M-Y');
@@ -614,7 +615,8 @@ class JobCardManagementController extends Controller
                 'docName' => $job->estimate_document_id,
                 'remark' => $job->remark??'',
                 'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
-                'status' => $job->status ==  0 ? (count($job->job_card)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled')
+                'status' => $job->status ==  0 ? (count($job->job_card)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled'),
+                'otherEstimate' => $job->other_details!=null?Estimates::whereIn('id', explode(',', $job->other_details))->get()->pluck('estimate_no')->implode(', ') ?? '':"" 
             ]);
         }
         $todayDate = Carbon::now()->format('j-M-Y');
