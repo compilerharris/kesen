@@ -119,7 +119,7 @@
         </div> --}}
         <div style="margin-top: 10px;margin-bottom: 10px">
             <span style="display: inline;font-weight: bold;">No: {{ $estimate->estimate_no }}</span>
-            <span class="sub-title" style="margin-left: 13%;font-weight: bold;" >PROFORMA</span>
+            <span class="sub-title" style="margin-left: 13%;font-weight: bold;" >ESTIMATE</span>
             <span style="float: right;font-weight: bold;font-size: 16px;display: inline">Date: {{ $estimate->updated_at->format('j M Y') }}</span>
         </div>
         
