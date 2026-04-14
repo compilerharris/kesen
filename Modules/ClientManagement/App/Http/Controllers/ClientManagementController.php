@@ -373,3 +373,12 @@ class ClientManagementController extends Controller
         return redirect(route('clientmanagement.redirectToRatecardList', $id));
     }
 }
+
+
+
+
+
+
+
+
+// test
