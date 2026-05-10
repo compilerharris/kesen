@@ -17,9 +17,13 @@
     $languages = sort_languages($languages);
 @endphp
 @if ($layoutHelper->isLayoutTopnavEnabled())
-    @php($def_container_class = 'container')
+    @php
+        $def_container_class = 'container';
+    @endphp
 @else
-    @php($def_container_class = 'container-fluid')
+    @php
+        $def_container_class = 'container-fluid';
+    @endphp
 @endif
 
 {{-- Default Content Wrapper --}}
@@ -40,7 +44,8 @@
     @endif
 
     {{-- Main Content --}}
-    <div class="content" style="padding-top: 20px; margin-left: 10px">
+        <div class="content" style="padding-top: 20px; margin-left: 10px">
+            @include('components.notification')
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item "><a href="/estimate-management">Estimate </a></li>
@@ -395,7 +400,7 @@
                         value="{{ old('date', $estimate->date) }}" required label="Mail Received on" />
                     <x-adminlte-input name="discount" placeholder="Discount" fgroup-class="col-md-2" type="text"
                         value="{{ old('discount', $estimate->discount) }}" label="Discount" />
-                    <x-adminlte-select2 name="rorn" id="rorn" fgroup-class="col-md-2" required value="{{ old('rorn') }}"
+                    <x-adminlte-select2 name="rorn" id="rorn" fgroup-class="col-md-2" required value="{{ old('rorn', $estimate->rorn) }}"
                         label="Rush/Normal">
                         <option value="normal" {{$estimate->rorn=="normal"?"selected":""}}>Normal</option>
                         <option value="rush" {{$estimate->rorn=="rush"?"selected":""}}>Rush</option>
@@ -445,10 +450,17 @@
                                                 <div class="invalid-feedback is-invalid" id="requiredMsg_{{ $index }}">Please select at least one language.</div>
                                             </div>
                                             <!-- document -->
-                                            <x-adminlte-input name="document_name[{{ $index }}]" placeholder="Document Name"  fgroup-class="col-md-4" type="text" value="{{ old('document_name.' . $index,  $detail->document_name) }}" required label="Document Name" readonly />
+                                            @php
+                                                $documentReadonly = filled(trim((string) ($detail->document_name ?? '')));
+                                            @endphp
+                                            @if ($documentReadonly)
+                                                <x-adminlte-input name="document_name[{{ $index }}]" placeholder="Document Name" fgroup-class="col-md-4" type="text" value="{{ old('document_name.' . $index, $detail->document_name) }}" required label="Document Name" readonly />
+                                            @else
+                                                <x-adminlte-input name="document_name[{{ $index }}]" placeholder="Document Name" fgroup-class="col-md-4" type="text" value="{{ old('document_name.' . $index, $detail->document_name) }}" required label="Document Name" />
+                                            @endif
                                             <!-- unit -->
                                             {{-- onkeyup="calculateAmount(this)" --}}
-                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-1" type="text" value="{{ old('unit.' . $index, $detail->unit) }}" required label="Unit" min="1" />
+                                            <x-adminlte-input name="unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-1" type="text" value="{{ old('unit.' . $index, $detail->entered_unit === null ? $detail->unit : $detail->entered_unit) }}" required label="Unit" min="1" />
                                             {{-- <!-- t rate -->
                                             <x-adminlte-input name="rate[{{ $index }}]" placeholder="T Rate" fgroup-class="col-md-1" type="text" value="{{ old('rate.' . $index, $detail->rate) }}" required label="T Rate" onkeyup="calculateAmount(this)" />
                                             <!-- t amount -->
@@ -495,7 +507,7 @@
                                             {{-- <!-- bt rate -->
                                             <x-adminlte-input name="back_translation[{{ $index }}]" placeholder="BT Rate" fgroup-class="col-md-1" type="text" value="{{ old('back_translation.' . $index,  $detail->back_translation) }}" label="BT Rate" onkeyup="calculateAmount_2(this)" />
                                             <!-- bt amount -->
-                                            <x-adminlte-input name="amount_bt[{{ $index }}]" placeholder="BT Amount" fgroup-class="col-md-1" type="text" value="{{ $detail->unit *  $detail->back_translation }}" label="BT Amount" readonly /> --}}
+                                            <x-adminlte-input name="amount_bt[{{ $index }}]" placeholder="BT Amount" fgroup-class="col-md-1" type="text" value="{{ estimateDetailBackTranslationLineTotal($detail) }}" label="BT Amount" readonly /> --}}
                                             <!-- BTV -->
                                             {{-- onchange="calculateBtvAmount(this)" --}}
                                             <div class="form-group col-md-1">
@@ -530,14 +542,14 @@
                                             </x-adminlte-select> -->
                                         </div>
                                         <div class="row">
-                                            <input type="button" name="button"
+                                            <button type="button"
                                                 class="btn btn-danger remove-item mt-3 mb-1"
                                                 style="float:right;width: 100px"
                                                 data-detail-name="{{ $detail->document_name }}"
                                                 data-detail-unit="{{ $detail->unit }}"
                                                 data-detail-rate="{{ $detail->rate }}"
                                                 data-detail-estimateid="{{ $detail->estimate_id }}"
-                                                value="Remove"></button>
+                                            >Remove</button>
                                         </div>
                                     </div>
                                 </div>
@@ -556,35 +568,46 @@
 </div>
 <script type="text/javascript">
     var rates = [];
+    const minLineTotal = @json((float) config('estimatemanagement.min_line_total', 500));
     $(document).ready(function() {  
         addLangScripts();  
         checkTypeValue();
-        let tempIndex = {{ count($estimate->details) }};
-        let itemIndex = {{ count($estimate->details) }};
+        let tempIndex = {{ $estimate->eDetails->count() }};
+        let itemIndex = {{ $estimate->eDetails->count() }};
 
         $('#add-item').click(function() {
-            let newItem = $('.repeater-item.mt-3:first').clone();
+            let $first = $('.repeater-item.mt-3:first');
+            if ($first.length === 0) {
+                return;
+            }
+            let firstIdx = 0;
+            let firstDocName = $first.find('input[name^="document_name["]').first().attr('name');
+            let docMatch = firstDocName && firstDocName.match(/document_name\[(\d+)\]/);
+            if (docMatch) {
+                firstIdx = parseInt(docMatch[1], 10);
+            }
+            let newItem = $first.clone();
             newItem.find('.card-title').html('Document ' + (itemIndex + 1));
             newItem.find('input, checkbox').each(function() {
                 $(this).prop('checked', false);
                 let name = $(this).attr('name');
-                if (name === 't[0]') {
+                if (name === 't[' + firstIdx + ']') {
                     $(this).prop('checked', true);
                     $(this).attr("disabled", true);
                     name = name.replace(/\d+/, itemIndex);
-                }else if (name === 'v_one[0]') {
+                } else if (name === 'v_one[' + firstIdx + ']') {
                     $(this).prop('checked', false);
                     name = 'v_one[' + itemIndex + ']';
-                }else if (name === 'v_two[0]') {
+                } else if (name === 'v_two[' + firstIdx + ']') {
                     $(this).prop('checked', false);
                     name = 'v_two[' + itemIndex + ']';
-                }else if (name === 'bt[0]') {
+                } else if (name === 'bt[' + firstIdx + ']') {
                     $(this).prop('checked', false);
                     name = 'bt[' + itemIndex + ']';
-                }else if (name === 'btv[0]') {
+                } else if (name === 'btv[' + firstIdx + ']') {
                     $(this).prop('checked', false);
                     name = 'btv[' + itemIndex + ']';
-                }else if(name != "lang_0[]"){
+                } else if (name != 'lang_' + firstIdx + '[]') {
                     $(this).val('');
                 }
                 if (name == "button") {
@@ -616,15 +639,17 @@
                     }
                 }
             });
-            newItem.find('#dropdownMenuButton_0').text('Select Language');
-            newItem.find('#dropdownMenuButton_0').attr('id','dropdownMenuButton_'+itemIndex);
-            newItem.find('.dropdown-menu').attr('aria-labelledby','dropdownMenuButton_'+itemIndex);
-            newItem.find('#requiredMsg_0').attr('id','requiredMsg_'+itemIndex);
+            newItem.find('.remove-item').attr('data-detail-name', '').attr('data-detail-unit', '').attr('data-detail-rate', '').attr('data-detail-estimateid', '');
+            newItem.find('#dropdownMenuButton_' + firstIdx).text('Select Language');
+            newItem.find('#dropdownMenuButton_' + firstIdx).attr('id', 'dropdownMenuButton_' + itemIndex);
+            newItem.find('.dropdown-menu').attr('aria-labelledby', 'dropdownMenuButton_' + itemIndex);
+            newItem.find('#requiredMsg_' + firstIdx).attr('id', 'requiredMsg_' + itemIndex);
             newItem.appendTo('#repeater');
             var script = document.createElement('script');
             script.textContent = "$('#dropdownMenuButton_"+itemIndex+" + div').on('click', function(e) { e.stopPropagation();});";
             document.body.appendChild(script);
             itemIndex++;
+            refreshRatesForAllRows();
         });
 
         $(document).on('click', '.remove-item', function() {
@@ -672,23 +697,25 @@
             //     itemIndex++;
             // });
             $('.repeater-item').each(function() {
-                let newItem = $(this);
-                newItem.find('input, checkbox').each(function() {
-                    let name = $(this).attr('name');
-                    name = name.replace(/\d+/, itemIndex);
-                    $(this).attr('name', name);
-                    if (name == 'document_name[' + itemIndex + ']') {
-                        $(this).removeAttr('readonly');
+                let row = $(this);
+                row.find('input, checkbox').each(function() {
+                    let el = $(this);
+                    let name = el.attr('name');
+                    if (!name) {
+                        return;
                     }
-                    newItem.attr('name', name);
-                    // Update the id and 'for' attribute to ensure they are unique
-                    let id = newItem.attr('id');
+                    name = name.replace(/\d+/, itemIndex);
+                    el.attr('name', name);
+                    if (name == 'document_name[' + itemIndex + ']') {
+                        el.removeAttr('readonly');
+                    }
+                    let id = el.attr('id');
                     if (id) {
                         id = id.replace(/\d+/, itemIndex);
-                        newItem.attr('id', id);
+                        el.attr('id', id);
                     }
 
-                    let label = newItem.next('label');
+                    let label = el.next('label');
                     if (label.length > 0) {
                         let labelFor = label.attr('for');
                         if (labelFor) {
@@ -697,17 +724,19 @@
                         }
                     }
                 });
-                newItem.find('.card-title').html('Document ' + (itemIndex + 1));
-                newItem.find('.dropdown-toggle').attr('id','dropdownMenuButton_'+itemIndex);
-                newItem.find('.dropdown-menu').attr('aria-labelledby','dropdownMenuButton_'+itemIndex);
-                newItem.find('.invalid-feedback').attr('id','requiredMsg_'+itemIndex);
+                row.find('.card-title').html('Document ' + (itemIndex + 1));
+                row.find('.dropdown-toggle').attr('id', 'dropdownMenuButton_' + itemIndex);
+                row.find('.dropdown-menu').attr('aria-labelledby', 'dropdownMenuButton_' + itemIndex);
+                row.find('.invalid-feedback').attr('id', 'requiredMsg_' + itemIndex);
                 itemIndex++;
             });
+            refreshRatesForAllRows();
         }
 
         // Additional script for client_id change event
         $('#client_id').change(function() {
             let client_id = this.value;
+            refreshRatesForAllRows();
             $.ajax({
                 url: "/estimate-management/client/" + client_id,
                 method: 'GET',
@@ -716,6 +745,10 @@
                 }
             });
         });
+        $('#rorn, #type').on('change', function() {
+            refreshRatesForAllRows();
+        });
+        refreshRatesForAllRows();
 
         // Initial script for amount calculation
         // $('input[name^="unit"], input[name^="rate"], input[name^="back_translation"]').on('input', function() {
@@ -747,49 +780,84 @@
     }
 
     function changeLan(input) {
-        console.log(input);
-        const index = input.name.substring(5).replace("[]", "");
-        var selected = [];
-        $('input[name^="lang_'+index+'"]').each(function() {
+        const m = input.name && input.name.match(/^lang_(\d+)\[\]$/);
+        if (!m) {
+            return;
+        }
+        const index = m[1];
+        const $row = $(input).closest('.repeater-item');
+        const selected = [];
+        $row.find('input[type="checkbox"][name="lang_' + index + '[]"]').each(function() {
             if ($(this).is(':checked')) {
                 selected.push($(this).next('label').text());
             }
         });
 
-        $('#dropdownMenuButton_'+index).text(selected.join(', ') || 'Select Language');
+        $row.find('[id^="dropdownMenuButton_"]').first().text(selected.join(', ') || 'Select Language');
 
-        // Update the hidden input value and validity
         if (selected.length > 0) {
-            $('#requiredMsg_'+index).hide();
+            $('#requiredMsg_' + index).hide();
+            getRates(index);
         } else {
-            $('#requiredMsg_'+index).show();
+            $('#requiredMsg_' + index).show();
+            delete rates[index];
         }
-        // if (selected.length == 1) {
-        //     getRates(index);    
-        // }
+    }
+
+    function refreshRatesForAllRows() {
+        const clientId = $('#client_id').val();
+        if (!clientId) {
+            return;
+        }
+        $('.repeater-item').each(function() {
+            const $row = $(this);
+            const $doc = $row.find('input[name^="document_name["]').first();
+            const m = $doc.attr('name') && $doc.attr('name').match(/document_name\[(\d+)\]/);
+            if (!m) {
+                return;
+            }
+            const index = m[1];
+            const lang = $row.find('input[name="lang_' + index + '[]"]:checked').first().val();
+            if (!lang) {
+                delete rates[index];
+                return;
+            }
+            getRates(index);
+        });
     }
 
     function getRates(index){
-        const eClientId = $('#client_id option:selected').val()?$('#client_id option:selected').val():@json($clients[0]->id);
-        const eRorn = $('#rorn option:selected').val()?$('#rorn option:selected').val():'normal';
-        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
-        const eLang = $(`input[name="lang_${index}[]"]:checked`).first().val()?$(`input[name="lang_${index}[]"]:checked`).first().val():@json($languages[0]->id);
+        const eClientId = $('#client_id').val();
+        if (!eClientId) {
+            return;
+        }
+        const eRorn = $('#rorn option:selected').val() ? $('#rorn option:selected').val() : 'normal';
+        const eType = $('#type option:selected').val() ? $('#type option:selected').val() : 'minimum';
+        const eLang = $(`input[name="lang_${index}[]"]:checked`).first().val() ? $(`input[name="lang_${index}[]"]:checked`).first().val() : @json($languages[0]->id);
         $.ajax({
             url: "/estimate-management/ratecard/" + eClientId +  "/"  + eRorn +  "/" + eType +  "/" + eLang,
             method: 'GET',
             success: function(data) {
-                rates[index] = data;
-                if(eType == 'minimum'){
-                    document.querySelector(`input[name="rate[${index}]"]`).value = data.t_minimum_rate?data.t_minimum_rate:0;
-                }else{
-                    document.querySelector(`input[name="rate[${index}]"]`).value = data.t_rate?data.t_rate:0;
+                if (!data) {
+                    delete rates[index];
+                    return;
                 }
-                document.querySelector(`input[name="unit[${index}]"]`).value = 0;
-                document.querySelector(`input[name="amount[${index}]"]`).value = 0;
-                document.querySelector(`input[name="amount_bt[${index}]"]`).value = 0;
-                document.querySelector(`input[name="verification[${index}]"]`).value = 0;
-                document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
-                document.querySelector(`input[name="verification_2[${index}]"]`).value = 0;
+                rates[index] = data;
+                const rateEl = document.querySelector(`input[name="rate[${index}]"]`);
+                if (rateEl) {
+                    if (eType == 'minimum') {
+                        rateEl.value = data.t_minimum_rate ? data.t_minimum_rate : 0;
+                    } else {
+                        rateEl.value = data.t_rate ? data.t_rate : 0;
+                    }
+                }
+                const setIf = (name, val) => { const el = document.querySelector(`input[name="${name}[${index}]"]`); if (el) el.value = val; };
+                // Do not clear unit here: refreshRatesForAllRows() runs on load and would wipe saved word counts (e.g. 611 → 0).
+                setIf('amount', 0);
+                setIf('amount_bt', 0);
+                setIf('verification', 0);
+                setIf('two_way_qc_t', 0);
+                setIf('verification_2', 0);
             }
         });
     }
@@ -799,7 +867,8 @@
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
         if( $(`input[name="v_one[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
-            const rate = eType == 'minimum'?parseFloat(rates[index].v1_minimum_rate):parseFloat(rates[index].v1_rate) || 0;
+            const rc = rates[index];
+            const rate = eType == 'minimum' ? parseFloat(rc?.v1_minimum_rate) : parseFloat(rc?.v1_rate) || 0;
             const v1Amount = unit * rate;
             document.querySelector(`input[name="verification[${index}]"]`).value = v1Amount;
         }else{
@@ -812,7 +881,8 @@
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
         if( $(`input[name="v_two[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
-            const rate = eType == 'minimum'?parseFloat(rates[index].v2_minimum_rate):parseFloat(rates[index].v2_rate) || 0;
+            const rc = rates[index];
+            const rate = eType == 'minimum' ? parseFloat(rc?.v2_minimum_rate) : parseFloat(rc?.v2_rate) || 0;
             const amount = unit * rate;
             document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = amount;
         }else{
@@ -825,13 +895,25 @@
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
         if( $(`input[name="bt[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
-            const rate = eType == 'minimum'?parseFloat(rates[index].bt_minimum_rate):parseFloat(rates[index].bt_rate) || 0;
-            const amount = unit * rate;
-            document.querySelector(`input[name="back_translation[${index}]"]`).value = rate;
-            document.querySelector(`input[name="amount_bt[${index}]"]`).value = amount;
+            const rc = rates[index];
+            const btRate = parseFloat(rc?.bt_rate) || 0;
+            const btMin = parseFloat(rc?.bt_minimum_rate) || 0;
+            const lineAtRate = unit * btRate;
+            const flatMinimum = lineAtRate < btMin;
+            const storedValue = flatMinimum ? btMin : btRate;
+            let amount = flatMinimum ? btMin : lineAtRate;
+            if (eType !== 'customize') {
+                amount = Math.max(amount, minLineTotal);
+            }
+            const btRateInput = document.querySelector(`input[name="back_translation[${index}]"]`);
+            const amountBtInput = document.querySelector(`input[name="amount_bt[${index}]"]`);
+            if (btRateInput) btRateInput.value = storedValue;
+            if (amountBtInput) amountBtInput.value = amount;
         }else{
-            document.querySelector(`input[name="back_translation[${index}]"]`).value = 0;
-            document.querySelector(`input[name="amount_bt[${index}]"]`).value = 0;
+            const btRateInput = document.querySelector(`input[name="back_translation[${index}]"]`);
+            const amountBtInput = document.querySelector(`input[name="amount_bt[${index}]"]`);
+            if (btRateInput) btRateInput.value = 0;
+            if (amountBtInput) amountBtInput.value = 0;
         }
     }
 
@@ -840,7 +922,8 @@
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
         if( $(`input[name="btv[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
-            const rate = eType == 'minimum'?parseFloat(rates[index].btv_minimum_rate):parseFloat(rates[index].btv_rate) || 0;
+            const rc = rates[index];
+            const rate = eType == 'minimum' ? parseFloat(rc?.btv_minimum_rate) : parseFloat(rc?.btv_rate) || 0;
             const amount = unit * rate;
             document.querySelector(`input[name="verification_2[${index}]"]`).value = amount;
         }else{
@@ -867,18 +950,15 @@
 
     // Validate form on submit
     function checkValidLan(e){
-        let i=0;
         $('.repeater-item').each(function() {
-            console.log($('#dropdownMenuButton_'+i).text());
-            // console.log(i,$('input[name="lang_'+i+'[]"]:checked').val());
-            // if ($('input[name="lang_'+i+'[]"]:checked').val() === '' || $('input[name="lang_'+i+'[]"]:checked').val() === undefined ) {
-            if ($('#dropdownMenuButton_'+i).text() === 'Select Language') {
-                $('#requiredMsg_'+i).show();
+            const $btn = $(this).find('[id^="dropdownMenuButton_"]').first();
+            if ($btn.length && $btn.text().trim() === 'Select Language') {
+                const idx = ($btn.attr('id') || '').replace('dropdownMenuButton_', '');
+                if (idx !== '') {
+                    $('#requiredMsg_' + idx).show();
+                }
                 e.preventDefault();
-            } else {
-                $('#requiredMsg_'+i).hide();
             }
-            i++;
         });
     }
 
@@ -895,14 +975,13 @@
     // if customize remove required from unt/words
     function checkTypeValue(){
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'';
-        let index = 0;
         $('.repeater-item').each(function() {
-            if(eType === 'customize' || eType === 'minimum'){
-                $(this).find('input[name="unit['+index+']"]').removeAttr('required');
-            }else{
-                $(this).find('input[name="unit['+index+']"]').attr('required',true);
+            const $unit = $(this).find('input[name^="unit["]');
+            if (eType === 'customize' || eType === 'minimum'){
+                $unit.removeAttr('required');
+            } else {
+                $unit.attr('required', true);
             }
-            index++;
         });
     }
 

@@ -20,7 +20,17 @@ class EstimatesDetails extends Model
 
    protected $guarded=['id'];
 
-   public function jobRegister()
+   protected $casts = [
+       'bt_flat_minimum' => 'boolean',
+       'entered_unit' => 'float',
+   ];
+
+    public function estimate()
+    {
+        return $this->belongsTo(Estimates::class, 'estimate_id');
+    }
+
+    public function jobRegister()
     {
         return $this->belongsTo(JobRegister::class,'document_name', 'estimate_document_id');
     }

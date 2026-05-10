@@ -5,9 +5,21 @@
 /public/storage
 /storage/*.key
 /vendor
+
+# Environment (never commit secrets)
 .env
-.env.backup
-.env.production
+.env.*
+!.env.example
+
+# Local databases & SQL dumps
+*.sqlite
+*.sqlite-journal
+*.db
+*.sql
+
+# Local assets (e.g. screenshots, attachments — not part of the app)
+/assets/
+
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

@@ -74,7 +74,7 @@ $config = [
                         value="{{ old('date', date('Y-m-d')) }}" required label="Mail Received on" />
                     <x-adminlte-input name="discount" placeholder="Discount" fgroup-class="col-md-2" type="text"
                         value="{{ old('discount') }}" label="Discount" />
-                    <x-adminlte-select2 name="rorn" id="rorn" fgroup-class="col-md-2" required value="{{ old('rorn') }}"
+                    <x-adminlte-select2 name="rorn" id="rorn" fgroup-class="col-md-2" required value="{{ old('rorn', 'normal') }}"
                         label="Rush/Normal">
                         <option value="normal">Normal</option>
                         <option value="rush">Rush</option>
@@ -225,6 +225,7 @@ $config = [
 
 <script type="text/javascript">
     var rates = [];
+    const minLineTotal = @json((float) config('estimatemanagement.min_line_total', 500));
     $(document).ready(function() {
         let itemIndex = 1;
 
@@ -310,6 +311,7 @@ $config = [
             script.textContent = "$('#dropdownMenuButton_"+itemIndex+" + div').on('click', function(e) { e.stopPropagation();});";
             document.body.appendChild(script);
             itemIndex++;
+            refreshRatesForAllRows();
         });
 
         $(document).on('click', '.remove-item', function() {
@@ -354,10 +356,12 @@ $config = [
                 $(this).find('#requiredMsg_0').attr('id','requiredMsg_'+itemIndex);
                 itemIndex++;
             });
+            refreshRatesForAllRows();
         }
 
         $('#client_id').change(function() {
             let client_id = this.value;
+            refreshRatesForAllRows();
             $.ajax({
                 url: "/estimate-management/client/" + client_id,
                 method: 'GET',
@@ -366,6 +370,10 @@ $config = [
                 }
             });
         });
+        $('#rorn, #type').on('change', function() {
+            refreshRatesForAllRows();
+        });
+        refreshRatesForAllRows();
 
         $('input[name^="unit"], input[name^="rate"], input[name^="back_translation"]').on('input', function() {
             calculateAmount(this);
@@ -401,48 +409,90 @@ $config = [
     }
 
     function changeLan(input) {
-        const index = input.name.substring(5).replace("[]", "");
+        const m = input.name && input.name.match(/^lang_(\d+)\[\]$/);
+        if (!m) {
+            return;
+        }
+        const index = m[1];
+        const $row = $(input).closest('.repeater-item');
         var selected = [];
-        $('input[name^="lang_'+index+'"]').each(function() {
+        $row.find('input[type="checkbox"][name="lang_' + index + '[]"]').each(function() {
             if ($(this).is(':checked')) {
                 selected.push($(this).next('label').text());
             }
         });
 
-        $('#dropdownMenuButton_'+index).text(selected.join(', ') || 'Select Language');
-        
-        // Update the hidden input value and validity
+        $row.find('[id^="dropdownMenuButton_"]').first().text(selected.join(', ') || 'Select Language');
+
         if (selected.length > 0) {
-            $('#requiredMsg_'+index).hide();
+            const msgId = 'requiredMsg_' + index;
+            if (document.getElementById(msgId)) {
+                $('#' + msgId).hide();
+            }
+            getRates(index);
         } else {
-            $('#requiredMsg_'+index).show();
+            const msgId = 'requiredMsg_' + index;
+            if (document.getElementById(msgId)) {
+                $('#' + msgId).show();
+            }
+            delete rates[index];
         }
-        // if (selected.length == 1) {
-        //     getRates(index);    
-        // }
+    }
+
+    function refreshRatesForAllRows() {
+        const clientId = $('#client_id').val();
+        if (!clientId) {
+            return;
+        }
+        $('.repeater-item').each(function() {
+            const $row = $(this);
+            const $doc = $row.find('input[name^="document_name["]').first();
+            const m = $doc.attr('name') && $doc.attr('name').match(/document_name\[(\d+)\]/);
+            if (!m) {
+                return;
+            }
+            const index = m[1];
+            const lang = $row.find('input[name="lang_' + index + '[]"]:checked').first().val();
+            if (!lang) {
+                delete rates[index];
+                return;
+            }
+            getRates(index);
+        });
     }
 
     function getRates(index){
-        const eClientId = $('#client_id option:selected').val()?$('#client_id option:selected').val():@json($clients[0]->id);
-        const eRorn = $('#rorn option:selected').val()?$('#rorn option:selected').val():'normal';
-        const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
-        const eLang = $(`input[name="lang_${index}[]"]:checked`).first().val()?$(`input[name="lang_${index}[]"]:checked`).first().val():@json($languages[0]->id);
+        const eClientId = $('#client_id').val();
+        if (!eClientId) {
+            return;
+        }
+        const eRorn = $('#rorn option:selected').val() ? $('#rorn option:selected').val() : 'normal';
+        const eType = $('#type option:selected').val() ? $('#type option:selected').val() : 'minimum';
+        const eLang = $(`input[name="lang_${index}[]"]:checked`).first().val() ? $(`input[name="lang_${index}[]"]:checked`).first().val() : @json($languages[0]->id);
         $.ajax({
             url: "/estimate-management/ratecard/" + eClientId +  "/"  + eRorn +  "/" + eType +  "/" + eLang,
             method: 'GET',
             success: function(data) {
-                rates[index] = data;
-                if(eType == 'minimum'){
-                    document.querySelector(`input[name="rate[${index}]"]`).value = data.t_minimum_rate?data.t_minimum_rate:0;
-                }else{
-                    document.querySelector(`input[name="rate[${index}]"]`).value = data.t_rate?data.t_rate:0;
+                if (!data) {
+                    delete rates[index];
+                    return;
                 }
-                document.querySelector(`input[name="unit[${index}]"]`).value = 0;
-                document.querySelector(`input[name="amount[${index}]"]`).value = 0;
-                document.querySelector(`input[name="amount_bt[${index}]"]`).value = 0;
-                document.querySelector(`input[name="verification[${index}]"]`).value = 0;
-                document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = 0;
-                document.querySelector(`input[name="verification_2[${index}]"]`).value = 0;
+                rates[index] = data;
+                const rateEl = document.querySelector(`input[name="rate[${index}]"]`);
+                if (rateEl) {
+                    if (eType == 'minimum') {
+                        rateEl.value = data.t_minimum_rate ? data.t_minimum_rate : 0;
+                    } else {
+                        rateEl.value = data.t_rate ? data.t_rate : 0;
+                    }
+                }
+                const setIf = (name, val) => { const el = document.querySelector(`input[name="${name}[${index}]"]`); if (el) el.value = val; };
+                setIf('unit', 0);
+                setIf('amount', 0);
+                setIf('amount_bt', 0);
+                setIf('verification', 0);
+                setIf('two_way_qc_t', 0);
+                setIf('verification_2', 0);
             }
         });
     }
@@ -452,7 +502,8 @@ $config = [
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
         if( $(`input[name="v_one[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
-            const rate = eType == 'minimum'?parseFloat(rates[index].v1_minimum_rate):parseFloat(rates[index].v1_rate) || 0;
+            const rc = rates[index];
+            const rate = eType == 'minimum' ? parseFloat(rc?.v1_minimum_rate) : parseFloat(rc?.v1_rate) || 0;
             const amount = unit * rate;
             document.querySelector(`input[name="verification[${index}]"]`).value = amount;
         }else{
@@ -465,7 +516,8 @@ $config = [
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
         if( $(`input[name="v_two[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
-            const rate = eType == 'minimum'?parseFloat(rates[index].v2_minimum_rate):parseFloat(rates[index].v2_rate) || 0;
+            const rc = rates[index];
+            const rate = eType == 'minimum' ? parseFloat(rc?.v2_minimum_rate) : parseFloat(rc?.v2_rate) || 0;
             const amount = unit * rate;
             document.querySelector(`input[name="two_way_qc_t[${index}]"]`).value = amount;
         }else{
@@ -478,9 +530,17 @@ $config = [
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
         if( $(`input[name="bt[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
-            const rate = eType == 'minimum'?parseFloat(rates[index].bt_minimum_rate):parseFloat(rates[index].bt_rate) || 0;
-            const amount = unit * rate;
-            document.querySelector(`input[name="back_translation[${index}]"]`).value = rate;
+            const rc = rates[index];
+            const btRate = parseFloat(rc?.bt_rate) || 0;
+            const btMin = parseFloat(rc?.bt_minimum_rate) || 0;
+            const lineAtRate = unit * btRate;
+            const flatMinimum = lineAtRate < btMin;
+            const storedValue = flatMinimum ? btMin : btRate;
+            let amount = flatMinimum ? btMin : lineAtRate;
+            if (eType !== 'customize') {
+                amount = Math.max(amount, minLineTotal);
+            }
+            document.querySelector(`input[name="back_translation[${index}]"]`).value = storedValue;
             document.querySelector(`input[name="amount_bt[${index}]"]`).value = amount;
         }else{
             document.querySelector(`input[name="back_translation[${index}]"]`).value = 0;
@@ -493,7 +553,8 @@ $config = [
         const eType = $('#type option:selected').val()?$('#type option:selected').val():'minimum';
         if( $(`input[name="btv[${index}]"]:checked`).val() != undefined ){
             const unit = parseFloat(document.querySelector(`input[name="unit[${index}]"]`).value) || 0;
-            const rate = eType == 'minimum'?parseFloat(rates[index].btv_minimum_rate):parseFloat(rates[index].btv_rate) || 0;
+            const rc = rates[index];
+            const rate = eType == 'minimum' ? parseFloat(rc?.btv_minimum_rate) : parseFloat(rc?.btv_rate) || 0;
             const amount = unit * rate;
             document.querySelector(`input[name="verification_2[${index}]"]`).value = amount;
         }else{

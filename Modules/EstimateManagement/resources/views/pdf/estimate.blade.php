@@ -176,6 +176,7 @@
             $filteredBtLayout = array_filter($estimate->details->pluck('layout_charges_2')->toArray(), function($value) {
                 return $value != null;
             });
+            $pdfFirstDetail = $estimate->details->first();
         @endphp
         <table>
             <thead>
@@ -196,7 +197,7 @@
                         @php $counter=$counter+1; @endphp
                         <th class="nowrap">Layout<br>Charges</th>
                     @endif
-                    @if (isset($estimate->details[0]->back_translation) && ($estimate->details[0]->back_translation!=$estimate->details[0]->rate))
+                    @if ($pdfFirstDetail && isset($pdfFirstDetail->back_translation) && ($pdfFirstDetail->back_translation != $pdfFirstDetail->rate))
                         @php $counter=$counter+1; @endphp
                         <th>BT Rate</th>
                     @endif
@@ -208,7 +209,7 @@
                         @php $counter=$counter+1; @endphp
                         <th>Verification</th>
                     @endif
-                    @if ($estimate->details[0]->two_way_qc_bt)
+                    @if ($pdfFirstDetail && $pdfFirstDetail->two_way_qc_bt)
                         @php $counter=$counter+1; @endphp
                         <th>BT 2 Way QC</th>
                     @endif
@@ -238,7 +239,7 @@
                         <td style="width: 20%">{{ $detail->document_name }}</td>
                         <td>{{ $detail->unit != 1 ? $detail->unit : 'Min'}}</td>
                         <td class="nowrap">{{ $detail->rate }}</td>
-                        <td>{{ $detail->unit * $detail->rate }}</td>
+                        <td>{{ estimateDetailTranslationLineTotal($detail, $estimate) }}</td>
                         @if (count($filteredV1)>0)
                             <td>{{ $detail->verification??'---' }}</td>
                         @endif
@@ -257,16 +258,16 @@
                             </td>
                             {{-- <td>{{$detail->layout_charges? "Rs. ".$detail->layout_charges."x".$detail->layout_pages."pgs = Rs. ".($detail->layout_pages*$detail->layout_charges)."/-" : "---" }}</td> --}}
                         @endif
-                        @if (isset($estimate->details[0]->back_translation) && ($estimate->details[0]->back_translation!=$estimate->details[0]->rate))
+                        @if ($pdfFirstDetail && isset($pdfFirstDetail->back_translation) && ($pdfFirstDetail->back_translation != $pdfFirstDetail->rate))
                             <td>{{ $detail->back_translation??'---' }}</td>
                         @endif
                         @if (count($filteredBt)>0)
-                            <td>{{ $detail->back_translation?$detail->back_translation*$detail->unit:'---' }}</td>
+                            <td>{{ $detail->back_translation ? estimateDetailBackTranslationLineTotal($detail) : '---' }}</td>
                         @endif
                         @if (count($filteredBtv)>0)
                             <td>{{ $detail->verification_2??'---' }}</td>
                         @endif
-                        @if ($estimate->details[0]->two_way_qc_bt)
+                        @if ($pdfFirstDetail && $pdfFirstDetail->two_way_qc_bt)
                             <td>{{ $detail->two_way_qc_bt }}</td>
                         @endif
                         @if (count($filteredBt)>0&&count($filteredLayout)>0)
@@ -288,11 +289,11 @@
                         <td>{{ $languages_ids->pluck('language.code')->implode('/') }}</td>
                         {{-- <td>{{ Modules\LanguageManagement\App\Models\Language::whereIn('id', $languages_ids)->pluck('code')->implode('/') }}</td> --}}
                         <td style="width: 20%" class="nowrap">
-                            {{ number_format( (($detail->unit * $detail->rate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * ($languages_ids->count()),2) }}
+                            {{ number_format( (estimateDetailTranslationLineTotal($detail, $estimate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + estimateDetailBackTranslationLineTotal($detail) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * ($languages_ids->count()),2) }}
                             {{-- (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()),2) }} --}}
                         </td>
                         @php
-                            $sub_total = ($sub_total + (($detail->unit * $detail->rate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + ($detail->unit*($detail->back_translation??0)) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * $languages_ids->count()); 
+                            $sub_total = ($sub_total + (estimateDetailTranslationLineTotal($detail, $estimate) + ($detail->layout_charges?($detail->layout_pages*$detail->layout_charges):0) + estimateDetailBackTranslationLineTotal($detail) + ($detail->verification??0) + ($detail->two_way_qc_t??0) + ($detail->two_way_qc_bt??0) + ($detail->verification_2??0) + ($detail->layout_charges_2?($detail->bt_layout_pages*$detail->layout_charges_2):0) ) * $languages_ids->count()); 
                             // (Modules\EstimateManagement\App\Models\EstimatesDetails::where('estimate_id', $detail->estimate_id)->where('document_name', $detail->document_name)->where('unit', $detail->unit)->where('rate', $detail->rate)->count()));
                         @endphp
                     </tr>

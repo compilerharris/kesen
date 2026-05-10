@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Modules\ClientManagement\App\Models\Client;
 use Modules\ClientManagement\App\Models\ContactPerson;
@@ -176,7 +177,7 @@ class EstimateManagementController extends Controller
             'currency' => 'required',
             'date'=> 'required',
             'discount' => 'nullable',
-            'rorn' => 'required|string',
+            'rorn' => 'required|string|in:normal,rush',
             'status' => 'nullable|in:1,0,2',
             'document_name.*' => 'required|string|max:255',
             'type.*' => 'required|string|max:255',
@@ -191,6 +192,11 @@ class EstimateManagementController extends Controller
             'two_way_qc_bt.*'=>'nullable|numeric',
         ]);
         if ($request['document_name'] != null) {
+            foreach ($request->input('document_name', []) as $index => $document_name) {
+                if (count($this->languageIdsForDocumentRow($request, $index)) === 0) {
+                    return redirect()->back()->withInput()->with('alert', 'Please select at least one language for each document row.');
+                }
+            }
             $estimate = new Estimates();
             $estimate->estimate_no = generateEstimateNumber($request->client_id);
             $estimate->client_id = $request->client_id;
@@ -201,16 +207,20 @@ class EstimateManagementController extends Controller
             $estimate->currency = $request->currency;
             $estimate->status = 0;
             $estimate->discount = $request->discount ?? 0;
-            $estimate->rorn = $request->rorn;
+            $rornKey = $this->resolveRornForRatecard($request, null);
+            $estimate->rorn = $rornKey;
             $estimate->created_by = Auth()->user()->id;
             $estimate->updated_by = Auth()->user()->id;
             $estimate->save();
             foreach ($request['document_name'] as $index => $document_name) {
-                $languages=$request['lang_' . $index];
+                $languages = $this->languageIdsForDocumentRow($request, $index);
+                $postedWords = (float) ($request['unit'][$index] ?? 0);
                 for ($i = 0; $i < count($languages); $i++) {
                     if(isset($languages[$i])&&$languages[$i]!=null&&$languages[$i]!=''){
-                        $rateCard = Ratecard::where('client_id', $request->client_id)->where('type', $request->rorn)->where('lang', $languages[$i])->first();
+                        $rateCard = $this->findRatecardForEstimateRow((string) $request->client_id, $rornKey, $languages[$i]);
                         if(isset($rateCard)){
+                            $btOn = isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on';
+                            [$backTranslation, $btFlatMinimum] = $this->resolveBackTranslationForDetail($rateCard, $request->type, $postedWords, $btOn);
                             // 'unit' => $request->type == "customize" ? 1 : (($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$request['unit'][$index]),
                             EstimatesDetails::updateOrCreate([
                                 'estimate_id' => $estimate->id,
@@ -222,26 +232,33 @@ class EstimateManagementController extends Controller
                                 'estimate_id' => $estimate->id,
                                 'document_name' => $document_name,
                                 'type' => $request->type,
-                                'unit' => $request->type == "customize" ? 1 : ($request->type == "minimum"?1:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$request['unit'][$index])),
-                                'rate' => $request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->t_minimum_rate:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?$rateCard->t_minimum_rate:$rateCard->t_rate)),
+                                'unit' => $request->type == "customize" ? 1 : ($request->type == "minimum"?1:(($postedWords*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$postedWords)),
+                                'entered_unit' => $postedWords,
+                                'rate' => $request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->t_minimum_rate:(($postedWords*$rateCard->t_rate) < $rateCard->t_minimum_rate?$rateCard->t_minimum_rate:$rateCard->t_rate)),
                                 'v1' => isset($request['v_one']) && is_array($request['v_one']) && isset($request['v_one'][$index]) && $request['v_one'][$index] === 'on' ? true : false,
-                                'verification' => $request->type == "customize" ? null : (isset($request['v_one']) && is_array($request['v_one']) && isset($request['v_one'][$index]) && $request['v_one'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->v1_minimum_rate:(($request['unit'][$index]*$rateCard->v1_rate) < $rateCard->v1_minimum_rate?$rateCard->v1_minimum_rate:$request['unit'][$index]*$rateCard->v1_rate)) : null),
+                                'verification' => $request->type == "customize" ? null : (isset($request['v_one']) && is_array($request['v_one']) && isset($request['v_one'][$index]) && $request['v_one'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->v1_minimum_rate:(($postedWords*$rateCard->v1_rate) < $rateCard->v1_minimum_rate?$rateCard->v1_minimum_rate:$postedWords*$rateCard->v1_rate)) : null),
                                 'v2' => isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? true : false,
-                                'two_way_qc_t' => $request->type == "customize" ? null : (isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->v2_minimum_rate:(($request['unit'][$index]*$rateCard->v2_rate) < $rateCard->v2_minimum_rate?$rateCard->v2_minimum_rate:$request['unit'][$index]*$rateCard->v2_rate)) : null),
-                                'bt' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? true : false,
-                                'back_translation' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->bt_minimum_rate:(($request['unit'][$index]*$rateCard->bt_rate) < $rateCard->bt_minimum_rate?$rateCard->bt_minimum_rate:$rateCard->bt_rate))) : null,
+                                'two_way_qc_t' => $request->type == "customize" ? null : (isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->v2_minimum_rate:(($postedWords*$rateCard->v2_rate) < $rateCard->v2_minimum_rate?$rateCard->v2_minimum_rate:$postedWords*$rateCard->v2_rate)) : null),
+                                'bt' => $btOn,
+                                'back_translation' => $backTranslation,
+                                'bt_flat_minimum' => $btFlatMinimum,
                                 'btv' => isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? true : false,
-                                'verification_2' => $request->type == "customize" ? null : (isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ?  ($request->type == "minimum"?$rateCard->btv_minimum_rate:(($request['unit'][$index]*$rateCard->btv_rate) < $rateCard->btv_minimum_rate?$rateCard->btv_minimum_rate:$request['unit'][$index]*$rateCard->btv_rate)) : null),
+                                'verification_2' => $request->type == "customize" ? null : (isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ?  ($request->type == "minimum"?$rateCard->btv_minimum_rate:(($postedWords*$rateCard->btv_rate) < $rateCard->btv_minimum_rate?$rateCard->btv_minimum_rate:$postedWords*$rateCard->btv_rate)) : null),
                                 'layout_charges' => $request->type == "customize" ? null : ($request['layout_charges'][$index]??null),
                                 'layout_pages' => $request->type == "customize" ? null : ($request['layout_pages'][$index]??null),
                                 'layout_charges_2' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request['layout_charges'][$index]??null):null),
                                 'bt_layout_pages' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request['layout_pages'][$index]??null):null),
                                 'lang' => $languages[$i],
-                                'two_way_qc_bt' => $request['two_way_qc_bt'][$index]??null,
+                                'two_way_qc_bt' => $request->input("two_way_qc_bt.{$index}"),
                             ]);
                         }else{
-                            $clientName = Client::where('id',$request->client_id)->first()->name;
-                            return redirect()->back()->with("alert","Please enter rates in client ".$clientName."'s Rate Card.");
+                            $clientName = Client::where('id', $request->client_id)->value('name') ?? 'this client';
+                            $langLabel = Language::find($languages[$i])?->name ?? (string) $languages[$i];
+
+                            return redirect()->back()->withInput()->with(
+                                'alert',
+                                $this->missingRatecardUserMessage((string) $request->client_id, $clientName, $rornKey, $languages[$i], $langLabel)
+                            );
                         }
                     }
                 }
@@ -290,31 +307,53 @@ class EstimateManagementController extends Controller
         },'details.language'])->find($id);
         $detailHolder = collect();
 
-        $estimate->details->map(function ($detail) use ($detailHolder) {
-            $key = implode('!', [$detail->document_name, $detail->unit]);
+        $estimate->details->each(function ($detail) use ($detailHolder) {
+            $langId = $detail->lang;
+            $langName = optional($detail->language)->name ?? '';
+
+            $key = implode('!', [(string) ($detail->document_name ?? ''), (string) ($detail->unit ?? '')]);
+
             $existingDetail = $detailHolder->first(function ($item) use ($key) {
-                return implode('!', [$item->document_name, $item->unit]) === $key;
+                return implode('!', [(string) ($item->document_name ?? ''), (string) ($item->unit ?? '')]) === $key;
             });
-            
+
             if ($existingDetail) {
                 $index = $detailHolder->search(function ($item) use ($existingDetail) {
                     return $item === $existingDetail;
                 });
                 $languages = $existingDetail->languages;
-                array_push($languages,$detail->language->id);
+                array_push($languages, $langId);
                 $existingDetail->languages = $languages;
 
                 $languagesNames = $existingDetail->languagesNames;
-                array_push($languagesNames,$detail->language->name);
+                array_push($languagesNames, $langName);
                 $existingDetail->languagesNames = $languagesNames;
 
                 $detailHolder->put($index, $existingDetail);
             } else {
-                $detail->languages = [$detail->language->id];
-                $detail->languagesNames = [$detail->language->name];
+                $detail->languages = [$langId];
+                $detail->languagesNames = [$langName];
                 $detailHolder->push($detail);
             }
         });
+
+        if ($detailHolder->isEmpty()) {
+            $placeholder = new EstimatesDetails([
+                'estimate_id' => $estimate->id,
+                'document_name' => '',
+                'type' => $estimate->type ?? 'words',
+                'unit' => null,
+                'entered_unit' => null,
+                'rate' => 0,
+                'v1' => false,
+                'v2' => false,
+                'bt' => false,
+                'btv' => false,
+            ]);
+            $placeholder->languages = [];
+            $placeholder->languagesNames = [];
+            $detailHolder->push($placeholder);
+        }
 
         $estimate->eDetails = $detailHolder;
         return view('estimatemanagement::edit', compact('estimate'));
@@ -332,6 +371,7 @@ class EstimateManagementController extends Controller
             'date'=>'required',
             'discount' => 'nullable',
             'currency' => 'required',
+            'rorn' => 'required|string|in:normal,rush',
             'status' => 'nullable|in:1,0,2',
             'document_name.*' => 'required|string|max:255',
             'type' => 'required|string|max:255',
@@ -346,32 +386,47 @@ class EstimateManagementController extends Controller
             'two_way_qc_bt.*'=>'nullable|numeric',
         ]);
 
+        foreach ($request->input('document_name', []) as $index => $document_name) {
+            if (count($this->languageIdsForDocumentRow($request, $index)) === 0) {
+                return redirect()->back()->withInput()->with('alert', 'Please select at least one language for each document row.');
+            }
+        }
+
         $estimate = Estimates::find($id);
+        $rornKey = $this->resolveRornForRatecard($request, $estimate);
         $estimate->client_id = $request->client_id;
         $estimate->client_contact_person_id = $request->client_contact_person_id;
         $estimate->headline = $request->headline;
         $estimate->type = $request->type;
         $estimate->date = $request->date;
         $estimate->discount = $request->discount ?? 0;
-        $estimate->rorn = $request->rorn;
+        $estimate->rorn = $rornKey;
         $estimate->currency = $request->currency;
         $estimate->status = 0;
         $estimate->updated_by = Auth()->user()->id;
         $estimate->updated_at = Carbon::now()->format('Y-m-d H:i:s');
         $estimate->save();
         foreach ($request['document_name'] as $index => $document_name) {
-            $languages=$request['lang_' . $index];
+            $languages = $this->languageIdsForDocumentRow($request, $index);
+            $postedWords = (float) ($request['unit'][$index] ?? 0);
+            $lookupUnit = EstimatesDetails::where('document_name', $document_name)->where('estimate_id', $estimate->id)->value('unit');
+            if ($lookupUnit === null) {
+                $lookupUnit = $request->type === 'customize' ? 1 : $postedWords;
+            }
+            $unitForRowQueries = $request->type === 'customize' ? 1 : $lookupUnit;
             // ->where('rate', $request['rate'][$index])
-            $previous_lang=EstimatesDetails::where('document_name', $document_name)->where('unit', $request['unit'][$index])->where('estimate_id', $estimate->id)->get('lang')->pluck('lang')->toArray();
+            $previous_lang=EstimatesDetails::where('document_name', $document_name)->where('unit', $unitForRowQueries)->where('estimate_id', $estimate->id)->get('lang')->pluck('lang')->toArray();
             $deleted_lang=array_diff($previous_lang,$languages);
             
             if(count($deleted_lang)>0){
-                EstimatesDetails::where('document_name', $document_name)->where('unit', $request->type == "customize"?1:$request['unit'][$index])->where('estimate_id', $estimate->id)->whereIn('lang', $deleted_lang)->delete();
+                EstimatesDetails::where('document_name', $document_name)->where('unit', $unitForRowQueries)->where('estimate_id', $estimate->id)->whereIn('lang', $deleted_lang)->delete();
             }
             for ($i = 0; $i < count($languages); $i++) {
                 if(isset($languages[$i])&&$languages[$i]!=null&&$languages[$i]!=''){
-                    $rateCard = Ratecard::where('client_id', $request->client_id)->where('type', $request->rorn)->where('lang', $languages[$i])->first();
+                    $rateCard = $this->findRatecardForEstimateRow((string) $request->client_id, $rornKey, $languages[$i]);
                     if(isset($rateCard)){
+                        $btOn = isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on';
+                        [$backTranslation, $btFlatMinimum] = $this->resolveBackTranslationForDetail($rateCard, $request->type, $postedWords, $btOn);
                         EstimatesDetails::updateOrCreate([
                             'estimate_id' => $estimate->id,
                             'document_name' => $document_name,
@@ -382,26 +437,33 @@ class EstimateManagementController extends Controller
                             'estimate_id' => $estimate->id,
                             'document_name' => $document_name,
                             'type' => $request->type,
-                            'unit' => $request->type == "customize" ? 1 : ($request->type == "minimum"?1:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$request['unit'][$index])),
-                            'rate' => $request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->t_minimum_rate:(($request['unit'][$index]*$rateCard->t_rate) < $rateCard->t_minimum_rate?$rateCard->t_minimum_rate:$rateCard->t_rate)),
+                            'unit' => $request->type == "customize" ? 1 : ($request->type == "minimum"?1:(($postedWords*$rateCard->t_rate) < $rateCard->t_minimum_rate?1:$postedWords)),
+                            'entered_unit' => $postedWords,
+                            'rate' => $request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->t_minimum_rate:(($postedWords*$rateCard->t_rate) < $rateCard->t_minimum_rate?$rateCard->t_minimum_rate:$rateCard->t_rate)),
                             'v1' => isset($request['v_one']) && is_array($request['v_one']) && isset($request['v_one'][$index]) && $request['v_one'][$index] === 'on' ? true : false,
-                            'verification' => $request->type == "customize" ? null : (isset($request['v_one']) && is_array($request['v_one']) && isset($request['v_one'][$index]) && $request['v_one'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->v1_minimum_rate:(($request['unit'][$index]*$rateCard->v1_rate) < $rateCard->v1_minimum_rate?$rateCard->v1_minimum_rate:$request['unit'][$index]*$rateCard->v1_rate)) : null),
+                            'verification' => $request->type == "customize" ? null : (isset($request['v_one']) && is_array($request['v_one']) && isset($request['v_one'][$index]) && $request['v_one'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->v1_minimum_rate:(($postedWords*$rateCard->v1_rate) < $rateCard->v1_minimum_rate?$rateCard->v1_minimum_rate:$postedWords*$rateCard->v1_rate)) : null),
                             'v2' => isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? true : false,
-                            'two_way_qc_t' => $request->type == "customize" ? null : (isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->v2_minimum_rate:(($request['unit'][$index]*$rateCard->v2_rate) < $rateCard->v2_minimum_rate?$rateCard->v2_minimum_rate:$request['unit'][$index]*$rateCard->v2_rate)) : null),
-                            'bt' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? true : false,
-                            'back_translation' => isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request->type == "customize" ? $rateCard->customize_rate : ($request->type == "minimum"?$rateCard->bt_minimum_rate:(($request['unit'][$index]*$rateCard->bt_rate) < $rateCard->bt_minimum_rate?$rateCard->bt_minimum_rate:$rateCard->bt_rate))) : null,
+                            'two_way_qc_t' => $request->type == "customize" ? null : (isset($request['v_two']) && is_array($request['v_two']) && isset($request['v_two'][$index]) && $request['v_two'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->v2_minimum_rate:(($postedWords*$rateCard->v2_rate) < $rateCard->v2_minimum_rate?$rateCard->v2_minimum_rate:$postedWords*$rateCard->v2_rate)) : null),
+                            'bt' => $btOn,
+                            'back_translation' => $backTranslation,
+                            'bt_flat_minimum' => $btFlatMinimum,
                             'btv' => isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? true : false,
-                            'verification_2' => $request->type == "customize" ? null : (isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->btv_minimum_rate:(($request['unit'][$index]*$rateCard->btv_rate) < $rateCard->btv_minimum_rate?$rateCard->btv_minimum_rate:$request['unit'][$index]*$rateCard->btv_rate)) : null),
+                            'verification_2' => $request->type == "customize" ? null : (isset($request['btv']) && is_array($request['btv']) && isset($request['btv'][$index]) && $request['btv'][$index] === 'on' ? ($request->type == "minimum"?$rateCard->btv_minimum_rate:(($postedWords*$rateCard->btv_rate) < $rateCard->btv_minimum_rate?$rateCard->btv_minimum_rate:$postedWords*$rateCard->btv_rate)) : null),
                             'layout_charges' => $request->type == "customize" ? null : ($request['layout_charges'][$index]??null),
                             'layout_pages' => $request->type == "customize" ? null : ($request['layout_pages'][$index]??null),
                             'layout_charges_2' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request['layout_charges'][$index]??null):null),
                             'bt_layout_pages' => $request->type == "customize" ? null : (isset($request['bt']) && is_array($request['bt']) && isset($request['bt'][$index]) && $request['bt'][$index] === 'on' ? ($request['layout_pages'][$index]??null):null),
                             'lang' => $languages[$i],
-                            'two_way_qc_bt' => $request['two_way_qc_bt'][$index]??null,
+                            'two_way_qc_bt' => $request->input("two_way_qc_bt.{$index}"),
                         ]);
                     }else{
-                        $clientName = Client::where('id',$request->client_id)->first()->name;
-                        return redirect()->back()->with("alert","Please enter rates in client ".$clientName."'s Rate Card.");
+                        $clientName = Client::where('id', $request->client_id)->value('name') ?? 'this client';
+                        $langLabel = Language::find($languages[$i])?->name ?? (string) $languages[$i];
+
+                        return redirect()->back()->withInput()->with(
+                            'alert',
+                            $this->missingRatecardUserMessage((string) $request->client_id, $clientName, $rornKey, $languages[$i], $langLabel)
+                        );
                     }
                 }
             }
@@ -455,7 +517,177 @@ class EstimateManagementController extends Controller
 
     // to get rate card
     public function getRatecard($clientId, $rorn, $type, $lang){
-        $ratecard = Ratecard::where('client_id', $clientId)->where('type', $rorn)->where('lang', $lang)->first();
+        $ratecard = $this->findRatecardForEstimateRow((string) $clientId, strtolower(trim((string) $rorn)), $lang);
+
         return response()->json($ratecard);
+    }
+
+    /**
+     * @return array{0: float|null, 1: bool} [back_translation, bt_flat_minimum]
+     */
+    private function resolveBackTranslationForDetail(Ratecard $rateCard, string $estimateType, float $enteredWords, bool $btOn): array
+    {
+        if (! $btOn) {
+            return [null, false];
+        }
+        if ($estimateType === 'customize') {
+            return [(float) $rateCard->customize_rate, false];
+        }
+        $btRate = (float) $rateCard->bt_rate;
+        $btMinimum = (float) $rateCard->bt_minimum_rate;
+        if (($enteredWords * $btRate) < $btMinimum) {
+            return [$btMinimum, true];
+        }
+
+        return [$btRate, false];
+    }
+
+    private function resolveRornForRatecard(Request $request, ?Estimates $estimate): string
+    {
+        $fromRequest = $request->input('rorn');
+        if (is_string($fromRequest)) {
+            $fromRequest = strtolower(trim($fromRequest));
+        }
+        if ($fromRequest === 'normal' || $fromRequest === 'rush') {
+            return $fromRequest;
+        }
+        $existing = $estimate?->rorn;
+        if (is_string($existing)) {
+            $existing = strtolower(trim($existing));
+        }
+        if ($existing === 'normal' || $existing === 'rush') {
+            return $existing;
+        }
+
+        return 'normal';
+    }
+
+    /**
+     * Resolve a rate card for pricing. Tries the given client, then any other client with the same exact name
+     * (handles duplicate client rows where rate cards were saved against a different id).
+     */
+    private function findRatecardForEstimateRow(string $clientId, string $rorn, mixed $languageId): ?Ratecard
+    {
+        foreach ($this->clientIdsForSameNameGroup($clientId) as $cid) {
+            $card = $this->findRatecardForExactClient($cid, $rorn, $languageId);
+            if ($card !== null) {
+                return $card;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function clientIdsForSameNameGroup(string $clientId): array
+    {
+        $clientId = trim((string) $clientId);
+        $name = Client::query()->whereKey($clientId)->value('name');
+        if ($name === null || $name === '') {
+            return [$clientId];
+        }
+
+        $ids = Client::query()
+            ->where('name', $name)
+            ->pluck('id')
+            ->map(fn ($id) => (string) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        // Prefer the client currently selected on the estimate, then any same-name peer (duplicate rows).
+        $rest = array_values(array_filter($ids, fn (string $id) => $id !== $clientId));
+
+        return array_values(array_unique(array_merge([$clientId], $rest)));
+    }
+
+    private function findRatecardForExactClient(string $clientId, string $rorn, mixed $languageId): ?Ratecard
+    {
+        $rorn = strtolower(trim($rorn));
+        $clientId = trim((string) $clientId);
+        $langKey = trim((string) $languageId);
+
+        $query = Ratecard::query()
+            ->where('client_id', $clientId)
+            ->where('type', $rorn);
+
+        $card = (clone $query)->where('lang', $langKey)->first();
+        if ($card) {
+            return $card;
+        }
+
+        $language = Language::query()->find($langKey);
+        if ($language === null) {
+            return null;
+        }
+
+        $legacyKeys = array_values(array_filter(array_unique([
+            trim((string) $language->name),
+            trim((string) ($language->code ?? '')),
+        ]), fn ($v) => $v !== '' && $v !== $langKey));
+
+        if ($legacyKeys === []) {
+            return null;
+        }
+
+        return (clone $query)->whereIn('lang', $legacyKeys)->first();
+    }
+
+    /**
+     * Human-readable explanation when no rate card matches client + Rush/Normal + language.
+     */
+    private function missingRatecardUserMessage(
+        string $clientId,
+        string $clientName,
+        string $rornKey,
+        mixed $languageId,
+        string $langLabel
+    ): string {
+        $langKey = trim((string) $languageId);
+        $langRow = Language::query()->find($langKey);
+        $langColumns = array_values(array_filter(array_unique([
+            $langKey,
+            $langRow ? trim((string) $langRow->name) : null,
+            $langRow ? trim((string) ($langRow->code ?? '')) : null,
+        ]), fn ($v) => $v !== null && $v !== ''));
+
+        $clientIds = $this->clientIdsForSameNameGroup($clientId);
+
+        $otherTypes = Ratecard::query()
+            ->whereIn('client_id', $clientIds)
+            ->whereIn('lang', $langColumns)
+            ->where('type', '!=', $rornKey)
+            ->distinct()
+            ->pluck('type')
+            ->filter()
+            ->values()
+            ->all();
+
+        $msg = 'No rate card for language "'.$langLabel.'" (language id: '.$langKey.') with Rush/Normal "'.$rornKey.'". Add that combination under Client Management → Rate Cards for '.$clientName.'.';
+
+        if (count($otherTypes) > 0) {
+            $msg .= ' Note: a rate card for this language exists for '.(count($otherTypes) === 1 ? 'type' : 'types').' "'.implode('", "', $otherTypes).'" only; add "'.$rornKey.'" for this language or change the estimate Rush/Normal to match.';
+        }
+
+        if (count($clientIds) > 1) {
+            $msg .= ' This client name is shared by '.count($clientIds).' client records; rate cards may be on another record with the same name—open Client Management and add the card on the client you select here, or merge duplicate clients.';
+        }
+
+        return $msg;
+    }
+
+    /**
+     * Checkbox fields use name "lang_{index}[]"; normalize to a flat list of language ids.
+     *
+     * @return list<string|int>
+     */
+    private function languageIdsForDocumentRow(Request $request, int|string $index): array
+    {
+        return array_values(array_filter(
+            Arr::wrap($request->input('lang_'.$index, [])),
+            fn ($id) => $id !== null && $id !== ''
+        ));
     }
 }
