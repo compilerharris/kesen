@@ -140,7 +140,7 @@
                     <td style="line-height: 1">{{ $estimate->client->address }}</td>
                 </tr>
             @endif
-            <tr>
+            <!-- <tr>
                 <td style="line-height: 1.5" colspan="2"><strong>Languages Required:</strong>
                     @php $languages_list = $estimate->details->pluck('language'); @endphp
                     {{-- @foreach ($estimate->details()->distinct('lang')->get() as $index=>$details )    
@@ -154,7 +154,7 @@
                     @endphp
                     
                     {{ implode(', ',array_filter(array_unique($languages_list), function($value) {return !is_null($value) && $value !== '';})) }}</td>
-            </tr>
+            </tr> -->
         </table>
         @php 
             $counter=6;
