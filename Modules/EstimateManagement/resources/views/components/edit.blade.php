@@ -48,7 +48,7 @@
             @include('components.notification')
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item "><a href="/estimate-management">Estimate </a></li>
+                <li class="breadcrumb-item "><a href="/estimate-management">Estimate</a></li>
                 <li class="breadcrumb-item ">{{$estimate->estimate_no}}</li>
                 
             </ol>
