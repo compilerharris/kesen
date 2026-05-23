@@ -178,7 +178,7 @@
             });
             $pdfFirstDetail = $estimate->details->first();
         @endphp
-        <!-- <table>
+        <table>
             <thead>
                 <tr>
                     <th>Documents</th>
@@ -325,7 +325,7 @@
                     </td>
                 </tr>
             </tbody>
-        </table> -->
+        </table>
     </section>
 
     <footer style="text-align: left;float: left;">
