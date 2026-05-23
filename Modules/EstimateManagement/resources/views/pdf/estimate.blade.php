@@ -271,7 +271,7 @@
                             <td>{{ $detail->two_way_qc_bt }}</td>
                         @endif
                         @if (count($filteredBt)>0&&count($filteredLayout)>0)
-                            <td>
+                            <!-- <td>
                                 @if($detail->layout_charges_2)
                                     <span>{{"Rs. ".$detail->layout_charges_2}}<br>
                                     <span>{{"x ".$detail->bt_layout_pages." pgs ="}}</span><br>
@@ -279,7 +279,7 @@
                                 @else
                                     ---
                                 @endif
-                            </td>
+                            </td> -->
                             {{-- <td>{{$detail->layout_charges_2? "Rs. ".$detail->layout_charges_2."x".$detail->bt_layout_pages."pgs = Rs. ".($detail->bt_layout_pages*$detail->layout_charges_2)."/-" : "---"}}</td> --}}
                         @endif
                         @php 
