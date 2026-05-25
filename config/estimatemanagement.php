@@ -5,6 +5,9 @@
  * `php artisan config:cache` and stay consistent on every machine after git pull).
  *
  * @see Modules\EstimateManagement\config\config.php (module merge; this file wins on duplicate keys)
+ *
+ * NOTE: After pulling this repo, run `php artisan migrate` to apply pending estimate_details
+ * migrations (bt_flat_minimum, entered_unit columns) before using estimate management.
  */
 return [
     'name' => 'EstimateManagement',
