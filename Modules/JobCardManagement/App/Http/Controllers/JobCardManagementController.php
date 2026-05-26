@@ -356,7 +356,6 @@ class JobCardManagementController extends Controller
         if (!empty($job_register->other_details)) {
             $otherEstimateIds = explode(',', $job_register->other_details);
             $otherDetails = EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)
-                ->where('document_name', $estimate_detail_id)
                 ->orderBy('created_at', 'desc')
                 ->get();
             $estimate_detail = $estimate_detail->merge($otherDetails);
