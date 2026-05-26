@@ -5,7 +5,7 @@
     $languages = Modules\LanguageManagement\App\Models\Language::where('status', 1)->get();
     $languages = sort_languages($languages);
 @endphp
-@php $estimates=Modules\EstimateManagement\App\Models\Estimates::where('status',1)->get(); @endphp
+@php $estimates=Modules\EstimateManagement\App\Models\Estimates::where('status',1)->orderBy('created_at','desc')->get(); @endphp
 @php $estimates_details=Modules\EstimateManagement\App\Models\EstimatesDetails::distinct()->pluck('document_name'); @endphp
 @php $clients=Modules\ClientManagement\App\Models\Client::where('status',1)->get(); @endphp
 
