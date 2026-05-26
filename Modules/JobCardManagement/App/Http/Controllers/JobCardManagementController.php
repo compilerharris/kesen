@@ -704,7 +704,7 @@ class JobCardManagementController extends Controller
             $query->whereBetween('created_at', [$this->from,$endDate]);
         })
         ->when($this->billingStatus == "0", function($query) {
-            $query->whereNull('bill_no')->where('status',1);
+            $query->whereNull('bill_no')->whereIn('status', [0, 1]);
         })
         ->when($this->billingStatus == "1", function($query) {
             $query->whereNotNull('bill_no');
