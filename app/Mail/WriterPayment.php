@@ -22,7 +22,7 @@ class WriterPayment extends Mailable
 
     public function __construct($job_card, $paymentDetails, $writer)
     {
-        $this->$job_card = $job_card;
+        $this->job_card = $job_card;
         $this->paymentDetails = $paymentDetails;
         $this->writer = $writer;
     }
