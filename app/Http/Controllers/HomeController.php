@@ -106,8 +106,10 @@ class HomeController extends Controller
         ->get();
 
         // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
+        $writer = Writer::where('id', $request->writer)->first();
+        $writerName = $writer ? $writer->writer_name : 'writer';
         $pdf = FacadePdf::loadView('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
-        return $pdf->stream();
+        return $pdf->download($writerName . '.pdf');
         
     }
 
@@ -132,8 +134,10 @@ class HomeController extends Controller
         ->get();
         if($purpose == 'preview'){
             // return view('reports.pdf.pdf-payment',compact('job_card','max','min','writer_payment'));
+            $writer = Writer::where('id', $writerId)->first();
+            $writerName = $writer ? $writer->writer_name : 'writer';
             $pdf = FacadePdf::loadView('reports.pdf.pdf-payment',compact('job_card','writer_payment'));
-            return $pdf->stream();
+            return $pdf->download($writerName . '.pdf');
         }
         try{
             $wEmail = Writer::where('id',$writerId)->first();
