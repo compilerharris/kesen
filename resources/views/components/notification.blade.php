@@ -8,3 +8,8 @@
         {{ Session::get('alert') }}
     </x-adminlte-alert>
 @endif
+@if (Session::has('payment_notice'))
+    <x-adminlte-alert theme="warning" title="Payment Required" style="font-size:20px;" dismissable id="payment-notice-msg" class="mt-3">
+        {!! Session::get('payment_notice') !!}
+    </x-adminlte-alert>
+@endif

@@ -54,16 +54,27 @@
     ];
     $config['paging'] = false;
     $config['searching'] = false;
-    $config['lengthMenu'] = [10, 50, 100, 500];
+    $config['info'] = false;
+    $config['dom'] = 't';
     $config_manage['paging'] = false;
 @endphp
 @use('\Carbon\Carbon','Carbon')
 <div class="card-body">
+    <div class="d-flex justify-content-start align-items-center mb-2">
+        <span class="mr-1">Show</span>
+        <select class="form-select form-select-sm d-inline-block mx-2" style="width:80px"
+            onchange="(function(v){ var u=new URL(location.href); u.searchParams.set('perPage',v); u.searchParams.delete('page'); location.href=u; })(this.value)">
+            @foreach([10, 20, 50, 100, 500] as $opt)
+                <option value="{{ $opt }}" {{ request('perPage', 20) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+            @endforeach
+        </select>
+        <span>entries</span>
+    </div>
     <x-adminlte-datatable id="table8" :heads="Auth::user()->hasRole('CEO')? $ceoHeads : (Auth::user()->hasRole('Accounts') ? $aHeads : $oHeads)" head-theme="dark" striped :config="$config">
         @if(Auth::user()->hasRole('CEO'))
             @foreach ($job_register as $index => $row)
                 <tr>
-                    <td style="font-size: 2rem;">{{ $index + 1 }}</td>
+                    <td style="font-size: 2rem;">{{ $job_register->firstItem() + $index }}</td>
                     <td style="font-size: 2rem;">{{ $row->created_at?Carbon::parse($row->created_at)->format('j M Y'):'---' }}</td>
                     <td style="font-size: 2rem;">{{ $row->sr_no }}</td>
                     <td style="font-size: 2rem;">{{ $row->estimate?$row->estimate->client->name:($row->no_estimate?$row->no_estimate->client->name:'') }}</td>
@@ -77,7 +88,7 @@
         @else
             @foreach ($job_register as $index => $row)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $job_register->firstItem() + $index }}</td>
                     @if (Auth::user()->hasRole('Accounts'))
                         <td>{{ $row->created_at?Carbon::parse($row->created_at)->format('j M Y'):'---' }}</td>
                     @endif
@@ -129,9 +140,17 @@
             @endforeach
         @endif
     </x-adminlte-datatable>
-    <!-- Pagination Links -->
-    <div class="d-flex justify-content-center">
-        {{ $job_register->links() }}
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div style="font-size:14px;">
+            @if($job_register->total() > 0)
+                Showing {{ $job_register->firstItem() }} to {{ $job_register->lastItem() }} of {{ number_format($job_register->total()) }} entries
+            @else
+                Showing 0 entries
+            @endif
+        </div>
+        <div>
+            {{ $job_register->appends(request()->except('page'))->links() }}
+        </div>
     </div>
 </div>
 

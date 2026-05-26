@@ -47,7 +47,8 @@
     ];
     $config['paging'] = false;
     $config['searching'] = false;
-    $config['lengthMenu'] = [10, 50, 100, 500];
+    $config['info'] = false;
+    $config['dom'] = 't';
 @endphp
 
 @if ($layoutHelper->isLayoutTopnavEnabled())
@@ -68,12 +69,22 @@
 @use('\Carbon\Carbon','Carbon')
 
 <div class="card-body">
+    <div class="d-flex justify-content-start align-items-center mb-2">
+        <span class="mr-1">Show</span>
+        <select class="form-select form-select-sm d-inline-block mx-2" style="width:80px"
+            onchange="(function(v){ var u=new URL(location.href); u.searchParams.set('perPage',v); u.searchParams.delete('page'); location.href=u; })(this.value)">
+            @foreach([10, 20, 50, 100, 500] as $opt)
+                <option value="{{ $opt }}" {{ request('perPage', 20) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+            @endforeach
+        </select>
+        <span>entries</span>
+    </div>
     <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
         <x-adminlte-datatable id="table8" :heads="$heads" head-theme="dark" striped :config="$config">
             @foreach ($job_registers as $index => $row)
                 <tr>
 
-                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $job_registers->firstItem() + $index }}</td>
                     <td>{{ $row->sr_no }}</td>
                     <td>{{ $row->estimate?$row->estimate->estimate_no:"No Estimate" }}</td>
                     <td>{{ Carbon::parse($row->created_at)->format('j M Y') }}</td>
@@ -107,9 +118,17 @@
             @endforeach
         </x-adminlte-datatable>
     </div>
-    <!-- Pagination Links -->
-    <div class="d-flex justify-content-center">
-        {{ $job_registers->links() }}
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div style="font-size:14px;">
+            @if($job_registers->total() > 0)
+                Showing {{ $job_registers->firstItem() }} to {{ $job_registers->lastItem() }} of {{ number_format($job_registers->total()) }} entries
+            @else
+                Showing 0 entries
+            @endif
+        </div>
+        <div>
+            {{ $job_registers->appends(request()->except('page'))->links() }}
+        </div>
     </div>
 </div>
 

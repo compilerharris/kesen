@@ -35,13 +35,17 @@ class JobRegisterManagementController extends Controller
     }
     
     public function index(Request $request)
-    { 
-        if(empty($request->query()) || (array_key_exists('page', $request->query()) && count($request->query()) === 1)){
+    {
+        $perPage = (int) $request->get('perPage', 20);
+        $perPage = in_array($perPage, [10, 20, 50, 100, 500]) ? $perPage : 20;
+
+        $defaultOnlyKeys = array_diff(array_keys($request->query()), ['page', 'perPage']);
+        if(empty($request->query()) || empty($defaultOnlyKeys)){
             $job_registers = JobRegister::with(['estimate','handle_by','client','employee',
                 'jobCard' => function ($query) {
                     $query->select('job_no');
                 }])
-            ->orderBy('sr_no','desc')->paginate(20);
+            ->orderBy('sr_no','desc')->paginate($perPage);
 
             $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')

@@ -20,7 +20,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Modules\LanguageManagement\App\Models\Language;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Session; 
+use Illuminate\Support\Facades\Session;
+use Modules\WriterManagement\App\Models\Writer;
 class JobCardManagementController extends Controller
 {
     public $jobNo = null;
@@ -35,13 +36,17 @@ class JobCardManagementController extends Controller
 
     public function index(Request $request)
     {
-        if(empty($request->query()) || (array_key_exists('page', $request->query()) && count($request->query()) === 1)){
-            
+        $perPage = (int) $request->get('perPage', 20);
+        $perPage = in_array($perPage, [10, 20, 50, 100, 500]) ? $perPage : 20;
+
+        $defaultOnlyKeys = array_diff(array_keys($request->query()), ['page', 'perPage']);
+        if(empty($request->query()) || empty($defaultOnlyKeys)){
+
             $job_register = JobRegister::with(['estimate.client','estimate.client_person','no_estimate.client','no_estimate.client_person','handle_by','client','employee',
                 'jobCard' => function ($query) {
                     $query->select('job_no');
                 }])
-            ->orderBy('sr_no','desc')->paginate(20);
+            ->orderBy('sr_no','desc')->paginate($perPage);
 
             $statusCounts = JobRegister::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
@@ -463,6 +468,28 @@ class JobCardManagementController extends Controller
             $job_register->cancel_reason = $request->reason??null;
             $job_register->updated_at = Carbon::now();
             $job_register->save();
+            if($status == 2){
+                $jobCards = JobCard::where('job_no', $job_register->sr_no)
+                    ->where(function($q) {
+                        $q->whereNotNull('t_writer_code')->orWhereNotNull('bt_writer_code');
+                    })->get();
+
+                $writerIds = collect();
+                foreach ($jobCards as $card) {
+                    if ($card->t_writer_code) $writerIds->push($card->t_writer_code);
+                    if ($card->bt_writer_code) $writerIds->push($card->bt_writer_code);
+                }
+                $writerIds = $writerIds->unique()->filter();
+
+                if ($writerIds->isNotEmpty()) {
+                    $writers = Writer::whereIn('id', $writerIds)->get();
+                    $writerLinks = $writers->map(function($w) {
+                        $url = route('writermanagement.addPaymentView', $w->id);
+                        return '<a href="' . $url . '" target="_blank">' . e($w->writer_name) . '</a>';
+                    })->implode(', ');
+                    return redirect()->back()->with('payment_notice', 'Job cancelled. The following writers have pending payment: ' . $writerLinks);
+                }
+            }
             if($status==1){
                 $recipient = $job_register->client->client_accountant->email;
                 Mail::to($recipient)->send(new JobCompletedBilling($job_register));
@@ -635,13 +662,16 @@ class JobCardManagementController extends Controller
     }
 
     public function jobSearch($request){
+        $perPage = (int) $request->get('perPage', 20);
+        $perPage = in_array($perPage, [10, 20, 50, 100, 500]) ? $perPage : 20;
+
         if($request->get('jobNo') != ''){
             $this->jobNo = $request->get('jobNo');
             $this->cp = $this->document = $this->pm = $this->contactPerson = $this->from = $this->to = $this->billingStatus = $this->status = null;
             $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
             ->where('sr_no',$this->jobNo)
             ->orderBy('sr_no','desc')
-            ->paginate(20);
+            ->paginate($perPage);
             if( $job_register->count() == 0 ){
                 return [];  
             }
@@ -714,7 +744,7 @@ class JobCardManagementController extends Controller
         });
         $statusCountsQuery = clone $job_register_query;
         Session::put('excel_export_job_card_data', json_encode($job_register_query->get()));
-        $job_register = $job_register_query->orderBy('sr_no', 'desc')->paginate(20);
+        $job_register = $job_register_query->orderBy('sr_no', 'desc')->paginate($perPage);
         if( $job_register->count() == 0 ){
             return [];  
         }
