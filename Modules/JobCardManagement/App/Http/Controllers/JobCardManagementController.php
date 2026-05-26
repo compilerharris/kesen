@@ -121,7 +121,7 @@ class JobCardManagementController extends Controller
         // return view('jobcardmanagement::pdf', compact('job'));
         $pdf = FacadePdf::loadView('jobcardmanagement::pdf', compact('job'));
 
-       return  $pdf->stream();
+       return  $pdf->download($job->sr_no . '.pdf');
     }
 
     public function store(Request $request)
