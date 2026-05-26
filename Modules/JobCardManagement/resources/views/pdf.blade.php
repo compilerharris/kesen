@@ -185,10 +185,15 @@
                 @php $pageBreakIndex=0;@endphp
                 @php $lanIndex=0;@endphp
                 @php
-                    $estimates = $job->estimate?$job->estimate->details:$job->no_estimate->details;
+                    $estimates = $job->estimate?$job->estimate->details:($job->no_estimate?$job->no_estimate->details:collect());
                     $estimates = $estimates->filter(function ($estimate) use ($job) {
                         return $estimate->document_name == $job->estimate_document_id;
                     });
+                    if (!empty($job->other_details)) {
+                        $otherEstimateIds = explode(',', $job->other_details);
+                        $otherDetails = \Modules\EstimateManagement\App\Models\EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)->get();
+                        $estimates = $estimates->merge($otherDetails);
+                    }
                     $estimates = sort_languages_job_card_preview($estimates);
                 @endphp
                 @foreach($estimates as $index => $estimate)
