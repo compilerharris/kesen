@@ -33,6 +33,9 @@
             'label' => 'Client Name',
         ],
         [
+            'label' => 'Job Type',
+        ],
+        [
             'label' => 'Created By',
         ],
         [
@@ -76,6 +79,7 @@
                     <td>{{ Carbon::parse($row->created_at)->format('j M Y') }}</td>
                     <td>{{ $row->handle_by->name }}</td>
                     <td>{{ $row->client->name }}</td>
+                    <td>{{ $row->type ? ucwords(str_replace('-', ' ', $row->type)) : '---' }}</td>
                     <td>{{ $row->employee->name??'---' }}</td>
                     <td class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>
                             {{ $row->status == 0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' :  'Canceled - '.$row->cancel_reason) }}
