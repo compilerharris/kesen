@@ -258,6 +258,10 @@ class HomeController extends Controller
                     $query->where('t_writer_code', $request->writer)
                           ->whereNotNull('t_pd')
                           ->whereNull('t_cr');
+                })->orWhere(function ($query) use ($request) {
+                    $query->where('bt_writer_code', $request->writer)
+                          ->whereNotNull('bt_pd')
+                          ->whereNull('bt_cr');
                 })->whereBetween('created_at', [$twoMonthsAgo, $today])->orderBy('job_no')->get();
                 $writerWorkload->writerId = $request->writer;
                 $writerWorkload->writerIds = [$request->writer];
@@ -274,6 +278,10 @@ class HomeController extends Controller
                 $query->whereIn('t_writer_code', $writers)
                       ->whereNotNull('t_pd')
                       ->whereNull('t_cr');
+            })->orWhere(function ($query) use ($writers) {
+                $query->whereIn('bt_writer_code', $writers)
+                      ->whereNotNull('bt_pd')
+                      ->whereNull('bt_cr');
             })->whereBetween('created_at', [$twoMonthsAgo, $today])->orderBy('t_writer_code')->get();
             $writerIds = [];
             $writerWorkload = $writerWorkload->filter(function($job) use ($request, &$writerIds, $writers) {
@@ -281,6 +289,9 @@ class HomeController extends Controller
                 if ($estimateDetail) {
                     if(in_array($job->t_writer_code,$writers)){
                         array_push($writerIds, $job->t_writer_code);
+                    }
+                    if(in_array($job->bt_writer_code,$writers)){
+                        array_push($writerIds, $job->bt_writer_code);
                     }
                     return true;
                 }
