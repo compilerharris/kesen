@@ -6,6 +6,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Modules\EstimateManagement\App\Models\Estimates;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class KesenExport implements FromCollection, WithHeadings, WithCustomStartCell, WithStyles
@@ -16,16 +17,24 @@ class KesenExport implements FromCollection, WithHeadings, WithCustomStartCell, 
     }
     public function collection()
     {
+        $otherEstimateNos = '';
+        if (!empty($this->jobRegister->other_details)) {
+            $otherEstimateNos = Estimates::whereIn('id', explode(',', $this->jobRegister->other_details))
+                ->pluck('estimate_no')
+                ->implode(', ');
+        }
+
         return collect([
             ['', ''],
             ['Job no', '', '',$this->jobRegister->sr_no, ''],
             ['Old job no', '', '',$this->jobRegister->old_job_no, ''],
-            ['Client name', '', '',$this->jobRegister->estimate?$this->jobRegister->estimate->client->name:$this->jobRegister->no_estimate->client->name, ''],
-            ['Client Contact Person', '', '',$this->jobRegister->estimate?$this->jobRegister->estimate->client_person->name:$this->jobRegister->no_estimate->client_person->name, ''],
+            ['Client name', '', '',$this->jobRegister->estimate?$this->jobRegister->estimate->client->name:($this->jobRegister->no_estimate->client->name??''), ''],
+            ['Client Contact Person', '', '',$this->jobRegister->estimate?$this->jobRegister->estimate->client_person->name:($this->jobRegister->no_estimate->client_person->name??''), ''],
             ['Protocol Number', '', '',$this->jobRegister->protocol_no, ''],
             ['Document Name', '', '',$this->jobRegister->estimate_document_id, ''],
+            ['Other Estimate No.', '', '', $otherEstimateNos, ''],
             ['', ''],
-            ['Sr No', 'Dr names', 'Site no', 'Languages', 'No of sites','Other Estimate']
+            ['Sr No', 'Dr names', 'Site no', 'Languages', 'No of sites', 'Other Estimate']
         ]);
     }
 
@@ -60,12 +69,14 @@ class KesenExport implements FromCollection, WithHeadings, WithCustomStartCell, 
         $sheet->mergeCells('A6:C6');
         $sheet->mergeCells('A7:C7');
         $sheet->mergeCells('A8:C8');
+        $sheet->mergeCells('A9:C9');
         $sheet->mergeCells('D3:H3');
         $sheet->mergeCells('D4:H4');
         $sheet->mergeCells('D5:H5');
         $sheet->mergeCells('D6:H6');
         $sheet->mergeCells('D7:H7');
         $sheet->mergeCells('D8:H8');
+        $sheet->mergeCells('D9:H9');
         $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
         $sheet->getStyle('D3')->getAlignment()->setHorizontal('left');
         $sheet->getStyle('D4')->getAlignment()->setHorizontal('left');
@@ -73,13 +84,14 @@ class KesenExport implements FromCollection, WithHeadings, WithCustomStartCell, 
         $sheet->getStyle('D6')->getAlignment()->setHorizontal('left');
         $sheet->getStyle('D7')->getAlignment()->setHorizontal('left');
         $sheet->getStyle('D8')->getAlignment()->setHorizontal('left');
+        $sheet->getStyle('D9')->getAlignment()->setHorizontal('left');
         $sheet->getStyle('D3')->getFont()->setBold(true);
-        $sheet->getStyle('A10')->getFont()->setBold(true);
-        $sheet->getStyle('B10')->getFont()->setBold(true);
-        $sheet->getStyle('C10')->getFont()->setBold(true);
-        $sheet->getStyle('D10')->getFont()->setBold(true);
-        $sheet->getStyle('E10')->getFont()->setBold(true);
-        $sheet->getStyle('F10')->getFont()->setBold(true);
+        $sheet->getStyle('A11')->getFont()->setBold(true);
+        $sheet->getStyle('B11')->getFont()->setBold(true);
+        $sheet->getStyle('C11')->getFont()->setBold(true);
+        $sheet->getStyle('D11')->getFont()->setBold(true);
+        $sheet->getStyle('E11')->getFont()->setBold(true);
+        $sheet->getStyle('F11')->getFont()->setBold(true);
         return [
             1 => ['font' => ['bold' => true]],
         ];
