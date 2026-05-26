@@ -108,10 +108,28 @@
         .client-info td{
             padding-left: 10px;
         }
+        .watermark {
+            position: fixed;
+            top: 35%;
+            left: 5%;
+            width: 90%;
+            text-align: center;
+            font-size: 90pt;
+            font-weight: bold;
+            color: rgba(180, 0, 0, 0.12);
+            transform: rotate(-45deg);
+            z-index: 1000;
+            pointer-events: none;
+        }
     </style>
 </head>
 
 <body>
+    @if($job->status == 2)
+        <div class="watermark">Cancelled</div>
+    @elseif($job->status == 1)
+        <div class="watermark">Completed</div>
+    @endif
     <div class="container">
         <div class="header">
             @if (($job->estimate?$job->estimate->client->client_metric->code:($job->no_estimate->client->client_metric->code??'')) == 'KCP')
