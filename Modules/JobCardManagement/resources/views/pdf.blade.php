@@ -209,7 +209,9 @@
                     });
                     if (!empty($job->other_details)) {
                         $otherEstimateIds = explode(',', $job->other_details);
-                        $otherDetails = \Modules\EstimateManagement\App\Models\EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)->get();
+                        $otherDetails = \Modules\EstimateManagement\App\Models\EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)
+                            ->where('document_name', $job->estimate_document_id)
+                            ->get();
                         $estimates = $estimates->merge($otherDetails);
                     }
                     $estimates = sort_languages_job_card_preview($estimates);

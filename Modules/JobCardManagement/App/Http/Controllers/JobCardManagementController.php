@@ -361,6 +361,7 @@ class JobCardManagementController extends Controller
         if (!empty($job_register->other_details)) {
             $otherEstimateIds = explode(',', $job_register->other_details);
             $otherDetails = EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)
+                ->where('document_name', $estimate_detail_id)
                 ->orderBy('created_at', 'desc')
                 ->get();
             $estimate_detail = $estimate_detail->merge($otherDetails);
@@ -536,6 +537,11 @@ class JobCardManagementController extends Controller
             $excelFormat = collect();
             foreach($jobCard as $index => $job){
                 $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
+                if (!empty($job->other_details)) {
+                    $otherEstimateIds = explode(',', $job->other_details);
+                    $otherLangIds = EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)->where('document_name', $job->estimate_document_id)->pluck('lang');
+                    $langIds = $langIds->merge($otherLangIds)->unique();
+                }
                 $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('code')->toArray());
                 $excelFormat->push([
                     'sr' => $index+1,
@@ -553,7 +559,7 @@ class JobCardManagementController extends Controller
                     'remark' => $job->remark??'',
                     'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
                     'status' => $job->status ==  0 ? (count($job->jobCard)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled'),
-                    'otherEstimate' => $job->other_details!=null?Estimates::whereIn('id', explode(',', $job->other_details))->get()->pluck('estimate_no')->implode(', ') ?? '':"" 
+                    'otherEstimate' => $job->other_details!=null?Estimates::whereIn('id', explode(',', $job->other_details))->get()->pluck('estimate_no')->implode(', ') ?? '':""
                 ]);
             }
             $todayDate = Carbon::now()->format('j-M-Y');
@@ -635,6 +641,11 @@ class JobCardManagementController extends Controller
         $excelFormat = collect();
         foreach($jobCard as $index => $job){
             $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
+            if (!empty($job->other_details)) {
+                $otherEstimateIds = explode(',', $job->other_details);
+                $otherLangIds = EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)->where('document_name', $job->estimate_document_id)->pluck('lang');
+                $langIds = $langIds->merge($otherLangIds)->unique();
+            }
             $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('code')->toArray());
             $excelFormat->push([
                 'sr' => $index+1,
@@ -652,7 +663,7 @@ class JobCardManagementController extends Controller
                 'remark' => $job->remark??'',
                 'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
                 'status' => $job->status ==  0 ? (count($job->job_card)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled'),
-                'otherEstimate' => $job->other_details!=null?Estimates::whereIn('id', explode(',', $job->other_details))->get()->pluck('estimate_no')->implode(', ') ?? '':"" 
+                'otherEstimate' => $job->other_details!=null?Estimates::whereIn('id', explode(',', $job->other_details))->get()->pluck('estimate_no')->implode(', ') ?? '':""
             ]);
         }
         $todayDate = Carbon::now()->format('j-M-Y');
