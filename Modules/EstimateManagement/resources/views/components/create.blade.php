@@ -487,7 +487,7 @@ $config = [
                     }
                 }
                 const setIf = (name, val) => { const el = document.querySelector(`input[name="${name}[${index}]"]`); if (el) el.value = val; };
-                setIf('unit', 0);
+                // Do not clear unit here: getRates fires on language/type/client changes and would wipe the user's entered word count.
                 setIf('amount', 0);
                 setIf('amount_bt', 0);
                 setIf('verification', 0);
