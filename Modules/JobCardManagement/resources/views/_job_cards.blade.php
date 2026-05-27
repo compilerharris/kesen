@@ -22,6 +22,7 @@
         ['label' => 'Protocol No'],
         ['label' => 'Handled By'],
         ['label' => 'Contact Person'],
+        ['label' => 'Job Type'],
         ['label' => 'Delivery Date'],
         ['label' => 'Billing Status'],
         ['label' => 'Bill Date'],
@@ -37,6 +38,7 @@
         ['label' => 'Protocol No'],
         ['label' => 'Handled By'],
         ['label' => 'Contact Person'],
+        ['label' => 'Job Type'],
         ['label' => 'Delivery Date'],
         ['label' => 'Status'],
         ['label' => 'Action'],
@@ -48,6 +50,7 @@
         ['label' => 'Client Name'],
         ['label' => 'Document Name'],
         ['label' => 'Handled By'],
+        ['label' => 'Job Type'],
         ['label' => 'Delivery Date'],
         ['label' => 'Billing Status'],
         ['label' => 'Status']
@@ -80,6 +83,7 @@
                     <td style="font-size: 2rem;">{{ $row->estimate?$row->estimate->client->name:($row->no_estimate?$row->no_estimate->client->name:'') }}</td>
                     <td style="font-size: 2rem;">{{ $row->estimate_document_id??'' }}</td>
                     <td style="font-size: 2rem;">{{ $row->handle_by->code??'' }}</td>
+                    <td style="font-size: 2rem;">{{ $row->type ? ucwords(str_replace('-', ' ', $row->type)) : '---' }}</td>
                     <td style="font-size: 2rem;">{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'---' }}</td>
                     <td style="font-size: 2rem;" class="{{empty($row->bill_no)&&$row->status==1?'bg-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'bg-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'bg-success':''))}}">{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'unbilled':($row->bill_no??'---'))}}</td>
                     <td style="font-size: 2rem;" class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}> {{ $row->status ==  0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</td>
@@ -98,6 +102,7 @@
                     <td><p style="width: 70px;">{{ $row->protocol_no??'' }}</p></td>
                     <td>{{ $row->handle_by->code??'' }}</td>
                     <td><p style="width: 70px;">{{ $row->estimate?$row->estimate->client_person->name:($row->no_estimate->client_person->name??'') }}</p></td>
+                    <td>{{ $row->type ? ucwords(str_replace('-', ' ', $row->type)) : '---' }}</td>
                     <td>{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'---' }}</td>
                     @if (Auth::user()->hasRole('Accounts'))
                         <td class="{{empty($row->bill_no)&&$row->status==1?'bg-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'bg-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'bg-success':''))}}">{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'unbilled':($row->bill_no??'---'))}}</td>
