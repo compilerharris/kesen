@@ -142,13 +142,16 @@ class HomeController extends Controller
         try{
             $wEmail = Writer::where('id',$writerId)->first();
             if(!$wEmail){
-                return redirect()->back()->with('alert', 'Please enter writer email id from writer management to send email.');
+                return redirect()->route('writermanagement.viewPayments', $writerId)->with('alert', 'Writer not found. Please check writer management.');
             }
-            Mail::to($wEmail)->send(new WP($job_card,$writer_payment,$wEmail));
+            if(!$wEmail->email){
+                return redirect()->route('writermanagement.viewPayments', $writerId)->with('alert', 'No email address found for this writer. Please add an email in writer management.');
+            }
+            Mail::to($wEmail->email)->send(new WP($job_card,$writer_payment,$wEmail));
         }catch (\Exception $e) {
-            return back()->with('alert', 'Failed to send writer payment email: ' . $e->getMessage());
+            return redirect()->route('writermanagement.viewPayments', $writerId)->with('alert', 'Failed to send payment email: ' . $e->getMessage());
         }
-        
+        return redirect()->route('writermanagement.viewPayments', $writerId)->with('message', 'Payment email sent successfully to ' . $wEmail->email . '.');
     }
 
     public function generateWriterReport() {
