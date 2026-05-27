@@ -89,16 +89,16 @@
                                 <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 40px;">{{$job->jobRegister->handle_by->code??''}}</p></td>
                                 <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 300px;">{{$job->jobRegister->estimate_document_id??''}}</p></td>
                                 <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">{{$job->estimateDetail->language->name??'---'}}</p></td>
-                                @if(in_array($job->t_writer_code,$writerWorkload->writerIds))
+                                @if($job->t_writer_code && in_array($job->t_writer_code,$writerWorkload->writerIds) && $job->t_pd && !$job->t_cr)
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">{{$job->t_unit}}</p></td>
-                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">{{$job->t_pd?Carbon\Carbon::parse($job->t_pd)->format('j M Y'):''}}</p></td>
+                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">{{Carbon\Carbon::parse($job->t_pd)->format('j M Y')}}</p></td>
                                 @else
-                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;"></p></td>
-                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;"></p></td>
+                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">---</p></td>
+                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">---</p></td>
                                 @endif
-                                @if( !isset($job->tWriter) && in_array($job->bt_writer_code,$writerWorkload->writerIds))
+                                @if($job->bt_writer_code && in_array($job->bt_writer_code,$writerWorkload->writerIds) && $job->bt_pd && !$job->bt_cr)
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">{{$job->bt_unit?$job->bt_unit:''}}</p></td>
-                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">{{$job->bt_pd?Carbon\Carbon::parse($job->bt_pd)->format('j M Y'):''}}</p></td>
+                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">{{Carbon\Carbon::parse($job->bt_pd)->format('j M Y')}}</p></td>
                                 @else
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">---</p></td>
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">---</p></td>
@@ -134,7 +134,7 @@
                                 <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 50px;"><b>{{$job->jobRegister->sr_no}}</b></p></td>
                                 <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 40px;">{{$job->jobRegister->handle_by->code??''}}</p></td>
                                 <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 300px;">{{$job->jobRegister->estimate_document_id??''}}</p></td>
-                                @if(in_array($job->t_writer_code,$writerWorkload->writerIds))
+                                @if($job->t_writer_code && in_array($job->t_writer_code,$writerWorkload->writerIds) && $job->t_pd && !$job->t_cr)
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 40px;"><b>{{$job->tWriter->code??'---'}}</b></p></td>
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">{{$job->t_unit}}</p></td>
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">{{$job->t_pd?Carbon\Carbon::parse($job->t_pd)->format('j M Y'):''}}</p></td>
@@ -143,10 +143,10 @@
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">---</p></td>
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">---</p></td>
                                 @endif
-                                @if( !isset($job->tWriter) && in_array($job->bt_writer_code,$writerWorkload->writerIds))
+                                @if($job->bt_writer_code && in_array($job->bt_writer_code,$writerWorkload->writerIds) && $job->bt_pd && !$job->bt_cr)
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 40px;"><b>{{$job->btWriter->code??'---'}}</b></p></td>
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">{{$job->bt_unit?$job->bt_unit:'---'}}</p></td>
-                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">{{$job->bt_pd?Carbon\Carbon::parse($job->bt_pd)->format('j M Y'):'---'}}</p></td>
+                                    <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 100px;">{{Carbon\Carbon::parse($job->bt_pd)->format('j M Y')}}</p></td>
                                 @else
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 40px;">---</p></td>
                                     <td style="text-align: left;"><p style="word-wrap: break-word; text-wrap: wrap; width: 30px;">---</p></td>
