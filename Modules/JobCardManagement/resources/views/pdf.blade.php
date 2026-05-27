@@ -197,7 +197,6 @@
                     <th>Sent Date</th>
                 </tr>
             </thead>
-            <tbody>
                 @php $estimate_details_list=[];@endphp
                 @php $temp_index=1;@endphp
                 @php $pageBreakIndex=0;@endphp
@@ -221,6 +220,7 @@
                     @if($partCopyIndex > 0)
                         @php $lanRowCount = $partCopyIndex; @endphp
                         @foreach($estimate->jobCards as $cardIndex => $card)
+                            <tbody style="page-break-inside: avoid">
                             {{-- t --}}
                             <tr style="{{$cardIndex==0?'border-top: solid 2px #000':''}}">
                                 @if($lanRowCount == $partCopyIndex)
@@ -298,10 +298,10 @@
                                 <td></td>
                                 <td></td>
                             </tr>
+                            </tbody>
                             @php $pageBreakIndex+=5;@endphp
                             @if($index < $estimates->count()-1)
                                 @if($pageBreakIndex % 30 == 0 && $pageBreakIndex == 30 )
-                                        </tbody>
                                     </table>
                                     <div class="page-break"></div>
                                     <table class="job-details">
@@ -319,9 +319,7 @@
                                                 <th>Sent Date</th>
                                             </tr>
                                         </thead>
-                                    <tbody>
                                 @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex == 75 )
-                                        </tbody>
                                     </table>
                                     <div class="page-break"></div>
                                     <table class="job-details">
@@ -339,9 +337,7 @@
                                                 <th>Sent Date</th>
                                             </tr>
                                         </thead>
-                                    <tbody>
                                 @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex > 75 )
-                                        </tbody>
                                     </table>
                                     <div class="page-break"></div>
                                     <table class="job-details">
@@ -359,11 +355,11 @@
                                                 <th>Sent Date</th>
                                             </tr>
                                         </thead>
-                                    <tbody>
                                 @endif
                             @endif
                         @endforeach
                     @else
+                        <tbody style="page-break-inside: avoid">
                         {{-- t --}}
                         <tr style="border-top: solid 3px #000">
                             @php $lanIndex = $lanIndex==0?1:0;@endphp
@@ -463,10 +459,10 @@
                             <td style="font-size: 8pt"></td>
                             <td style="font-size: 8pt"></td>
                         </tr>
+                        </tbody>
                         @php $pageBreakIndex+=5;@endphp
                         @if($index < $estimates->count()-1)
                             @if($pageBreakIndex % 30 == 0 && $pageBreakIndex == 30 )
-                                    </tbody>
                                 </table>
                                 @if($index < $estimate->count())
                                     <div class="page-break"></div>
@@ -485,10 +481,8 @@
                                                 <th>Sent Date</th>
                                             </tr>
                                         </thead>
-                                    <tbody>
-                                @endif 
+                                @endif
                             @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex == 75  )
-                                    </tbody>
                                 </table>
                                 <br>
                                 <div class="page-break"></div>
@@ -507,10 +501,8 @@
                                             <th>Sent Date</th>
                                         </tr>
                                     </thead>
-                                <tbody>
 
                             @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex > 75 )
-                                    </tbody>
                                 </table>
                                 <div class="page-break"></div>
                                 <table class="job-details">
@@ -528,12 +520,10 @@
                                             <th>Sent Date</th>
                                         </tr>
                                     </thead>
-                                <tbody>
                             @endif
                         @endif
                     @endif
                 @endforeach
-            </tbody>
         </table>
         <br>
         <table class="additional-info" >
