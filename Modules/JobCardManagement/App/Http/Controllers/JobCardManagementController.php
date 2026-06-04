@@ -492,13 +492,16 @@ class JobCardManagementController extends Controller
                 }
             }
             if($status==1){
-                $recipient = $job_register->client->client_accountant->email;
-                Mail::to($recipient)->send(new JobCompletedBilling($job_register));
-                // $recipients=config('app.recipients');
-                // foreach ($recipients as $recipient) {
-                    // Mail::to($recipient)->send(new JobCompletedBilling($job_register));
-                // }
-                return redirect('/job-card-management')->with('message', 'Job completed and email has been sent.');
+                $recipient = $job_register->client->client_accountant->email ?? null;
+                if($recipient){
+                    try{
+                        Mail::to($recipient)->send(new JobCompletedBilling($job_register));
+                        return redirect('/job-card-management')->with('message', 'Job completed and email has been sent.');
+                    }catch(\Exception $e){
+                        return redirect('/job-card-management')->with('alert', 'Job completed but failed to send email: ' . $e->getMessage());
+                    }
+                }
+                return redirect('/job-card-management')->with('message', 'Job completed. No accountant email found, notification skipped.');
             }
             return redirect()->back()->with('message', 'Status changed successfully.');
         }
