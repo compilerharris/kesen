@@ -305,7 +305,7 @@
                 </div>
                 <button type="button" class="btn btn-primary" id="add-item">Add Part Copy</button>
                 <br>
-                <button type="submit" class="mt-3 btn btn-success" style="padding: 5px 15px; font-size: 1.5rem;" onClick="this.form.submit(); this.disabled=true; this.innerText='Updating…'; ">Submit</button>
+                <button type="submit" class="mt-3 btn btn-success" style="padding: 5px 15px; font-size: 1.5rem;" onClick="if(!this.form.checkValidity()){ this.form.reportValidity(); return; } this.disabled=true; this.innerText='Updating…'; this.form.submit();">Submit</button>
             </form>
         </x-adminlte-card>
     </div>
@@ -315,6 +315,13 @@
 <script type="text/javascript">
    $(document).ready(function() {
     let itemIndex = {{ count($job_card) }};
+
+    function syncRemoveButtons() {
+        var count = $('.repeater-item').length;
+        $('.remove-item').prop('disabled', count <= 1);
+    }
+
+    syncRemoveButtons();
 
     $('#add-item').click(function() {
         let newItem = $('.repeater-item.mt-3:first').clone();
@@ -333,6 +340,7 @@
         newItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
         newItem.appendTo('#repeater');
         itemIndex++;
+        syncRemoveButtons();
     });
 
     $(document).on('click', '.remove-item', function() {
@@ -353,6 +361,7 @@
             }
             $(this).closest('.repeater-item').remove();
             updateIndices();
+            syncRemoveButtons();
         }
     });
 
