@@ -136,14 +136,16 @@
                                 <span style="font-size: 1.5rem;" class="right badge badge-danger p-2 mr-2">Total Canceled:
                                     {{ $job_register->cancel_count }}</span>
                                 @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$billingStatus && !$status)
-                                    <a style="font-size: 1.5rem;margin-bottom: 0;padding: 1px 10px;" target="_blank" class="btn btn-info">Export
-                                        {{-- <button class="btn btn-sm btn-info " title="Edit" style="width:132px;margin-left:5px;height:33px;font-size: 1.5rem;" ></button> --}}
+                                    <a style="font-size: 1.5rem;margin-bottom: 0;padding: 1px 10px;" target="_blank" class="btn btn-info">
+                                        {{ Auth::user()->hasRole('CEO') ? 'Download PDF' : 'Download Excel' }}
                                     </a>
                                 @else
                                     <form action="{{ route('jobcardmanagement.exportJobCard') }}" target="_blank" method="POST">
                                         @csrf
                                         <input type="hidden" name="data" value="{{ json_encode($job_register) }}">
-                                        <button class="btn btn-sm btn-info" style="font-size: 1.5rem;height:40px;padding: 1px 10px;" type="submit">Export</button>
+                                        <button class="btn btn-sm btn-info" style="font-size: 1.5rem;height:40px;padding: 1px 10px;" type="submit">
+                                            {{ Auth::user()->hasRole('CEO') ? 'Download PDF' : 'Download Excel' }}
+                                        </button>
                                     </form>
                                 @endif
                             </div>
@@ -201,13 +203,17 @@
                                     {{ $job_register->cancel_count }}</span>
                                 @if ( !$jobNo && !$cp && !$document && !$pm && !$contactPerson && !$from && !$to && !$billingStatus && !$status)
                                     <a target="_blank">
-                                        <button class="btn btn-sm btn-info" title="Edit" style="width:132px;margin-left:5px;height:33px;" >Export</button>
+                                        <button class="btn btn-sm btn-info" style="width:152px;margin-left:5px;height:33px;">
+                                            {{ Auth::user()->hasRole('CEO') ? 'Download PDF' : 'Download Excel' }}
+                                        </button>
                                     </a>
                                 @else
                                     <form action="{{ route('jobcardmanagement.exportJobCard') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="data" value="{{ json_encode($job_register) }}">
-                                        <button class="btn btn-sm btn-info" style="width:132px;margin-left:5px;height:33px;" type="submit">Export</button>
+                                        <button class="btn btn-sm btn-info" style="width:152px;margin-left:5px;height:33px;" type="submit">
+                                            {{ Auth::user()->hasRole('CEO') ? 'Download PDF' : 'Download Excel' }}
+                                        </button>
                                     </form>
                                 @endif
                             </div>
