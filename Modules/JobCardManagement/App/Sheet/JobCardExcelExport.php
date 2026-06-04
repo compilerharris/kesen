@@ -98,9 +98,6 @@ class JobCardExcelExport implements FromCollection, WithHeadings, WithCustomStar
                     $statusCell = $sheet->getCellByColumnAndRow(15, $row); // Assuming "Status" is in the 12th column
                     $statusValue = $statusCell->getValue();
 
-                    // Debugging: Output the status value (optional)
-                    echo "Row {$row} Status: {$statusValue}\n";
-
                     if ($statusValue == 'Canceled') {
                         $sheet->getStyle($statusCell->getCoordinate())->applyFromArray([
                             'fill' => [

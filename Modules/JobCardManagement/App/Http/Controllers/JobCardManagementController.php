@@ -510,7 +510,7 @@ class JobCardManagementController extends Controller
         if($request->get('jobNo') != ''){
             $this->jobNo = $request->get('jobNo');
             $this->cp = $this->document = $this->pm = $this->contactPerson = $this->from = $this->to = $this->billingStatus =  $this->status = null;
-            $job_register = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
+            $job_register = JobRegister::with(['estimate.client','estimate.client_person','no_estimate.client','no_estimate.client_person','handle_by','jobCard'])
             ->where('sr_no',$this->jobNo)
             ->orderBy('sr_no','desc')
             ->paginate(20);
@@ -529,147 +529,126 @@ class JobCardManagementController extends Controller
             }
             $jobCard = $job_register;
             if(Auth::user()->hasRole('CEO')){
-                $complete_count = $jobCard->complete_count;
-                $cancel_count = $jobCard->cancel_count;
                 $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', compact(['jobCard']))->setPaper('a4', 'landscape');
-                return  $pdf->stream();
+                return $pdf->stream();
             }
-            $excelFormat = collect();
-            foreach($jobCard as $index => $job){
-                $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
-                if (!empty($job->other_details)) {
-                    $otherEstimateIds = explode(',', $job->other_details);
-                    $otherLangIds = EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)->where('document_name', $job->estimate_document_id)->pluck('lang');
-                    $langIds = $langIds->merge($otherLangIds)->unique();
-                }
-                $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('code')->toArray());
-                $excelFormat->push([
-                    'sr' => $index+1,
-                    'date' => $job->created_at?Carbon::parse($job->created_at)->format('j M Y'):'',
-                    'sr_no' => $job->sr_no,
-                    'handledBy' => $job->handle_by->code??'',
-                    'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
-                    'clientContact' => $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name??''),
-                    'estimateNo' => $job->estimate?$job->estimate->estimate_no:'No Estimate',
-                    'languages' => $languages,
-                    'oldJobNo' => $job->old_job_no??'',
-                    'protocolNo' => $job->protocol_no,
-                    'jobType' => $job->type??'',
-                    'docName' => $job->estimate_document_id,
-                    'remark' => $job->remark??'',
-                    'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
-                    'status' => $job->status ==  0 ? (count($job->jobCard)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled'),
-                    'otherEstimate' => $job->other_details!=null?Estimates::whereIn('id', explode(',', $job->other_details))->get()->pluck('estimate_no')->implode(', ') ?? '':""
-                ]);
-            }
+            $excelFormat = $this->buildExcelFormat($jobCard);
             $todayDate = Carbon::now()->format('j-M-Y');
             return Excel::download(new JobCardExcelExport($excelFormat), "job-card-export-sheet-{$todayDate}.xlsx");
         }
-        $endDate = Carbon::now()->format('Y-m-d');
+
         $job_register = collect(json_decode(Session::get('excel_export_job_card_data')));
-        // $this->jobNo = null;
-        // $this->cp = $request->get('cp', null);
-        // $this->document = $request->get('document', null);
-        // $this->pm = $request->get('pm', null);
-        // $this->contactPerson = $request->get('contactPerson', null);
-        // $this->from = $request->get('from', null);
-        // $this->to = $request->get('to', null);
-        // $this->billingStatus =  $request->get('billingStatus', null);
-        // $this->status =  $request->get('status', null);
-
-        // $this->billingStatus = $this->billingStatus == 'zero'?'0':$this->billingStatus;
-        // $this->status = $this->status == 'zero'?'0':$this->status;
-
-        // $clientIds = $this->cp?Client::where('name','like',"%{$this->cp}%")->pluck('id')->toArray():[];
-        // $userIds = $this->pm?User::where('name','like',"%{$this->pm}%")->orWhere('code','like',"%{$this->pm}%")->pluck('id')->toArray():[];
-        // $clientContactIds = $this->contactPerson?ContactPerson::where('name','like',"%{$this->contactPerson}%")->pluck('id')->toArray():[];
-        // $job_register_query = JobRegister::with(['estimateDetail', 'jobCard', 'client', 'handle_by', 'client_person'])
-        // ->when(count($clientIds)>0, function ($query) use ($clientIds) {
-        //     $query->whereIn('client_id', $clientIds);
-        // })
-        // ->when(count($clientIds)==0 && $this->cp, function ($query){
-        //     $query->where('protocol_no','like',"%{$this->cp}%");
-        // })
-        // ->when($this->document, function ($query){
-        //     $query->where('description','like',"%{$this->document}%");
-        // })
-        // ->when(count($userIds)>0, function ($query) use ($userIds) {
-        //     $query->whereIn('handled_by_id',$userIds);
-        // })
-        // ->when(count($clientContactIds)>0, function ($query) use ($clientContactIds) {
-        //     $query->whereIn('client_contact_person_id',$clientContactIds);
-        // })
-        // ->when($this->from && $this->to, function ($query){
-        //     $query->whereBetween('created_at', [
-        //         Carbon::parse($this->from)->startOfDay()->format('Y-m-d H:i:s'),
-        //         Carbon::parse($this->to)->endOfDay()->format('Y-m-d H:i:s')
-        //     ]);
-        // })
-        // ->when($this->from, function ($query) use ($endDate){
-        //     $query->whereBetween('created_at', [$this->from,$endDate]);
-        // })
-        // ->when($this->billingStatus == "0", function($query) {
-        //     $query->whereNull('bill_no')->where('status',1);
-        // })
-        // ->when($this->billingStatus == "1", function($query) {
-        //     $query->whereNotNull('bill_no');
-        // })
-        // ->when(in_array($this->status,['0','1','2']), function ($query){
-        //     $query->where('status',$this->status);
-        // });
-        $statusCountsQuery = clone $job_register->sortByDesc('sr_no');
         if( $job_register->count() == 0 ){
-            return [];  
+            return redirect()->back()->with('alert',"No job found.");
         }
-        $statusCounts = $job_register->groupBy('status')->map(function ($group) {
-            return $group->count(); // Count the total for each group
-        });
-        
+        $statusCounts = $job_register->groupBy('status')->map(fn($group) => $group->count());
         $job_register->complete_count = $statusCounts['1'] ?? 0;
         $job_register->cancel_count = $statusCounts['2'] ?? 0;
         $jobCard = $job_register;
-        if($jobCard->count() == 0){
-            return redirect()->back()->with('alert',"No job found.");
-        }
+
         if(Auth::user()->hasRole('CEO')){
-            $complete_count = $jobCard->complete_count;
-            $cancel_count = $jobCard->cancel_count;
-            // return view('jobcardmanagement::pdf.export-job-card', compact(['jobCard']));
             $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', compact(['jobCard']))->setPaper('a4', 'landscape');
-            return  $pdf->stream();
+            return $pdf->stream();
         }
-        $excelFormat = collect();
-        foreach($jobCard as $index => $job){
-            $langIds = EstimatesDetails::where('estimate_id',$job->estimate_id)->where('document_name',$job->estimate_document_id)->pluck('lang');
-            if (!empty($job->other_details)) {
-                $otherEstimateIds = explode(',', $job->other_details);
-                $otherLangIds = EstimatesDetails::whereIn('estimate_id', $otherEstimateIds)->where('document_name', $job->estimate_document_id)->pluck('lang');
-                $langIds = $langIds->merge($otherLangIds)->unique();
-            }
-            $languages = implode(", ",Language::whereIn('id',$langIds)->pluck('code')->toArray());
-            $excelFormat->push([
-                'sr' => $index+1,
-                'date' => $job->created_at?Carbon::parse($job->created_at)->format('j M Y'):'',
-                'sr_no' => $job->sr_no,
-                'handledBy' => $job->handle_by->code??'',
-                'clientName' => $job->estimate?$job->estimate->client->name:$job->no_estimate->client->name,
-                'clientContact' => $job->estimate?$job->estimate->client_person->name:($job->no_estimate->client_person->name??''),
-                'estimateNo' => $job->estimate?$job->estimate->estimate_no:'No Estimate',
-                'languages' => $languages,
-                'oldJobNo' => $job->old_job_no??'',
-                'protocolNo' => $job->protocol_no,
-                'jobType' => $job->type??'',
-                'docName' => $job->estimate_document_id,
-                'remark' => $job->remark??'',
-                'billingStatus' => $job->status==2?'---':(empty($job->bill_no)&&$job->status==1?'Unbilled':($job->bill_no??'---')),
-                'status' => $job->status ==  0 ? (count($job->job_card)>0?'In Progress':'---') : ($job->status == 1 ? 'Completed' : 'Canceled'),
-                'otherEstimate' => $job->other_details!=null?Estimates::whereIn('id', explode(',', $job->other_details))->get()->pluck('estimate_no')->implode(', ') ?? '':""
-            ]);
-        }
+        $excelFormat = $this->buildExcelFormat($jobCard);
         $todayDate = Carbon::now()->format('j-M-Y');
         return Excel::download(new JobCardExcelExport($excelFormat), "job-card-{$todayDate}.xlsx");
-        // $pdf = FacadePdf::loadView('jobcardmanagement::pdf.export-job-card', ['jobCard'=> $jobCard])->setPaper('a4', 'landscape');
-        // return $pdf->stream();
+    }
+
+    private function buildExcelFormat($jobCard): \Illuminate\Support\Collection
+    {
+        $jobs = collect($jobCard);
+
+        // Batch pre-fetch: collect all estimate IDs and other-estimate IDs
+        $allEstimateIds = $jobs->pluck('estimate_id')->unique()->filter()->values();
+        $allOtherEstimateIds = $jobs
+            ->filter(fn($j) => !empty($j->other_details))
+            ->flatMap(fn($j) => explode(',', $j->other_details))
+            ->map('trim')->unique()->filter()->values();
+
+        // Batch query: estimate details for main estimates
+        $mainDetails = $allEstimateIds->isNotEmpty()
+            ? EstimatesDetails::whereIn('estimate_id', $allEstimateIds)
+                ->select(['estimate_id', 'document_name', 'lang'])
+                ->get()
+            : collect();
+
+        // Batch query: estimate details for other estimates
+        $otherDetails = $allOtherEstimateIds->isNotEmpty()
+            ? EstimatesDetails::whereIn('estimate_id', $allOtherEstimateIds)
+                ->select(['estimate_id', 'document_name', 'lang'])
+                ->get()
+            : collect();
+
+        // Batch query: all language codes in one shot
+        $allLangIds = $mainDetails->pluck('lang')->merge($otherDetails->pluck('lang'))->unique()->filter();
+        $languageCodes = $allLangIds->isNotEmpty()
+            ? Language::whereIn('id', $allLangIds)->pluck('code', 'id')
+            : collect();
+
+        // Batch query: other estimate numbers in one shot
+        $otherEstimateNos = $allOtherEstimateIds->isNotEmpty()
+            ? Estimates::whereIn('id', $allOtherEstimateIds)->pluck('estimate_no', 'id')
+            : collect();
+
+        // Group details by "estimate_id|document_name" for O(1) lookup in the loop
+        $mainDetailsByKey  = $mainDetails->groupBy(fn($d) => $d->estimate_id . '|' . $d->document_name);
+        $otherDetailsByKey = $otherDetails->groupBy(fn($d) => $d->estimate_id . '|' . $d->document_name);
+
+        $excelFormat = collect();
+        foreach ($jobs as $index => $job) {
+            // Languages from the main estimate
+            $key    = $job->estimate_id . '|' . $job->estimate_document_id;
+            $langIds = $mainDetailsByKey->get($key, collect())->pluck('lang');
+
+            // Languages from other estimates
+            $otherEstimateStr = '';
+            if (!empty($job->other_details)) {
+                $otherIds = array_map('trim', explode(',', $job->other_details));
+                foreach ($otherIds as $otherId) {
+                    $otherKey = $otherId . '|' . $job->estimate_document_id;
+                    $langIds  = $langIds->merge(
+                        $otherDetailsByKey->get($otherKey, collect())->pluck('lang')
+                    )->unique();
+                }
+                $otherEstimateStr = collect($otherIds)
+                    ->map(fn($id) => $otherEstimateNos[$id] ?? '')
+                    ->filter()->implode(', ');
+            }
+
+            $languages = $langIds->map(fn($id) => $languageCodes[$id] ?? '')->filter()->implode(', ');
+
+            // Access works for both Eloquent models and stdClass (session-decoded JSON)
+            $handleByCode  = $job->handle_by->code ?? '';
+            $clientName    = $job->estimate ? ($job->estimate->client->name ?? '') : ($job->no_estimate->client->name ?? '');
+            $clientContact = $job->estimate ? ($job->estimate->client_person->name ?? '') : ($job->no_estimate->client_person->name ?? '');
+            $estimateNo    = $job->estimate ? ($job->estimate->estimate_no ?? 'No Estimate') : 'No Estimate';
+
+            // job_card (JSON/stdClass) or jobCard (Eloquent collection)
+            $jobCardItems  = $job->jobCard ?? $job->job_card ?? [];
+            $jobCardCount  = is_countable($jobCardItems) ? count($jobCardItems) : 0;
+
+            $excelFormat->push([
+                'sr'            => $index + 1,
+                'date'          => $job->created_at ? Carbon::parse($job->created_at)->format('j M Y') : '',
+                'sr_no'         => $job->sr_no,
+                'handledBy'     => $handleByCode,
+                'clientName'    => $clientName,
+                'clientContact' => $clientContact,
+                'estimateNo'    => $estimateNo,
+                'languages'     => $languages,
+                'oldJobNo'      => $job->old_job_no ?? '',
+                'protocolNo'    => $job->protocol_no,
+                'jobType'       => $job->type ?? '',
+                'docName'       => $job->estimate_document_id,
+                'remark'        => $job->remark ?? '',
+                'billingStatus' => $job->status == 2 ? '---' : (empty($job->bill_no) && $job->status == 1 ? 'Unbilled' : ($job->bill_no ?? '---')),
+                'status'        => $job->status == 0 ? ($jobCardCount > 0 ? 'In Progress' : '---') : ($job->status == 1 ? 'Completed' : 'Canceled'),
+                'otherEstimate' => $otherEstimateStr,
+            ]);
+        }
+
+        return $excelFormat;
     }
 
     public function jobSearch($request){
