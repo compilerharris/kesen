@@ -250,14 +250,23 @@ class JobRegisterManagementController extends Controller
     public function edit($id)
     {
         if(!(Auth::user()->hasRole('Admin')||Auth::user()->hasRole('CEO'))){
-            return redirect()->back()->with('alert', 'You are not autherized.'); 
+            return redirect()->back()->with('alert', 'You are not autherized.');
         }
         $jobRegister = JobRegister::findOrFail($id);
         $jobRegister->estimateType = Estimates::where('id',$jobRegister->estimate_id)->first()?"estimate":"no_estimate";
         $jobRegister->languages = EstimatesDetails::where('estimate_id',$jobRegister->estimate_id)->where('document_name',$jobRegister->estimate_document_id)->pluck('lang')->toArray();
         $jobRegister->languagesNames = Language::whereIn('id', $jobRegister->languages)->get('name')->pluck('name')->toArray();
         $jobRegister->clientName = Client::where('id',$jobRegister->client_id)->first('name')->name;
-       
+
+        // Scope estimate_details to this job's estimate_id and document_name so toggle
+        // states (T, V1, V2, BT, BTV) are loaded from the correct rows, not from
+        // unrelated jobs that happen to share the same document name.
+        $jobRegister->setRelation('estimate_details',
+            EstimatesDetails::where('estimate_id', $jobRegister->estimate_id)
+                ->where('document_name', $jobRegister->estimate_document_id)
+                ->get()
+        );
+
         return view('jobregistermanagement::edit', compact('jobRegister'));
     }
 
