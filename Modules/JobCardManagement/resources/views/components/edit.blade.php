@@ -338,6 +338,8 @@
             }
         });
         newItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
+        newItem.find('input, select').removeAttr('required');
+        newItem.find('label span.text-danger').remove();
         newItem.appendTo('#repeater');
         itemIndex++;
         syncRemoveButtons();
