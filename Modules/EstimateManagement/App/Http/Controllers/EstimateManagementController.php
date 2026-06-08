@@ -13,8 +13,10 @@ use Illuminate\Support\Facades\Auth;
 use Modules\ClientManagement\App\Models\Client;
 use Modules\ClientManagement\App\Models\ContactPerson;
 use Modules\ClientManagement\App\Models\Ratecard;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\EstimateManagement\App\Models\Estimates;
 use Modules\EstimateManagement\App\Models\EstimatesDetails;
+use Modules\EstimateManagement\App\Sheet\EstimateExport;
 use Modules\JobRegisterManagement\App\Models\JobRegister;
 use Modules\LanguageManagement\App\Models\Language;
 
@@ -109,33 +111,34 @@ class EstimateManagementController extends Controller
 
     public function exportEstimate()
     {
-        if(!request()->get("reset")){
-            if(request()->get("min")&&request()->get("max")==null) {
-            
-                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->orderBy('created_at', 'desc')->get();    
-            }
-            elseif(request()->get("min")!=''&&request()->get("max")!='') {
-                
-                $estimates = Estimates::where('created_at', '>=',Carbon::parse(request()->get("min"))->startOfDay())->where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay())->orderBy('created_at', 'desc')->get();    
-            }
-            elseif(request()->get("min")==null&&request()->get("max")){
-                
-                $estimates = Estimates::where('created_at', '<=', Carbon::parse(request()->get("max"))->endOfDay()->orderBy('created_at', 'desc'))->get();    
-            }else{
-                $min=Carbon::now()->startOfMonth();
-                $max=Carbon::now()->endOfMonth();
-                $estimates = Estimates::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();    
-            }
-        }else{
-            $min=Carbon::now()->startOfMonth();
-            $max=Carbon::now()->endOfMonth();
-            $estimates = Estimates::where('created_at', '>=', $min)->where('created_at', '<=', $max)->orderBy('created_at', 'desc')->get();    
+        $query = Estimates::query()->with(['client.client_metric', 'client_person', 'details', 'employee']);
+
+        if (request()->get('min') && request()->get('max') == null) {
+            $query->where('created_at', '>=', Carbon::parse(request()->get('min'))->startOfDay());
+        } elseif (request()->get('min') != '' && request()->get('max') != '') {
+            $query->where('created_at', '>=', Carbon::parse(request()->get('min'))->startOfDay())
+                  ->where('created_at', '<=', Carbon::parse(request()->get('max'))->endOfDay());
+        } elseif (request()->get('min') == null && request()->get('max')) {
+            $query->where('created_at', '<=', Carbon::parse(request()->get('max'))->endOfDay());
+        } else {
+            $query->where('created_at', '>=', Carbon::now()->startOfMonth())
+                  ->where('created_at', '<=', Carbon::now()->endOfMonth());
         }
-        $estimates_approved_count=$estimates->where('status',1)->count();
-        $estimates_rejected_count=$estimates->where('status',2)->count();
-        $pdf =FacadePdf::loadView('estimatemanagement::pdf.export-table-list', ['estimates'=> $estimates,'estimates_approved_count'=> $estimates_approved_count,'estimates_rejected_count'=> $estimates_rejected_count]);
-        return $pdf->stream();
-        
+
+        $estimates = $query->orderBy('created_at', 'desc')->get();
+        $estimates_approved_count = $estimates->where('status', 1)->count();
+        $estimates_rejected_count = $estimates->where('status', 2)->count();
+
+        if (Auth::user()->hasRole('CEO')) {
+            $pdf = FacadePdf::loadView('estimatemanagement::pdf.export-table-list', [
+                'estimates' => $estimates,
+                'estimates_approved_count' => $estimates_approved_count,
+                'estimates_rejected_count' => $estimates_rejected_count,
+            ]);
+            return $pdf->download('estimates-' . Carbon::now()->format('Y-m-d') . '.pdf');
+        }
+
+        return Excel::download(new EstimateExport($estimates), 'estimates-' . Carbon::now()->format('Y-m-d') . '.xlsx');
     }
 
     public function getContactPerson($id)
