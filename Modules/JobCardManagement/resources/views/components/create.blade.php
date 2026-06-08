@@ -319,7 +319,10 @@
 
         newItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
         newItem.find('input, select').removeAttr('required');
-        newItem.find('label span.text-danger').remove();
+        // Strip trailing '*' from label text (AdminLTE bakes it into the label string, no span)
+        newItem.find('label').each(function() {
+            $(this).text($(this).text().replace(/\s*\*\s*$/, ''));
+        });
 
         $('#repeater').append(newItem);
 

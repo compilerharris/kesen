@@ -90,7 +90,7 @@
                                         </div> --}}
                                         <div class="card-body">
                                             <div class="row pt-2">
-                                                @if($estimate_detail->t)
+                                                @if($estimate_detail->t && $index == 0)
                                                     <x-adminlte-input name="t_unit[{{ $index }}]" placeholder="Unit"
                                                     fgroup-class="col-md-2" type='text'
                                                     value="{{ old('t_unit.' . $index, $job->t_unit) }}"
@@ -199,7 +199,7 @@
                                         <div class="card" >
                                             <div class="card-body">
                                                 <div class="row pt-2">
-                                                    @if(!$estimate_detail->t && $estimate_detail->bt)
+                                                    @if(!$estimate_detail->t && $estimate_detail->bt && $index == 0)
                                                         <x-adminlte-input name="bt_unit[{{ $index }}]" placeholder="Unit" fgroup-class="col-md-2" type='text' value="{{ old('bt_unit.' . $index,  $job->bt_unit) }}" label="BT Unit*" required />
                                                         <x-adminlte-select name="bt_writer[{{ $index }}]" fgroup-class="col-md-2" value="{{ old('bt_writer.' . $index, $job->bt_writer_code) }}" label="BT Writer*" required>
                                                             <option value="">Select Writer</option>
@@ -347,7 +347,10 @@
         });
         newItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
         newItem.find('input, select').removeAttr('required');
-        newItem.find('label span.text-danger').remove();
+        // Strip trailing '*' from label text (AdminLTE bakes it into the label string, no span)
+        newItem.find('label').each(function() {
+            $(this).text($(this).text().replace(/\s*\*\s*$/, ''));
+        });
         $('#repeater').append(newItem);
 
         // Re-initialize Select2 on the newly added item
