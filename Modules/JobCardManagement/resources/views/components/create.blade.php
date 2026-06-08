@@ -298,20 +298,34 @@
 
     $('#add-item').click(function() {
         let newItem = $('.repeater-item.mt-3:first').clone();
+
+        // Remove Select2-generated containers so they don't interfere with ordering
+        newItem.find('.select2-container').remove();
+        newItem.find('select')
+            .removeClass('select2-hidden-accessible select2-focusable')
+            .removeAttr('data-select2-id aria-hidden tabindex')
+            .css('display', '');
+
         newItem.find('input, select').each(function() {
             $(this).val('');
             let name = $(this).attr('name');
-            if (name == 'verification_2[0]') {
-                name = 'verification_2[' + itemIndex + ']';
-            } else {
-                name = name.replace(/\d+/, itemIndex);
+            if (name) {
+                // Use \[\d+\] to match only the array index [N], avoiding false
+                // matches on digits that are part of the field name (e.g. v2_unit, btv_pd)
+                name = name.replace(/\[\d+\]/, '[' + itemIndex + ']');
+                $(this).attr('name', name);
             }
-            $(this).attr('name', name);
         });
+
         newItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
         newItem.find('input, select').removeAttr('required');
         newItem.find('label span.text-danger').remove();
-        newItem.appendTo('#repeater');
+
+        $('#repeater').append(newItem);
+
+        // Re-initialize Select2 on the newly added item
+        newItem.find('select').select2({ theme: 'bootstrap4', width: '100%' });
+
         itemIndex++;
         syncRemoveButtons();
     });
@@ -327,17 +341,15 @@
     function updateIndices() {
         itemIndex = 0;
         $('.repeater-item').each(function() {
-            let newItem = $(this);
-            newItem.find('input, select').each(function() {
+            let currentItem = $(this);
+            currentItem.find('input, select').each(function() {
                 let name = $(this).attr('name');
-                if (name == 'verification_2[0]') {
-                    name = 'verification_2[' + itemIndex + ']';
-                } else {
-                    name = name.replace(/\d+/, itemIndex);
+                if (name) {
+                    name = name.replace(/\[\d+\]/, '[' + itemIndex + ']');
+                    $(this).attr('name', name);
                 }
-                $(this).attr('name', name);
             });
-            newItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
+            currentItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
             itemIndex++;
         });
     }

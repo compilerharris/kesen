@@ -325,22 +325,34 @@
 
     $('#add-item').click(function() {
         let newItem = $('.repeater-item.mt-3:first').clone();
+
+        // Remove Select2-generated containers so they don't interfere with ordering
+        newItem.find('.select2-container').remove();
+        newItem.find('select')
+            .removeClass('select2-hidden-accessible select2-focusable')
+            .removeAttr('data-select2-id aria-hidden tabindex')
+            .css('display', '');
+
         newItem.find('input, select').each(function() {
             $(this).val('');
             let name = $(this).attr('name');
 
-            if(name === "button") {
+            if (name === 'button') {
                 $(this).attr('value', 'Remove');
                 $(this).attr('data-detail-id', '');
-            } else {
-                name = name.replace(/\d+/, itemIndex);
+            } else if (name) {
+                name = name.replace(/\[\d+\]/, '[' + itemIndex + ']');
                 $(this).attr('name', name);
             }
         });
         newItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
         newItem.find('input, select').removeAttr('required');
         newItem.find('label span.text-danger').remove();
-        newItem.appendTo('#repeater');
+        $('#repeater').append(newItem);
+
+        // Re-initialize Select2 on the newly added item
+        newItem.find('select').select2({ theme: 'bootstrap4', width: '100%' });
+
         itemIndex++;
         syncRemoveButtons();
     });
@@ -373,8 +385,10 @@
             let currentItem = $(this);
             currentItem.find('input, select').each(function() {
                 let name = $(this).attr('name');
-                name = name.replace(/\d+/, itemIndex);
-                $(this).attr('name', name);
+                if (name) {
+                    name = name.replace(/\[\d+\]/, '[' + itemIndex + ']');
+                    $(this).attr('name', name);
+                }
             });
             currentItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
             itemIndex++;
