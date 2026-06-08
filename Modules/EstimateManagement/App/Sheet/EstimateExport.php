@@ -2,6 +2,7 @@
 
 namespace Modules\EstimateManagement\App\Sheet;
 
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -21,6 +22,7 @@ class EstimateExport implements FromCollection, WithHeadings, WithStyles
 
             return [
                 $index + 1,
+                Carbon::parse($row->created_at)->format('d-m-Y'),
                 $row->estimate_no,
                 calculateTotals($row->details, $row->discount ?? 0),
                 $row->client->client_metric->code ?? '',
@@ -38,6 +40,7 @@ class EstimateExport implements FromCollection, WithHeadings, WithStyles
     {
         return [
             '#',
+            'Date',
             'Estimate No',
             'Amount',
             'Metrix',

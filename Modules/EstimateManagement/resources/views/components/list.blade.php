@@ -15,6 +15,7 @@
 @php
     $heads = [
         ['label' => '#'],
+        ['label' => 'Date'],
         ['label' => 'Estimate No'],
         ['label' => 'Metrix'],
         ['label' => 'Client Name'],
@@ -27,6 +28,7 @@
     ];
     $ceoHeads = [
         ['label' => '#'],
+        ['label' => 'Date'],
         ['label' => 'Estimate No'],
         ['label' => 'Client Name'],
         ['label' => 'Contact Person Name'],
@@ -127,6 +129,7 @@
                                 @foreach ($estimates as $index => $row)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
                                         <td>{{ $row->estimate_no }}</td>
                                         <td>{{ $row->client->name ?? '---' }}</td>
                                         <td>{{ $row->client_person->name ?? '---' }}</td>
@@ -140,6 +143,7 @@
                                 @foreach ($estimates as $index => $row)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
                                         <td>{{ $row->estimate_no }}</td>
                                         <td>{{ $row->client->client_metric->code }}</td>
                                         <td>{{ $row->client->name ?? '---' }}</td>

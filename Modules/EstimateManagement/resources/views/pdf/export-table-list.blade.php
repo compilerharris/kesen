@@ -6,6 +6,9 @@
             'label' => 'ID',
         ],
         [
+            'label' => 'Date',
+        ],
+        [
             'label' => 'Estimate No',
         ],
         [
@@ -134,6 +137,7 @@
         @foreach ($estimates as $index=>$row)
         <tr>
             <td>{{ $index+1 }}</td>
+            <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
             <td>{{ $row->estimate_no }}</td>
             <td>{{calculateTotals($row->details,$row->discount??0)}}</td>
             
