@@ -393,7 +393,7 @@
             currentItem.find('.card-title').html('Part Copy ' + (itemIndex + 1));
             itemIndex++;
         });
-    }
+    } 
 });
 
 </script>
