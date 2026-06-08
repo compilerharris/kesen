@@ -301,43 +301,7 @@
                             </tbody>
                             @php $pageBreakIndex+=5;@endphp
                             @if($index < $estimates->count()-1)
-                                @if($pageBreakIndex % 30 == 0 && $pageBreakIndex == 30 )
-                                    </table>
-                                    <div class="page-break"></div>
-                                    <table class="job-details">
-                                        <thead>
-                                            <tr>
-                                                <th colspan="3">Langs.</th>
-                                                <th>Unit</th>
-                                                <th>Writer Code</th>
-                                                <th>Employee Code</th>
-                                                <th>PD</th>
-                                                <th>CR</th>
-                                                <th>C/NC</th>
-                                                <th>DV</th>
-                                                <th>F/QC</th>
-                                                <th>Sent Date</th>
-                                            </tr>
-                                        </thead>
-                                @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex == 75 )
-                                    </table>
-                                    <div class="page-break"></div>
-                                    <table class="job-details">
-                                        <thead>
-                                            <tr>
-                                                <th colspan="3">Langs.</th>
-                                                <th>Unit</th>
-                                                <th>Writer Code</th>
-                                                <th>Employee Code</th>
-                                                <th>PD</th>
-                                                <th>CR</th>
-                                                <th>C/NC</th>
-                                                <th>DV</th>
-                                                <th>F/QC</th>
-                                                <th>Sent Date</th>
-                                            </tr>
-                                        </thead>
-                                @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex > 75 )
+                                @if($pageBreakIndex == 25 || ($pageBreakIndex > 25 && ($pageBreakIndex - 25) % 30 == 0))
                                     </table>
                                     <div class="page-break"></div>
                                     <table class="job-details">
@@ -359,7 +323,7 @@
                             @endif
                         @endforeach
                     @else
-                        <tbody style="page-break-inside: avoid">
+                        <tbody style="page-break-inside: avoid; page-break-before: auto;">
                         {{-- t --}}
                         <tr style="border-top: solid 3px #000">
                             @php $lanIndex = $lanIndex==0?1:0;@endphp
@@ -462,47 +426,7 @@
                         </tbody>
                         @php $pageBreakIndex+=5;@endphp
                         @if($index < $estimates->count()-1)
-                            @if($pageBreakIndex % 30 == 0 && $pageBreakIndex == 30 )
-                                </table>
-                                @if($index < $estimate->count())
-                                    <div class="page-break"></div>
-                                    <table class="job-details">
-                                        <thead>
-                                            <tr>
-                                                <th colspan="3">Langs.</th>
-                                                <th>Unit</th>
-                                                <th>Writer Code</th>
-                                                <th>Employee Code</th>
-                                                <th>PD</th>
-                                                <th>CR</th>
-                                                <th>C/NC</th>
-                                                <th>DV</th>
-                                                <th>F/QC</th>
-                                                <th>Sent Date</th>
-                                            </tr>
-                                        </thead>
-                                @endif
-                            @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex == 75  )
-                                </table>
-                                <br>
-                                <div class="page-break"></div>
-                                <table class="job-details">
-                                    <thead>
-                                        <tr>
-                                            <th colspan="3">Langs.</th>
-                                            <th>Unit</th>
-                                            <th>Writer Code</th>
-                                            <th>Employee Code</th>
-                                            <th>PD</th>
-                                            <th>CR</th>
-                                            <th>C/NC</th>
-                                            <th>DV</th>
-                                            <th>F/QC</th>
-                                            <th>Sent Date</th>
-                                        </tr>
-                                    </thead>
-
-                            @elseif($pageBreakIndex % 75 == 0 && $pageBreakIndex > 75 )
+                            @if($pageBreakIndex == 25 || ($pageBreakIndex > 25 && ($pageBreakIndex - 25) % 30 == 0))
                                 </table>
                                 <div class="page-break"></div>
                                 <table class="job-details">
