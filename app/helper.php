@@ -131,6 +131,33 @@ if(!function_exists('calculateTotals')){
     
 }
 
+if (!function_exists('calculateTotalsWithCounts')) {
+    function calculateTotalsWithCounts($details, $discount = 0, $countsMap = [])
+    {
+        $sub_total = 0;
+        $uniqueDetails = collect();
+        foreach ($details as $detail) {
+            $combination = $detail->document_name . '-' . $detail->unit;
+            if (!$uniqueDetails->contains($combination)) {
+                $uniqueDetails->push($combination);
+                $count = $countsMap[$combination] ?? 0;
+                $layout_charges = $detail->layout_charges ?? 0;
+                $translation = estimateDetailTranslationLineTotal($detail);
+                $back_translation = estimateDetailBackTranslationLineTotal($detail);
+                $verification = $detail->verification ?? 0;
+                $two_way_qc_t = $detail->two_way_qc_t ?? 0;
+                $two_way_qc_bt = $detail->two_way_qc_bt ?? 0;
+                $verification_2 = $detail->verification_2 ?? 0;
+                $layout_charges_2 = $detail->layout_charges_2 ?? 0;
+                $sub_total += (($translation) + $layout_charges + $back_translation + $verification + $two_way_qc_t + $two_way_qc_bt + $verification_2 + $layout_charges_2) * $count;
+            }
+        }
+        $net_total = $sub_total - $discount;
+        $gst = ($net_total / 100) * 18;
+        return $net_total + $gst;
+    }
+}
+
 if(!function_exists('getCurrencyDropDown')){
     function getCurrencyDropDown(){
         return <<<HTML

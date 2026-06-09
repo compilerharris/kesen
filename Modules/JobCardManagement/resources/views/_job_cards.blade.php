@@ -19,10 +19,10 @@
         ['label' => 'Job No'],
         ['label' => 'Client Name'],
         ['label' => 'Document Name'],
+        ['label' => 'Job Type'],
         ['label' => 'Protocol No'],
         ['label' => 'Handled By'],
         ['label' => 'Contact Person'],
-        ['label' => 'Job Type'],
         ['label' => 'Delivery Date'],
         ['label' => 'Billing Status'],
         ['label' => 'Bill Date'],
@@ -35,10 +35,10 @@
         ['label' => 'Job No'],
         ['label' => 'Client Name'],
         ['label' => 'Document Name'],
+        ['label' => 'Job Type'],
         ['label' => 'Protocol No'],
         ['label' => 'Handled By'],
         ['label' => 'Contact Person'],
-        ['label' => 'Job Type'],
         ['label' => 'Delivery Date'],
         ['label' => 'Status'],
         ['label' => 'Action'],
@@ -49,8 +49,8 @@
         ['label' => 'Job No'],
         ['label' => 'Client Name'],
         ['label' => 'Document Name'],
-        ['label' => 'Handled By'],
         ['label' => 'Job Type'],
+        ['label' => 'Handled By'],
         ['label' => 'Delivery Date'],
         ['label' => 'Billing Status'],
         ['label' => 'Status']
@@ -82,8 +82,8 @@
                     <td style="font-size: 2rem;">{{ $row->sr_no }}</td>
                     <td style="font-size: 2rem;">{{ $row->estimate?$row->estimate->client->name:($row->no_estimate?$row->no_estimate->client->name:'') }}</td>
                     <td style="font-size: 2rem;">{{ $row->estimate_document_id??'' }}</td>
-                    <td style="font-size: 2rem;">{{ $row->handle_by->code??'' }}</td>
                     <td style="font-size: 2rem;">{{ $row->type ? ucwords(str_replace('-', ' ', $row->type)) : '---' }}</td>
+                    <td style="font-size: 2rem;">{{ $row->handle_by->code??'' }}</td>
                     <td style="font-size: 2rem;">{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'---' }}</td>
                     <td style="font-size: 2rem;" class="{{empty($row->bill_no)&&$row->status==1?'bg-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'bg-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'bg-success':''))}}">{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'unbilled':($row->bill_no??'---'))}}</td>
                     <td style="font-size: 2rem;" class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}> {{ $row->status ==  0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</td>
@@ -99,10 +99,10 @@
                     <td>{{ $row->sr_no }}</td>
                     <td>{{ $row->estimate?$row->estimate->client->name:($row->no_estimate?$row->no_estimate->client->name:'') }}</td>
                     <td><p style="width: 100px;">{{ $row->estimate_document_id??'' }}</p></td>
+                    <td>{{ $row->type ? ucwords(str_replace('-', ' ', $row->type)) : '---' }}</td>
                     <td><p style="width: 70px;">{{ $row->protocol_no??'' }}</p></td>
                     <td>{{ $row->handle_by->code??'' }}</td>
                     <td><p style="width: 70px;">{{ $row->estimate?$row->estimate->client_person->name:($row->no_estimate->client_person->name??'') }}</p></td>
-                    <td>{{ $row->type ? ucwords(str_replace('-', ' ', $row->type)) : '---' }}</td>
                     <td>{{ $row->date?Carbon::parse($row->date)->format('j M Y'):'---' }}</td>
                     @if (Auth::user()->hasRole('Accounts'))
                         <td class="{{empty($row->bill_no)&&$row->status==1?'bg-warning':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Unpaid'?'bg-danger':(isset($row->bill_no)&&$row->status==1&&$row->payment_status=='Paid'?'bg-success':''))}}">{{$row->status==2?'---':(empty($row->bill_no)&&$row->status==1?'unbilled':($row->bill_no??'---'))}}</td>
@@ -112,34 +112,33 @@
                     @endif
                     <td class={{ $row->status == 0 ? '' : ($row->status == 1 ? 'bg-success' : 'bg-danger') }}>{{ $row->status ==  0 ? ($row->isJobCard?'In Progress':'---') : ($row->status == 1 ? 'Completed' : 'Canceled') }}</td>
                     <td style="width:250px;">
-                        <a href="{{ route('jobcardmanagement.manage.list', ['job_id' => $row->id, 'estimate_detail_id' => str_replace('/', '!', $row->estimate_document_id)]) }}" class="btn btn-info btn-sm mb-2">Manage
-                        </a>
+                        @if($row->status != 2)
+                            <a href="{{ route('jobcardmanagement.manage.list', ['job_id' => $row->id, 'estimate_detail_id' => str_replace('/', '!', $row->estimate_document_id)]) }}" class="btn btn-info btn-sm mb-2">Manage
+                            </a>
+                        @endif
                         <a href="{{ route('jobcardmanagement.pdf', ['job_id' => $row->id]) }}"  target="_blank" class="btn btn-info btn-sm mb-2">Preview</a>
-                        @if(!Auth::user()->hasRole('Accounts'))
-                            @if($row->status == 0)
-                                <a href="{{route('jobcardmanagement.status', [$row->id,1])}}" class="btn btn-success btn-sm mb-2">Completed</a>
-                            @elseif($row->status == 1)
-
-                                <a href="{{route('jobcardmanagement.status', [$row->id,0])}}" class="btn btn-info btn-sm mb-2">In Progress</a>
-                            @else
-
-                                <a href="{{route('jobcardmanagement.status', [$row->id,0])}}" class="btn btn-info btn-sm mb-2">In Progress</a>
+                        @if($row->status != 2)
+                            @if(!Auth::user()->hasRole('Accounts'))
+                                @if($row->status == 0)
+                                    <a href="{{route('jobcardmanagement.status', [$row->id,1])}}" class="btn btn-success btn-sm mb-2">Completed</a>
+                                @elseif($row->status == 1)
+                                    <a href="{{route('jobcardmanagement.status', [$row->id,0])}}" class="btn btn-info btn-sm mb-2">In Progress</a>
+                                @endif
                             @endif
 
-                        @endif
-                        
-                        @if($row->type=='site-specific')
-                            @if($row->is_excel_downloaded)
-                                <a class="btn btn-secondary btn-sm mb-2 disabled">Excel Already Download</a>
-                            @else
-                                <a href="{{route('jobregistermanagement.excell', $row->id)}}" class="btn btn-secondary btn-sm mb-2"><i class="fas fa-download"> Download Excel</i></a>
+                            @if($row->type=='site-specific')
+                                @if($row->is_excel_downloaded)
+                                    <a class="btn btn-secondary btn-sm mb-2 disabled">Excel Already Download</a>
+                                @else
+                                    <a href="{{route('jobregistermanagement.excell', $row->id)}}" class="btn btn-secondary btn-sm mb-2"><i class="fas fa-download"> Download Excel</i></a>
+                                @endif
                             @endif
+                            @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
+                                <a href="{{ route('jobcardmanagement.bill', ['job_id' => $row->id]) }}" class="btn btn-info btn-sm mb-2">Billing</a>
+                            @endif
+                            <button data-id="{{ $row->id }}" onclick="openModal(this)" data-toggle="modal" data-target="#cancelModal" class="btn btn-warning btn-sm mb-2">Remark</button>
+                            <button data-id="{{ $row->id }}" onclick="openModalwU(this)" data-toggle="modal" data-target="#wUText" class="btn btn-warning btn-sm mb-2">Words/Units</button>
                         @endif
-                        @if(Auth::user()->hasRole('Accounts')||Auth::user()->hasRole('CEO'))
-                        <a href="{{ route('jobcardmanagement.bill', ['job_id' => $row->id]) }}" class="btn btn-info btn-sm mb-2">Billing</a>
-                        @endif
-                        <button data-id="{{ $row->id }}" onclick="openModal(this)" data-toggle="modal" data-target="#cancelModal" class="btn btn-warning btn-sm mb-2">Remark</button>
-                        <button data-id="{{ $row->id }}" onclick="openModalwU(this)" data-toggle="modal" data-target="#wUText" class="btn btn-warning btn-sm mb-2">Words/Units</button>
                     </td>
                 </tr>
             @endforeach

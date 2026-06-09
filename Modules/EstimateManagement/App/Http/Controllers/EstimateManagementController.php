@@ -111,7 +111,7 @@ class EstimateManagementController extends Controller
 
     public function exportEstimate()
     {
-        $query = Estimates::query()->with(['client.client_metric', 'client_person', 'details', 'employee']);
+        $query = Estimates::query()->with(['client.client_metric', 'client_person', 'details']);
 
         if (request()->get('min') && request()->get('max') == null) {
             $query->where('created_at', '>=', Carbon::parse(request()->get('min'))->startOfDay());
@@ -125,20 +125,65 @@ class EstimateManagementController extends Controller
                   ->where('created_at', '<=', Carbon::now()->endOfMonth());
         }
 
-        $estimates = $query->orderBy('created_at', 'desc')->get();
+        $estimates = $query->orderBy('created_at', 'asc')->get();
         $estimates_approved_count = $estimates->where('status', 1)->count();
         $estimates_rejected_count = $estimates->where('status', 2)->count();
 
+        // Batch: protocol nos grouped by estimate_id (single query)
+        $estimateIds = $estimates->pluck('id');
+        $protocolNosMap = JobRegister::whereIn('estimate_id', $estimateIds)
+            ->select(['estimate_id', 'protocol_no'])
+            ->get()
+            ->groupBy('estimate_id')
+            ->map(fn($g) => $g->pluck('protocol_no')->filter()->implode(', '));
+
+        // Batch: user names (single query)
+        $userIds = $estimates->pluck('created_by')->unique()->filter();
+        $userNames = \App\Models\User::whereIn('id', $userIds)->pluck('name', 'id');
+
+        // Batch: EstimatesDetails counts for calculateTotalsWithCounts (single query)
+        $allDetails = $estimates->flatMap(fn($e) => $e->details);
+        $docNames = $allDetails->pluck('document_name')->unique()->filter()->values();
+        $detailCounts = $docNames->isNotEmpty()
+            ? EstimatesDetails::whereIn('document_name', $docNames)
+                ->selectRaw('document_name, unit, COUNT(*) as cnt')
+                ->groupBy('document_name', 'unit')
+                ->get()
+                ->mapWithKeys(fn($r) => [$r->document_name . '-' . $r->unit => (int) $r->cnt])
+                ->all()
+            : [];
+
+        // Pre-build flat rows — no more per-row DB queries
+        $rows = $estimates->map(function ($row, $index) use ($protocolNosMap, $userNames, $detailCounts) {
+            $contactPerson = $row->client_person;
+            $total = calculateTotalsWithCounts($row->details, $row->discount ?? 0, $detailCounts);
+            return (object) [
+                'sr'           => $index + 1,
+                'date'         => Carbon::parse($row->created_at)->format('d-m-Y'),
+                'estimate_no'  => $row->estimate_no,
+                'amount'       => $total,
+                'metrix'       => $row->client->client_metric->code ?? '',
+                'client_name'  => $row->client->name ?? '',
+                'contact_name' => $contactPerson->name ?? '',
+                'contact_phone'=> $contactPerson->phone_no ?? '',
+                'protocol_no'  => $protocolNosMap[$row->id] ?? '',
+                'created_by'   => $userNames[$row->created_by] ?? '',
+                'status'       => $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected'),
+                'status_code'  => $row->status,
+            ];
+        });
+
         if (Auth::user()->hasRole('CEO')) {
             $pdf = FacadePdf::loadView('estimatemanagement::pdf.export-table-list', [
-                'estimates' => $estimates,
+                'rows'                     => $rows,
+                'total_count'              => $estimates->count(),
                 'estimates_approved_count' => $estimates_approved_count,
                 'estimates_rejected_count' => $estimates_rejected_count,
             ]);
             return $pdf->download('estimates-' . Carbon::now()->format('Y-m-d') . '.pdf');
         }
 
-        return Excel::download(new EstimateExport($estimates), 'estimates-' . Carbon::now()->format('Y-m-d') . '.xlsx');
+        return Excel::download(new EstimateExport($rows), 'estimates-' . Carbon::now()->format('Y-m-d') . '.xlsx');
     }
 
     public function getContactPerson($id)

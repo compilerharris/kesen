@@ -121,7 +121,7 @@
     <title>Document</title>
 </head>
 <body >
-&nbsp;&nbsp;<span class="badge badge-primary" >Total Estimate: {{ $estimates->count() }}</span>
+&nbsp;&nbsp;<span class="badge badge-primary" >Total Estimate: {{ $total_count }}</span>
 <span class="badge badge-success">Total Approved: {{ $estimates_approved_count }}</span>
 <span class="badge badge-danger">Total Rejected: {{ $estimates_rejected_count }}</span>
 
@@ -134,21 +134,20 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($estimates as $index=>$row)
+        @foreach ($rows as $row)
         <tr>
-            <td>{{ $index+1 }}</td>
-            <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
+            <td>{{ $row->sr }}</td>
+            <td>{{ $row->date }}</td>
             <td>{{ $row->estimate_no }}</td>
-            <td>{{calculateTotals($row->details,$row->discount??0)}}</td>
-            
-            <td>{{ App\Models\Metrix::where('id',$row->client->metrix)->first()->code }}</td>
-            <td>{{ Modules\ClientManagement\App\Models\Client::where('id',$row->client_id)->first()->name??'';}}</td>
-            <td>{{  Modules\ClientManagement\App\Models\ContactPerson::where('id',$row->client_contact_person_id)->first()->name??'';}}</td>
-            <td>{{  Modules\ClientManagement\App\Models\ContactPerson::where('id',$row->client_contact_person_id)->first()->phone_no??'';}}</td>
-            <td>{{implode(',', Modules\JobRegisterManagement\App\Models\JobRegister::where('estimate_id',$row->id)->get('protocol_no')->pluck('protocol_no')->toArray())??'';}}</td>
-            <td>{{ \App\Models\User::where('id',$row->created_by)->first()->name }}</td>
-            <td class="{{ $row->status == 0 ? 'status-pending' : ($row->status == 1 ? 'status-approved' : 'status-rejected') }}">
-                {{ $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected') }}
+            <td>{{ $row->amount }}</td>
+            <td>{{ $row->metrix }}</td>
+            <td>{{ $row->client_name }}</td>
+            <td>{{ $row->contact_name }}</td>
+            <td>{{ $row->contact_phone }}</td>
+            <td>{{ $row->protocol_no }}</td>
+            <td>{{ $row->created_by }}</td>
+            <td class="{{ $row->status_code == 0 ? 'status-pending' : ($row->status_code == 1 ? 'status-approved' : 'status-rejected') }}">
+                {{ $row->status }}
             </td>
         </tr>
         @endforeach

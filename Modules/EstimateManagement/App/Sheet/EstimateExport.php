@@ -2,7 +2,6 @@
 
 namespace Modules\EstimateManagement\App\Sheet;
 
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -10,30 +9,23 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class EstimateExport implements FromCollection, WithHeadings, WithStyles
 {
-    public function __construct(private $estimates) {}
+    public function __construct(private $rows) {}
 
     public function collection()
     {
-        return $this->estimates->map(function ($row, $index) {
-            $contactPerson = $row->client_person;
-            $protocolNos = \Modules\JobRegisterManagement\App\Models\JobRegister::where('estimate_id', $row->id)
-                ->pluck('protocol_no')
-                ->implode(', ');
-
-            return [
-                $index + 1,
-                Carbon::parse($row->created_at)->format('d-m-Y'),
-                $row->estimate_no,
-                calculateTotals($row->details, $row->discount ?? 0),
-                $row->client->client_metric->code ?? '',
-                $row->client->name ?? '',
-                $contactPerson->name ?? '',
-                $contactPerson->phone_no ?? '',
-                $protocolNos,
-                \App\Models\User::where('id', $row->created_by)->value('name') ?? '',
-                $row->status == 0 ? 'Pending' : ($row->status == 1 ? 'Approved' : 'Rejected'),
-            ];
-        });
+        return $this->rows->map(fn($row) => [
+            $row->sr,
+            $row->date,
+            $row->estimate_no,
+            $row->amount,
+            $row->metrix,
+            $row->client_name,
+            $row->contact_name,
+            $row->contact_phone,
+            $row->protocol_no,
+            $row->created_by,
+            $row->status,
+        ]);
     }
 
     public function headings(): array
